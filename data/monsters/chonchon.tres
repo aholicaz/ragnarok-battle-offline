@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
 [ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="Texture2D" uid="uid://ch3ac6vcy2e50" path="res://Sprites/chonchon_idle.png" id="3_wick7"]
 
 [sub_resource type="Resource" id="Drop_chonchon_0"]
 script = ExtResource("2_drop")
@@ -24,10 +25,61 @@ script = ExtResource("2_drop")
 item_id = &"card_chonchon"
 chance = 5.0
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_qyd0n"]
+atlas = ExtResource("3_wick7")
+region = Rect2(0, 0, 842, 848)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5f7hx"]
+atlas = ExtResource("3_wick7")
+region = Rect2(842, 0, 842, 848)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yc8r1"]
+atlas = ExtResource("3_wick7")
+region = Rect2(1684, 0, 842, 848)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ekvov"]
+atlas = ExtResource("3_wick7")
+region = Rect2(0, 848, 842, 848)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fqpjk"]
+atlas = ExtResource("3_wick7")
+region = Rect2(842, 848, 842, 848)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rxfef"]
+atlas = ExtResource("3_wick7")
+region = Rect2(1684, 848, 842, 848)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_h531i"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qyd0n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5f7hx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yc8r1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ekvov")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fqpjk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rxfef")
+}],
+"loop": 1,
+"name": &"Idle",
+"speed": 5.0
+}]
+
 [resource]
 script = ExtResource("1_monster")
 id = &"chonchon"
 display_name = "ชอนชอน"
+sprite_frames = SubResource("SpriteFrames_h531i")
 hitbox_size = Vector2(24, 22)
 hp_bar_offset_y = -42.0
 display_height = 72.0

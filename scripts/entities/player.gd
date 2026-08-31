@@ -12,20 +12,21 @@ const JUMP_VELOCITY := -420.0
 const KNOCKBACK_DECAY := 900.0
 
 # =========================================================
-# ★★ การกระโดด (ปรับใหม่รอบ 27) ★★
+# ★★ การกระโดด (รอบ 27 · ปรับซ้ำรอบ 28) ★★
 #
-# ปัญหาเดิม: กระโดดแล้ว "เฟรมไม่เชื่อมกัน" — ท่ากระโดดวนลูปด้วยความเร็วคงที่
-# ไม่เกี่ยวกับว่าตัวละครกำลังลอยขึ้นหรือกำลังตก พอแตะพื้นก็ตัดไป Idle ทันที
+# ท่ากระโดดที่วาดกันทั่วไปจะมี 3 ช่วงในไฟล์เดียว เช่นของโปรเจกต์นี้ 6 เฟรม:
 #
-# ของใหม่: เฟรมท่ากระโดด "เดินตามความเร็วแนวตั้งจริง"
-#   เฟรมแรก ๆ  = กำลังพุ่งขึ้น
-#   เฟรมกลาง   = จุดสูงสุด (ลอยนิ่ง)
-#   เฟรมท้าย ๆ = กำลังตกลง
-# แล้วพอแตะพื้นจะค้างเฟรมสุดท้าย (หรือเล่นท่า Land ถ้ามี) สั้น ๆ ก่อนกลับไป Idle/Run
-# ภาพเลยต่อกันเป็นชุดเดียว ไม่กระตุก
+#   เฟรม 0-2  = ★ ย่อตัวถีบพื้น ★  (ยืน -> ย่อ -> ถีบ)   <- อยู่บนพื้น เล่นรวดเดียวตอนออกตัว
+#   เฟรม 3-4  = ★ ลอยกลางอากาศ ★  (ตัวลอย -> เริ่มตก)   <- เดินตามความเร็วแนวตั้งจริง
+#   เฟรม 5    = ★ ลงพื้น ★         (ยืนรับน้ำหนัก)        <- ค้างสั้น ๆ ตอนแตะพื้น
 #
-# ★ ถ้าสไปรท์กระโดดของคุณเรียงคนละแบบ ★ ปิด Jump Anim Follow Physics ได้
-# ระบบจะกลับไปเล่นวนแบบเดิม
+# ★ ปัญหาที่เจอ ★ ถ้าเอาทั้ง 6 เฟรมไปผูกกับความเร็วรวดเดียว
+# เฟรม "ย่อตัว" จะไปโผล่ตอนที่ตัวละครพุ่งขึ้นแล้ว ดูเหมือนภาพเดินถอยหลัง
+# แล้วพอลงพื้นก็กระโดดข้ามไป Idle = ไม่เชื่อมกัน
+#
+# ★ ตอนนี้ ★ แยกเป็น 3 ช่วงตามด้านบน ภาพเลยไหลต่อกันเป็นชุดเดียว
+# บอกระบบว่าเฟรมไหนเป็นช่วงไหนได้ที่ช่อง Jump Takeoff Frames / Jump Land Frames
+# (สไปรท์ที่ไม่มีช่วงย่อตัว ก็ตั้งเป็น 0 ได้)
 # =========================================================
 @export_group("การกระโดด")
 ## แรงกระโดด (ยิ่งมากยิ่งสูง)
@@ -40,8 +41,14 @@ const KNOCKBACK_DECAY := 900.0
 @export_range(0.0, 0.4) var jump_buffer_time: float = 0.12
 ## ★ ให้เฟรมท่ากระโดดเดินตามฟิสิกส์จริง ★ (แก้อาการเฟรมไม่เชื่อมกัน)
 @export var jump_anim_follow_physics: bool = true
+## ★ เฟรมแรก ๆ ที่เป็นช่วง "ย่อตัวถีบพื้น" มีกี่เฟรม ★ (ของชุดนี้ = 3 · ไม่มีให้ใส่ 0)
+@export_range(0, 8) var jump_takeoff_frames: int = 3
+## เล่นช่วงย่อตัวให้จบภายในกี่วินาที (สั้น ๆ พอ ไม่งั้นจะเห็นย่อตัวกลางอากาศ)
+@export_range(0.02, 0.5) var jump_takeoff_time: float = 0.12
+## ★ เฟรมท้าย ๆ ที่เป็นช่วง "ลงพื้น" มีกี่เฟรม ★ (ของชุดนี้ = 1 · ไม่มีให้ใส่ 0)
+@export_range(0, 8) var jump_land_frames: int = 1
 ## ค้างท่าลงพื้นไว้กี่วินาทีก่อนกลับไปยืน/วิ่ง (0 = ตัดทันทีแบบเดิม)
-@export_range(0.0, 0.5) var land_time: float = 0.10
+@export_range(0.0, 0.5) var land_time: float = 0.14
 
 @export_group("ท่าโดนตี")
 ## ★ ล็อกท่าโดนตีไว้กี่วินาที ★ 0 = คิดจากจำนวนเฟรมของท่านั้นให้อัตโนมัติ
@@ -148,6 +155,8 @@ var _jump_rising := false   # กำลังพุ่งขึ้นอยู�
 var _was_on_floor := true
 var _land_left := 0.0       # เหลือเวลาค้างท่าลงพื้น
 var _jump_anim := ""        # ชื่อท่ากระโดดที่กำลังเล่นอยู่จริง
+var _air_time := 0.0        # ลอยอยู่กลางอากาศมากี่วินาทีแล้ว
+var _jump_kick := false     # ★ ลอยเพราะ "กดกระโดด" ★ (ไม่ใช่เดินตกขอบ) = ต้องเล่นท่าย่อตัว
 # ★ สถานะท่าโดนตี ★ ล็อกไว้ไม่ให้ Idle/Run มาทับก่อนเล่นจบ
 var _hit_left := 0.0
 
@@ -233,6 +242,8 @@ func _physics_process(delta: float) -> void:
 		_jump_rising = true
 		_land_left = 0.0
 		_jump_anim = ""
+		_air_time = 0.0
+		_jump_kick = true   # กระโดดเอง = ต้องเล่นท่าย่อตัวถีบพื้นก่อน
 
 	# เดิน — A / D (หรือลูกศรซ้าย-ขวา)
 	var speed := PlayerState.stats.move_speed
@@ -264,6 +275,7 @@ func _tick_jump_timers(delta: float) -> void:
 	if on_floor and not _was_on_floor:
 		_land_left = land_time
 		_jump_rising = false
+		_jump_kick = false
 		# ปลดล็อกท่ากระโดดที่หยุดเฟรมไว้ ให้ท่าถัดไปเล่นต่อได้ปกติ
 		if _jump_anim != "" and land_time <= 0.0:
 			_jump_anim = ""
@@ -271,6 +283,12 @@ func _tick_jump_timers(delta: float) -> void:
 		# เพิ่งลอยขึ้น (กระโดด หรือเดินตกขอบ)
 		_land_left = 0.0
 	_was_on_floor = on_floor
+
+	# นับเวลาที่ลอยอยู่ ใช้กะจังหวะเฟรมช่วงย่อตัวถีบพื้น
+	if on_floor:
+		_air_time = 0.0
+	else:
+		_air_time += delta
 
 	if on_floor:
 		_coyote = coyote_time
@@ -306,7 +324,16 @@ func _jump_progress() -> float:
 	return clampf((velocity.y + span) / (span * 2.0), 0.0, 1.0)
 
 
-## เล่นท่ากระโดดโดยเลือกเฟรมตามความเร็วจริง (เฟรมเลยต่อเนื่องกับการลงพื้น)
+## ★ แบ่งเฟรมท่ากระโดดเป็น 3 ช่วง ★ คืน [จำนวนเฟรมย่อตัว, เฟรมลอยแรก, เฟรมลอยสุดท้าย]
+func _jump_frame_ranges(count: int) -> Array:
+	var takeoff: int = clampi(jump_takeoff_frames, 0, maxi(0, count - 2))
+	var land: int = clampi(jump_land_frames, 0, maxi(0, count - takeoff - 1))
+	var air_first: int = takeoff
+	var air_last: int = maxi(air_first, count - 1 - land)
+	return [takeoff, air_first, air_last]
+
+
+## เล่นท่ากระโดดโดยเลือกเฟรมเอง — ย่อตัวถีบพื้น -> ลอย (ตามความเร็วจริง)
 func _play_jump() -> void:
 	if _jump_anim == "" or sprite.animation != StringName(_jump_anim):
 		_jump_anim = _play("Jump")
@@ -319,7 +346,44 @@ func _play_jump() -> void:
 		return
 	if sprite.is_playing():
 		sprite.pause()
-	sprite.frame = clampi(int(round(_jump_progress() * (count - 1))), 0, count - 1)
+
+	var r := _jump_frame_ranges(count)
+	var takeoff: int = r[0]
+	var air_first: int = r[1]
+	var air_last: int = r[2]
+
+	# ---------- ★ ช่วงย่อตัวถีบพื้น ★ ----------
+	# เล่นรวดเดียวตอนเพิ่งกดกระโดด · เดินตกขอบเฉย ๆ ไม่ต้องเล่น (ไม่ได้ถีบพื้น)
+	if _jump_kick and takeoff > 0 and _air_time < jump_takeoff_time:
+		var t: float = _air_time / maxf(0.01, jump_takeoff_time)
+		sprite.frame = clampi(int(t * takeoff), 0, takeoff - 1)
+		return
+
+	# ---------- ★ ช่วงลอยกลางอากาศ ★ ----------
+	# 0 = พุ่งขึ้นสุด · 0.5 = จุดสูงสุด · 1 = ตกเต็มที่
+	var span: int = air_last - air_first
+	if span <= 0:
+		sprite.frame = air_first
+		return
+	sprite.frame = air_first + clampi(int(round(_jump_progress() * span)), 0, span)
+
+
+## ★ ช่วงลงพื้น ★ ไล่เฟรมท้าย ๆ ของท่ากระโดดให้จบพอดีกับเวลา land_time
+func _play_land_frames() -> void:
+	if _jump_anim == "" or sprite.sprite_frames == null:
+		return
+	var count := sprite.sprite_frames.get_frame_count(_jump_anim)
+	if count <= 1:
+		return
+	if sprite.is_playing():
+		sprite.pause()
+	var air_last: int = _jump_frame_ranges(count)[2]
+	if air_last >= count - 1:
+		sprite.frame = count - 1     # ไม่ได้แยกเฟรมลงพื้นไว้ ก็ค้างเฟรมสุดท้าย
+		return
+	var first: int = air_last + 1
+	var t: float = 1.0 - clampf(_land_left / maxf(0.01, land_time), 0.0, 1.0)
+	sprite.frame = clampi(first + int(t * (count - first)), first, count - 1)
 
 
 ## ความยาวของอนิเมชันนั้นเป็นวินาที (นับ frame duration ของ Godot 4 ด้วย)
@@ -446,16 +510,12 @@ func _update_animation() -> void:
 			_play("Idle")
 		return
 
-	# ★ เพิ่งแตะพื้น ★ ค้างท่าลงพื้นสั้น ๆ ให้ภาพต่อกัน ไม่กระตุก
+	# ★ เพิ่งแตะพื้น ★ เล่นเฟรมช่วงลงพื้นต่อจากช่วงลอย ภาพเลยไหลต่อกัน ไม่กระตุก
 	if _land_left > 0.0:
 		if _has_anim("Land"):
 			_play("Land")
-		elif _jump_anim != "":
-			# ค้างเฟรมสุดท้ายของท่ากระโดดไว้ (ไม่ต้องสั่งอะไรเพิ่ม)
-			var count := sprite.sprite_frames.get_frame_count(_jump_anim)
-			if jump_anim_follow_physics and count > 1:
-				sprite.frame = count - 1
-			return
+		elif _jump_anim != "" and jump_anim_follow_physics:
+			_play_land_frames()
 		else:
 			_play("Idle")
 		return

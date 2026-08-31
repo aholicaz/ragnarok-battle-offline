@@ -448,6 +448,10 @@ region = Rect2(1376, 768, 688, 768)
 atlas = ExtResource("8_ljvea")
 region = Rect2(2064, 768, 688, 768)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_q1ivy"]
+atlas = ExtResource("17_fo6hg")
+region = Rect2(0, 0, 500, 558)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_f3yc1"]
 atlas = ExtResource("17_fo6hg")
 region = Rect2(500, 0, 500, 558)
@@ -873,6 +877,9 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q1ivy")
+}, {
 "duration": 0.6,
 "texture": SubResource("AtlasTexture_f3yc1")
 }, {

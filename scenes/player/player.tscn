@@ -16,7 +16,7 @@ script = ExtResource("1_player")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1373520025]
 position = Vector2(-1, 0)
 sprite_frames = ExtResource("2_frames")
-animation = &"Die"
+animation = &"Jump"
 frame = 5
 frame_progress = 1.0
 offset = Vector2(-2.475, 0)

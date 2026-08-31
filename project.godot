@@ -33,8 +33,6 @@ window/stretch/aspect="expand"
 
 [gui]
 
-# ★ ฟอนต์ไทยฝังในเกม ★ เวอร์ชันเว็บ/มือถือไม่มีฟอนต์ของระบบให้ใช้
-# ถ้าไม่ตั้งค่านี้ ตัวหนังสือไทยจะกลายเป็นสี่เหลี่ยมทั้งเกม
 theme/custom_font="res://fonts/NotoSansThai-Regular.ttf"
 
 [input]

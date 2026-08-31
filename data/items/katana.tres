@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cg1ugiplau0cq"]
+
+[ext_resource type="Texture2D" uid="uid://dsq1wy3bt0u1g" path="res://Sprites/items/Katana.png" id="1_555ec"]
+[ext_resource type="Script" uid="uid://dbdwo63bn67r7" path="res://scripts/resources/item_data.gd" id="2_kixpy"]
+
+[resource]
+script = ExtResource("2_kixpy")
+id = &"katana"
+display_name = "ดาบซามู"
+description = "ดาบซามูไรญี่ปุ่นโบราณ"
+icon = ExtResource("1_555ec")
+required_level = 25
+type = 1
+slot = 1
+weapon_type = &"sword"
+attack_animation = &"Attack_Katana"
+card_slots = 2
+max_stack = 1
+buy_price = 84000
+sell_price = 2400
+atk = 53
+bonus_agi = 5
+bonus_luk = 2
+refinable = true
+refine_atk_per_level = 4

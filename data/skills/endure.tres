@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://c1vj2uyalhier"]
+
+[ext_resource type="Texture2D" uid="uid://d0ald40te4gni" path="res://Sprites/Endure.png" id="1_85ya6"]
+[ext_resource type="Script" uid="uid://3sobam6f0wu5" path="res://scripts/resources/skill_data.gd" id="1_skill"]
+
+[resource]
+script = ExtResource("1_skill")
+id = &"endure"
+display_name = "Endure (อดทน)"
+description = "เพิ่มพลังป้องกันและการหลบหลีกชั่วคราว"
+icon = ExtResource("1_85ya6")
+type = 2
+max_level = 5
+required_level = 6
+sp_cost_base = 10
+sp_cost_per_level = 2.0
+cooldown = 20.0
+duration_base = 25.0
+duration_per_level = 5.0
+buff_effects = {
+"def_percent": 15.0,
+"flee": 10.0
+}
+buff_value_per_level = 4.0

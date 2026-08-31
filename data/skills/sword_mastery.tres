@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://vub6e32gn3mc"]
+
+[ext_resource type="Texture2D" uid="uid://db7bivrhwu6su" path="res://Sprites/Sword Mastery.png" id="1_dc073"]
+[ext_resource type="Script" uid="uid://3sobam6f0wu5" path="res://scripts/resources/skill_data.gd" id="1_skill"]
+
+[resource]
+script = ExtResource("1_skill")
+id = &"sword_mastery"
+display_name = "Sword Mastery (เชี่ยวชาญดาบ)"
+description = "เพิ่มพลังโจมตีถาวรเมื่อถือดาบ"
+icon = ExtResource("1_dc073")
+type = 4
+passive_effects = {
+"atk": 4.0
+}

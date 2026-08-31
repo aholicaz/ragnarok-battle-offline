@@ -1,0 +1,78 @@
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://13phq5jcelit"]
+
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+
+[sub_resource type="Resource" id="Drop_baphomet_0"]
+script = ExtResource("2_drop")
+item_id = &"baphomet_horn"
+chance = 100.0
+
+[sub_resource type="Resource" id="Drop_baphomet_1"]
+script = ExtResource("2_drop")
+item_id = &"flame_sword"
+chance = 15.0
+
+[sub_resource type="Resource" id="Drop_baphomet_2"]
+script = ExtResource("2_drop")
+item_id = &"plate_armor"
+chance = 20.0
+
+[sub_resource type="Resource" id="Drop_baphomet_3"]
+script = ExtResource("2_drop")
+item_id = &"emveretarcon"
+chance = 100.0
+min_count = 3
+max_count = 6
+
+[sub_resource type="Resource" id="Drop_baphomet_4"]
+script = ExtResource("2_drop")
+item_id = &"white_potion"
+chance = 100.0
+min_count = 5
+max_count = 10
+
+[sub_resource type="Resource" id="Drop_baphomet_card"]
+script = ExtResource("2_drop")
+item_id = &"card_baphomet"
+chance = 5.0
+
+[resource]
+script = ExtResource("1_monster")
+id = &"baphomet"
+display_name = "บาฟโฟเมท"
+sprite_scale = Vector2(1.4, 1.4)
+hitbox_size = Vector2(70, 90)
+hp_bar_offset_y = -120.0
+display_height = 340.0
+level = 50
+max_hp = 14000
+atk_min = 320
+atk_max = 430
+def = 55
+mdef = 45
+hit = 80
+flee = 60
+element = 7
+race = 6
+size = 2
+ai_type = 1
+move_speed = 160.0
+jump_force = -380.0
+jump_while_chasing = false
+detect_range = 600.0
+attack_range = 130.0
+leash_range = 0.0
+wander_speed = 45.0
+wander_range = 220.0
+hop_while_wandering = false
+jump_interval = 1.2
+attack_windup = 0.45
+attack_duration = 0.6
+attack_cooldown = 1.4
+knockback_force = 320.0
+exp_reward = 9000
+zeny_min = 3000
+zeny_max = 6000
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_baphomet_0"), SubResource("Drop_baphomet_1"), SubResource("Drop_baphomet_2"), SubResource("Drop_baphomet_3"), SubResource("Drop_baphomet_4"), SubResource("Drop_baphomet_card")])
+respawn_time = 120.0

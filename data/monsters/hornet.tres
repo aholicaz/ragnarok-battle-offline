@@ -1,0 +1,56 @@
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://c8n7s6ei1p733"]
+
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+
+[sub_resource type="Resource" id="Drop_hornet_0"]
+script = ExtResource("2_drop")
+item_id = &"fluff"
+chance = 45.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_hornet_1"]
+script = ExtResource("2_drop")
+item_id = &"phracon"
+chance = 8.0
+
+[sub_resource type="Resource" id="Drop_hornet_2"]
+script = ExtResource("2_drop")
+item_id = &"orange_potion"
+
+[sub_resource type="Resource" id="Drop_hornet_card"]
+script = ExtResource("2_drop")
+item_id = &"card_hornet"
+chance = 5.0
+
+[resource]
+script = ExtResource("1_monster")
+id = &"hornet"
+display_name = "ฮอร์เน็ต"
+hitbox_size = Vector2(24, 22)
+hp_bar_offset_y = -42.0
+display_height = 80.0
+level = 9
+max_hp = 165
+atk_min = 26
+atk_max = 34
+def = 4
+hit = 19
+flee = 26
+element = 4
+race = 4
+size = 0
+ai_type = 1
+move_speed = 175.0
+jump_force = -220.0
+detect_range = 340.0
+attack_range = 62.0
+wander_speed = 95.0
+wander_range = 360.0
+jump_interval = 0.45
+attack_cooldown = 0.9
+knockback_force = 90.0
+exp_reward = 62
+zeny_min = 18
+zeny_max = 42
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_hornet_0"), SubResource("Drop_hornet_1"), SubResource("Drop_hornet_2"), SubResource("Drop_hornet_card")])

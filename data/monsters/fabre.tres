@@ -1,0 +1,236 @@
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://5fqcedkqf7wo"]
+
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="Texture2D" uid="uid://0yo4j1s4mvdx" path="res://Sprites/fable_attack.png" id="3_fisuj"]
+[ext_resource type="Texture2D" uid="uid://cf6w777cwy8i3" path="res://Sprites/fabre_idle.png" id="4_cmmrm"]
+[ext_resource type="Texture2D" uid="uid://pp5i542agjro" path="res://Sprites/fable_die.png" id="4_fe1t8"]
+
+[sub_resource type="Resource" id="Drop_fabre_0"]
+script = ExtResource("2_drop")
+item_id = &"fluff"
+chance = 60.0
+max_count = 3
+
+[sub_resource type="Resource" id="Drop_fabre_1"]
+script = ExtResource("2_drop")
+item_id = &"clover"
+chance = 20.0
+
+[sub_resource type="Resource" id="Drop_fabre_2"]
+script = ExtResource("2_drop")
+item_id = &"cotton_shirt"
+chance = 15.0
+
+[sub_resource type="Resource" id="Drop_fabre_card"]
+script = ExtResource("2_drop")
+item_id = &"card_fabre"
+chance = 5.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fe1t8"]
+atlas = ExtResource("3_fisuj")
+region = Rect2(0, 0, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8bc4j"]
+atlas = ExtResource("3_fisuj")
+region = Rect2(688, 0, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8nigc"]
+atlas = ExtResource("3_fisuj")
+region = Rect2(2064, 0, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cpal0"]
+atlas = ExtResource("3_fisuj")
+region = Rect2(0, 768, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pfkar"]
+atlas = ExtResource("3_fisuj")
+region = Rect2(688, 768, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ou3qo"]
+atlas = ExtResource("3_fisuj")
+region = Rect2(1376, 768, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ym5y1"]
+atlas = ExtResource("3_fisuj")
+region = Rect2(2064, 768, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_00j6a"]
+atlas = ExtResource("4_fe1t8")
+region = Rect2(0, 0, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8f3vc"]
+atlas = ExtResource("4_fe1t8")
+region = Rect2(688, 0, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k6thn"]
+atlas = ExtResource("4_fe1t8")
+region = Rect2(1376, 0, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7dehd"]
+atlas = ExtResource("4_fe1t8")
+region = Rect2(2064, 0, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sdaba"]
+atlas = ExtResource("4_fe1t8")
+region = Rect2(0, 768, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rnmg3"]
+atlas = ExtResource("4_fe1t8")
+region = Rect2(688, 768, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1t4kf"]
+atlas = ExtResource("4_fe1t8")
+region = Rect2(1376, 768, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_22l31"]
+atlas = ExtResource("4_fe1t8")
+region = Rect2(2064, 768, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gjnxp"]
+atlas = ExtResource("4_cmmrm")
+region = Rect2(0, 0, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ial05"]
+atlas = ExtResource("4_cmmrm")
+region = Rect2(688, 0, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_so1v6"]
+atlas = ExtResource("4_cmmrm")
+region = Rect2(1376, 0, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pkkln"]
+atlas = ExtResource("4_cmmrm")
+region = Rect2(2064, 0, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gk846"]
+atlas = ExtResource("4_cmmrm")
+region = Rect2(0, 768, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6pcux"]
+atlas = ExtResource("4_cmmrm")
+region = Rect2(688, 768, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ls5bl"]
+atlas = ExtResource("4_cmmrm")
+region = Rect2(1376, 768, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qdmre"]
+atlas = ExtResource("4_cmmrm")
+region = Rect2(2064, 768, 688, 768)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_iga5n"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fe1t8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8bc4j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8nigc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cpal0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pfkar")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ou3qo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ym5y1")
+}],
+"loop": 1,
+"name": &"Attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_00j6a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8f3vc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k6thn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7dehd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sdaba")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rnmg3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1t4kf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_22l31")
+}],
+"loop": 1,
+"name": &"Die",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gjnxp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ial05")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_so1v6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pkkln")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gk846")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6pcux")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ls5bl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qdmre")
+}],
+"loop": 1,
+"name": &"Idle",
+"speed": 5.0
+}]
+
+[resource]
+script = ExtResource("1_monster")
+id = &"fabre"
+display_name = "แฟเบร"
+sprite_frames = SubResource("SpriteFrames_iga5n")
+hitbox_size = Vector2(26, 20)
+hp_bar_offset_y = -40.0
+display_height = 72.0
+level = 2
+max_hp = 72
+atk_min = 9
+atk_max = 13
+def = 1
+element = 3
+race = 4
+size = 0
+move_speed = 80.0
+jump_force = 0.0
+jump_while_chasing = false
+detect_range = 220.0
+attack_range = 60.0
+leash_range = 450.0
+hop_while_wandering = false
+exp_reward = 18
+zeny_min = 5
+zeny_max = 15
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_fabre_0"), SubResource("Drop_fabre_1"), SubResource("Drop_fabre_2"), SubResource("Drop_fabre_card")])
+respawn_time = 6.0

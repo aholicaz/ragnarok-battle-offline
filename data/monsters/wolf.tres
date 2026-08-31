@@ -1,0 +1,65 @@
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://ddphalxkv2ksp"]
+
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+
+[sub_resource type="Resource" id="Drop_wolf_0"]
+script = ExtResource("2_drop")
+item_id = &"animal_skin"
+chance = 55.0
+max_count = 3
+
+[sub_resource type="Resource" id="Drop_wolf_1"]
+script = ExtResource("2_drop")
+item_id = &"meat"
+chance = 30.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_wolf_2"]
+script = ExtResource("2_drop")
+item_id = &"phracon"
+chance = 12.0
+
+[sub_resource type="Resource" id="Drop_wolf_3"]
+script = ExtResource("2_drop")
+item_id = &"guard"
+chance = 3.0
+
+[sub_resource type="Resource" id="Drop_wolf_card"]
+script = ExtResource("2_drop")
+item_id = &"card_wolf"
+chance = 5.0
+
+[resource]
+script = ExtResource("1_monster")
+id = &"wolf"
+display_name = "หมาป่า"
+hitbox_size = Vector2(44, 30)
+hp_bar_offset_y = -52.0
+display_height = 125.0
+level = 13
+max_hp = 340
+atk_min = 42
+atk_max = 58
+def = 8
+hit = 25
+flee = 20
+element = 3
+race = 2
+ai_type = 1
+move_speed = 190.0
+jump_force = -330.0
+detect_range = 400.0
+attack_range = 80.0
+leash_range = 700.0
+wander_speed = 90.0
+wander_range = 420.0
+hop_while_wandering = false
+jump_interval = 0.9
+attack_cooldown = 1.3
+knockback_force = 140.0
+exp_reward = 140
+zeny_min = 40
+zeny_max = 95
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_wolf_0"), SubResource("Drop_wolf_1"), SubResource("Drop_wolf_2"), SubResource("Drop_wolf_3"), SubResource("Drop_wolf_card")])
+respawn_time = 10.0

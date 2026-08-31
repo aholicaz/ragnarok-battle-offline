@@ -1,0 +1,67 @@
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://dgsfob2sq00bs"]
+
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+
+[sub_resource type="Resource" id="Drop_baphomet_jr_0"]
+script = ExtResource("2_drop")
+item_id = &"undead_bone"
+chance = 45.0
+max_count = 3
+
+[sub_resource type="Resource" id="Drop_baphomet_jr_1"]
+script = ExtResource("2_drop")
+item_id = &"emveretarcon"
+chance = 20.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_baphomet_jr_2"]
+script = ExtResource("2_drop")
+item_id = &"white_potion"
+chance = 25.0
+max_count = 3
+
+[sub_resource type="Resource" id="Drop_baphomet_jr_3"]
+script = ExtResource("2_drop")
+item_id = &"ring"
+chance = 3.0
+
+[sub_resource type="Resource" id="Drop_baphomet_jr_card"]
+script = ExtResource("2_drop")
+item_id = &"card_baphomet_jr"
+chance = 5.0
+
+[resource]
+script = ExtResource("1_monster")
+id = &"baphomet_jr"
+display_name = "บาฟโฟเมทจูเนียร์"
+hitbox_size = Vector2(32, 34)
+hp_bar_offset_y = -56.0
+display_height = 150.0
+level = 32
+max_hp = 1750
+atk_min = 150
+atk_max = 205
+def = 30
+mdef = 25
+hit = 53
+flee = 45
+element = 7
+race = 6
+size = 0
+ai_type = 1
+move_speed = 210.0
+jump_force = -360.0
+detect_range = 460.0
+attack_range = 80.0
+leash_range = 800.0
+wander_speed = 80.0
+wander_range = 340.0
+attack_windup = 0.25
+attack_cooldown = 1.0
+knockback_force = 180.0
+exp_reward = 980
+zeny_min = 350
+zeny_max = 700
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_baphomet_jr_0"), SubResource("Drop_baphomet_jr_1"), SubResource("Drop_baphomet_jr_2"), SubResource("Drop_baphomet_jr_3"), SubResource("Drop_baphomet_jr_card")])
+respawn_time = 20.0

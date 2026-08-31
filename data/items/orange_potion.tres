@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://etpryg1t1c27"]
+
+[ext_resource type="Texture2D" uid="uid://bls5xhwmqs0x6" path="res://Sprites/items/orange potion.png" id="1_cfrs4"]
+[ext_resource type="Script" uid="uid://dbdwo63bn67r7" path="res://scripts/resources/item_data.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"orange_potion"
+display_name = "ยาส้ม"
+description = "ฟื้นเลือดปานกลาง"
+icon = ExtResource("1_cfrs4")
+type = 0
+buy_price = 200
+sell_price = 80
+heal_hp = 105

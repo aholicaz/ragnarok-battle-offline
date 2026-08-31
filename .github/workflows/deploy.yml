@@ -1,0 +1,72 @@
+# ★ สร้างเกมเวอร์ชันเว็บอัตโนมัติ แล้วเอาขึ้น GitHub Pages ★
+#
+# ทำงานทุกครั้งที่ push ขึ้น branch main (หรือกดรันเองจากแท็บ Actions)
+# ต้องตั้งค่าใน repo ก่อน 1 ครั้ง: Settings -> Pages -> Source = "GitHub Actions"
+#
+# แก้เวอร์ชัน Godot ที่ใช้ build ได้ที่ GODOT_VERSION ด้านล่าง (ต้องตรงกับที่เปิดโปรเจกต์)
+name: build-web
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: "4.7"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ติดตั้ง Godot + export templates
+        run: |
+          set -e
+          BASE="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable"
+          curl -fsSL -o godot.zip "$BASE/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          curl -fsSL -o templates.tpz "$BASE/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          unzip -q godot.zip
+          sudo mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" /usr/local/bin/godot
+          sudo chmod +x /usr/local/bin/godot
+          unzip -q templates.tpz
+          mkdir -p "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mv templates/* "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable/"
+          godot --version
+
+      - name: นำเข้าไฟล์ (import)
+        # รอบแรกมักมี error เรื่องลำดับการโหลด class_name — รัน 2 รอบถึงจะครบ
+        run: |
+          godot --headless --import || true
+          godot --headless --import
+
+      - name: สร้างเวอร์ชันเว็บ
+        run: |
+          mkdir -p build/web
+          godot --headless --export-release "Web" build/web/index.html
+          ls -lh build/web
+
+      - name: กัน GitHub Pages แปลงไฟล์เอง
+        run: touch build/web/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

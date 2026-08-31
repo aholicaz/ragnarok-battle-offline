@@ -1,0 +1,144 @@
+[gd_scene format=3 uid="uid://bc43e2nsdkicd"]
+
+[ext_resource type="Texture2D" uid="uid://c0c4ch4fqer4e" path="res://Sprites/Map_Asgard.png" id="3_xle50"]
+[ext_resource type="Texture2D" uid="uid://bcow0cy6fmyvp" path="res://Sprites/NPC_1_Idle.png" id="6_vu1bs"]
+[ext_resource type="Script" uid="uid://cj52mis2ydm4e" path="res://scripts/world/map_base.gd" id="map_base"]
+[ext_resource type="PackedScene" uid="uid://bdgqbnav4qg14" path="res://scenes/npc/npc.tscn" id="npc"]
+[ext_resource type="PackedScene" uid="uid://bhp7c8ti14pnn" path="res://scenes/player/player.tscn" id="player"]
+[ext_resource type="PackedScene" uid="uid://d3v8kjt45bnvr" path="res://scenes/world/portal.tscn" id="portal"]
+
+[sub_resource type="RectangleShape2D" id="Rect_0"]
+size = Vector2(3620, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xmdfe"]
+atlas = ExtResource("6_vu1bs")
+region = Rect2(0, 0, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bhb5w"]
+atlas = ExtResource("6_vu1bs")
+region = Rect2(688, 0, 688, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ose2u"]
+atlas = ExtResource("6_vu1bs")
+region = Rect2(2064, 0, 688, 768)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_yf5fn"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xmdfe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bhb5w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ose2u")
+}],
+"loop": 1,
+"name": &"Idle",
+"speed": 3.0
+}]
+
+[node name="Map" type="Node2D" unique_id=983589772]
+script = ExtResource("map_base")
+map_id = &"prontera_town"
+display_name = "เมืองพรอนเทรา"
+map_bounds = Rect2(-1036, -73, 3620, 1060)
+auto_fit_bounds = false
+player_scene = ExtResource("player")
+
+[node name="Background" type="Node2D" parent="." unique_id=587235148]
+
+[node name="Sky" type="Polygon2D" parent="Background" unique_id=1489541874]
+z_index = -100
+position = Vector2(1200, 450)
+color = Color(0.36, 0.55, 0.78, 1)
+polygon = PackedVector2Array(-2636, -450, 1200, -450, 1200, 450, -1200, 450, -2639, 451)
+
+[node name="FarLayer" type="Polygon2D" parent="Background" unique_id=2025305551]
+z_index = -90
+position = Vector2(481.99997, 718)
+scale = Vector2(1.5949999, 1)
+color = Color(0.28, 0.42, 0.6, 1)
+polygon = PackedVector2Array(-1200, -198, 1200, -198, 1200, 198, -1200, 198, -1200, 129.29199)
+
+[node name="MapAsgard" type="Sprite2D" parent="Background" unique_id=1203579872]
+position = Vector2(774, 456.99997)
+scale = Vector2(1.126905, 1.1269054)
+texture = ExtResource("3_xle50")
+
+[node name="Terrain" type="Node2D" parent="." unique_id=1444048664]
+
+[node name="Ground0" type="StaticBody2D" parent="Terrain" unique_id=1016535649]
+position = Vector2(1200, 720)
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Ground0" unique_id=1171894742]
+position = Vector2(-426.0, 15.0)
+shape = SubResource("Rect_0")
+
+[node name="Visual" type="Polygon2D" parent="Terrain/Ground0" unique_id=1532239276]
+position = Vector2(-426.0, 289)
+scale = Vector2(1.508333, 1)
+color = Color(0.41960785, 0.36078432, 0.3019608, 1)
+polygon = PackedVector2Array(-1200, -80, 1200, -80, 1200, 80, -1200, 80, -1200.0002, 1.7828369)
+
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=386314343]
+
+[node name="default" type="Marker2D" parent="SpawnPoints" unique_id=744531472]
+position = Vector2(300, 600)
+
+[node name="from_field" type="Marker2D" parent="SpawnPoints" unique_id=118970678]
+position = Vector2(2200, 600)
+
+[node name="Portals" type="Node2D" parent="." unique_id=706764151]
+
+[node name="ToField" parent="Portals" unique_id=2006643713 instance=ExtResource("portal")]
+position = Vector2(2330, 570)
+target_map = &"prontera_field"
+target_spawn_point = &"from_town"
+label_text = "→ ทุ่งหญ้า"
+auto_enter = false
+
+[node name="NPCs" type="Node2D" parent="." unique_id=524951142]
+
+[node name="Merchant" parent="NPCs" unique_id=1565733649 instance=ExtResource("npc")]
+quest_ids = Array[StringName]([&"tony_fabre"])
+position = Vector2(-70, 590)
+npc_name = "พ่อค้าโทนี่"
+dialog = "มีของดีมาขายนะ"
+shop_items = Array[StringName]([&"red_potion", &"orange_potion", &"blue_potion", &"meat", &"novice_sword", &"falchion", &"cotton_shirt", &"guard", &"cap", &"hood", &"sandals", &"phracon", &"emveretarcon"])
+
+[node name="Blacksmith" parent="NPCs" unique_id=1359939436 instance=ExtResource("npc")]
+quest_ids = Array[StringName]([&"hans_poring"])
+position = Vector2(478, 590)
+npc_name = "ช่างตีเหล็กฮันส์"
+type = 2
+dialog = "อยากให้อาวุธแกร่งขึ้นไหม"
+portrait_file = "res://Sprites/portraits/hans.png"
+
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="NPCs/Blacksmith" unique_id=1862143772]
+position = Vector2(1.0000057, -27.000015)
+scale = Vector2(0.32049423, 0.32049426)
+sprite_frames = SubResource("SpriteFrames_yf5fn")
+animation = &"Idle"
+autoplay = "Idle"
+frame_progress = 0.39935097
+
+[node name="Healer" parent="NPCs" unique_id=981804629 instance=ExtResource("npc")]
+position = Vector2(1099, 590)
+npc_name = "ซิสเตอร์มาเรีย"
+type = 3
+dialog = "ขอพรให้เจ้าปลอดภัย"
+
+[node name="SavePoint" parent="NPCs" unique_id=1149238899 instance=ExtResource("npc")]
+position = Vector2(1650, 590)
+npc_name = "ศิลาบันทึก"
+type = 4
+dialog = "บันทึกการเดินทาง"
+
+[node name="Guide" parent="NPCs" unique_id=1727980527 instance=ExtResource("npc")]
+position = Vector2(-624, 590)
+npc_name = "ไกด์นำทาง"
+type = 0
+dialog = "กด C ดูสเตตัส, I เปิดกระเป๋า, K เรียนสกิล นะ"

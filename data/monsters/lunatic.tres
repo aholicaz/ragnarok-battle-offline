@@ -1,0 +1,57 @@
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://beie24ui0373o"]
+
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+
+[sub_resource type="Resource" id="Drop_lunatic_0"]
+script = ExtResource("2_drop")
+item_id = &"clover"
+chance = 45.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_lunatic_1"]
+script = ExtResource("2_drop")
+item_id = &"animal_skin"
+chance = 25.0
+
+[sub_resource type="Resource" id="Drop_lunatic_2"]
+script = ExtResource("2_drop")
+item_id = &"red_potion"
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_lunatic_card"]
+script = ExtResource("2_drop")
+item_id = &"card_lunatic"
+chance = 5.0
+
+[resource]
+script = ExtResource("1_monster")
+id = &"lunatic"
+display_name = "ลูนาติก"
+hitbox_size = Vector2(26, 24)
+hp_bar_offset_y = -44.0
+display_height = 82.0
+level = 4
+max_hp = 95
+atk_min = 13
+atk_max = 18
+def = 2
+hit = 11
+flee = 12
+element = 3
+race = 2
+size = 0
+move_speed = 140.0
+jump_force = -280.0
+detect_range = 260.0
+attack_range = 62.0
+leash_range = 520.0
+wander_speed = 75.0
+wander_range = 320.0
+jump_interval = 0.85
+attack_cooldown = 1.2
+exp_reward = 28
+zeny_min = 8
+zeny_max = 22
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_lunatic_0"), SubResource("Drop_lunatic_1"), SubResource("Drop_lunatic_2"), SubResource("Drop_lunatic_card")])
+respawn_time = 7.0

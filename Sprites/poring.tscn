@@ -1,0 +1,151 @@
+[gd_scene format=3 uid="uid://bxc44w7m4m4l7"]
+
+[ext_resource type="Script" uid="uid://b6gfy4tm8y6ju" path="res://poring.gd" id="1_qewde"]
+[ext_resource type="Texture2D" uid="uid://blj7m4om5rk3h" path="res://Sprites/ChatGPT Image 26 ส.ค. 2569 23_59_42.png" id="7_ocj0u"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ogk5r"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(24, 262, 191, 127)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h5280"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(215, 262, 191, 127)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0nxrs"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(406, 262, 191, 127)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qewde"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(597, 262, 191, 127)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ra7xf"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(20, 0, 147, 146)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ocj0u"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(167, 0, 147, 146)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p8a6n"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(314, 0, 147, 146)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b6et8"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(461, 0, 147, 146)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_agpww"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(608, 0, 147, 146)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c1ehx"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(755, 0, 147, 146)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jpnh1"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(14, 381, 171, 127)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l0uws"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(185, 381, 171, 127)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fwivb"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(356, 381, 171, 127)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qx3sq"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(527, 381, 171, 127)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8hhb4"]
+atlas = ExtResource("7_ocj0u")
+region = Rect2(698, 381, 171, 127)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g4v7s"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ogk5r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h5280")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0nxrs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qewde")
+}],
+"loop": 0,
+"name": &"Attack",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ra7xf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ocj0u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p8a6n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b6et8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_agpww")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c1ehx")
+}],
+"loop": 1,
+"name": &"Idle",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jpnh1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l0uws")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fwivb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qx3sq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8hhb4")
+}],
+"loop": 1,
+"name": &"Jump",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sag0g"]
+radius = 25.0
+height = 50.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yf5fn"]
+radius = 74.00676
+
+[node name="Poring" type="CharacterBody2D" unique_id=358724540 groups=["enemy"]]
+script = ExtResource("1_qewde")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=685737070]
+scale = Vector2(0.839491, 0.81311256)
+sprite_frames = SubResource("SpriteFrames_g4v7s")
+animation = &"Attack"
+autoplay = "Idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1494158283]
+shape = SubResource("CapsuleShape2D_sag0g")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1656128799]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1299395814]
+shape = SubResource("CircleShape2D_yf5fn")

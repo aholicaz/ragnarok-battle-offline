@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://d3k0umihbefqj"]
+
+[ext_resource type="Script" uid="uid://b3076eptxjrrr" path="res://scripts/resources/card_data.gd" id="1_card"]
+[ext_resource type="Texture2D" uid="uid://blvx3w1hi0pd3" path="res://Sprites/items/ChatGPT Image 29 ส.ค. 2569 16_05_07.png" id="1_t1nam"]
+
+[resource]
+script = ExtResource("1_card")
+monster_id = &"fabre"
+fits_slot = 4
+illustration = ExtResource("1_t1nam")
+id = &"card_fabre"
+display_name = "การ์ดแฟเบร"
+description = "ตัวหนอนที่ทนทานเกินหน้าตา"
+icon = ExtResource("1_t1nam")
+type = 5
+buy_price = 0
+sell_price = 6000
+max_hp = 100
+bonus_vit = 1

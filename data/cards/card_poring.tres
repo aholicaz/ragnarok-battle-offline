@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://blfiplueggegy"]
+
+[ext_resource type="Script" uid="uid://b3076eptxjrrr" path="res://scripts/resources/card_data.gd" id="1_card"]
+[ext_resource type="Texture2D" uid="uid://dayviivxbk5ni" path="res://Sprites/ChatGPT Image 27 ส.ค. 2569 11_49_17.png" id="1_mxpej"]
+
+[resource]
+script = ExtResource("1_card")
+monster_id = &"poring"
+fits_slot = 7
+illustration = ExtResource("1_mxpej")
+id = &"card_poring"
+display_name = "การ์ดโพริง"
+description = "การ์ดจากเจ้าก้อนวุ้นสีชมพู เชื่อกันว่านำโชคมาให้"
+icon = ExtResource("1_mxpej")
+type = 5
+buy_price = 0
+sell_price = 5000
+flee = 5
+bonus_luk = 2

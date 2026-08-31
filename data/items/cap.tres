@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bxh7sd4hharbv"]
+
+[ext_resource type="Script" uid="uid://dbdwo63bn67r7" path="res://scripts/resources/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" uid="uid://cduifwabit32r" path="res://Sprites/items/cap.png" id="1_lyhmc"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"cap"
+display_name = "หมวกผ้า"
+description = "หมวกธรรมดา"
+icon = ExtResource("1_lyhmc")
+type = 2
+slot = 3
+card_slots = 1
+max_stack = 1
+buy_price = 600
+sell_price = 240
+def = 5
+refinable = true

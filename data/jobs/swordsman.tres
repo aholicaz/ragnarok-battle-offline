@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="JobData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/job_data.gd" id="1_job"]
+
+[resource]
+script = ExtResource("1_job")
+id = &"swordsman"
+display_name = "นักดาบ"
+description = "นักรบผู้เชี่ยวชาญดาบ เลือดหนา พลังโจมตีสูง เหมาะกับการยืนแนวหน้า"
+hp_base = 45
+hp_per_level = 16.0
+hp_vit_percent = 1.2
+sp_base = 12
+sp_per_level = 2.5
+sp_int_percent = 1.0
+atk_mod = 1.15
+matk_mod = 0.5
+def_mod = 1.2
+hit_mod = 1.0
+flee_mod = 1.0
+aspd_base = 1.1
+aspd_agi_percent = 1.2
+weapon_types = Array[StringName]([&"sword"])
+skill_ids = Array[StringName]([&"sword_mastery", &"hp_recovery", &"bash", &"slash", &"magnum_break", &"endure", &"battle_cry", &"first_aid"])
+job_change_level = 40
+next_job_ids = Array[StringName]([&"knight"])

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://b837a2n682dxt"]
+
+[ext_resource type="Script" uid="uid://b3076eptxjrrr" path="res://scripts/resources/card_data.gd" id="1_card"]
+[ext_resource type="Texture2D" uid="uid://binj25gmno7v2" path="res://Sprites/items/King poring Card.png" id="1_jaoqw"]
+
+[resource]
+script = ExtResource("1_card")
+monster_id = &"king_poring"
+fits_slot = 5
+rarity = 4
+id = &"card_king_poring"
+display_name = "การ์ดคิงโพริง"
+description = "การ์ดจากราชาแห่งก้อนวุ้น หายากมาก ผู้ถือครองจะโชคดีผิดปกติ"
+icon = ExtResource("1_jaoqw")
+type = 5
+buy_price = 0
+sell_price = 60000
+flee = 12
+bonus_agi = 5
+bonus_luk = 3

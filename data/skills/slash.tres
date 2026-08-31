@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://bix0fgy6o30uy"]
+
+[ext_resource type="Texture2D" uid="uid://cvu2ng36gc1bg" path="res://Sprites/skill_slash.png" id="1_q5137"]
+[ext_resource type="Script" uid="uid://3sobam6f0wu5" path="res://scripts/resources/skill_data.gd" id="1_skill"]
+
+[resource]
+script = ExtResource("1_skill")
+id = &"slash"
+display_name = "Slash (พุ่งฟัน)"
+description = "พุ่งตัวไปข้างหน้าอย่างรวดเร็ว ฟันมอนสเตอร์ทุกตัวที่ขวางทาง โดนตัวละ 1 ครั้ง"
+icon = ExtResource("1_q5137")
+type = 5
+required_skills = {
+"bash": 5
+}
+required_level = 15
+sp_cost_base = 16
+sp_cost_per_level = 2.0
+cooldown = 4.0
+cast_windup = 0.18
+damage_mult_base = 1.6
+damage_mult_per_level = 0.3
+range_x = 120.0
+range_y = 90.0
+max_targets = 0
+effect_offset = Vector2(110, -60)
+effect_height = 200.0
+effect_follow = true
+effect_life = 0.45

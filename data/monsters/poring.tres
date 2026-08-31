@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://dctfetjjy4cox"]
+
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="SpriteFrames" uid="uid://bxoh11sqqtlu4" path="res://data/sprites/poring_frames.tres" id="3_frames"]
+
+[sub_resource type="Resource" id="Drop_poring_0"]
+script = ExtResource("2_drop")
+item_id = &"jellopy"
+chance = 65.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_poring_1"]
+script = ExtResource("2_drop")
+item_id = &"sticky_mucus"
+chance = 12.0
+
+[sub_resource type="Resource" id="Drop_poring_2"]
+script = ExtResource("2_drop")
+item_id = &"red_potion"
+chance = 6.0
+
+[sub_resource type="Resource" id="Drop_poring_card"]
+script = ExtResource("2_drop")
+item_id = &"card_poring"
+chance = 5.0
+
+[resource]
+script = ExtResource("1_monster")
+sprite_frames = ExtResource("3_frames")
+sprite_scale = Vector2(0.84, 0.81)
+hitbox_size = Vector2(50, 50)
+hp_bar_offset_y = -72.0
+display_height = 85.0
+max_hp = 55
+atk_min = 6
+atk_max = 10
+hit = 6
+flee = 2
+leash_range = 500.0
+wander_speed = 60.0
+wander_range = 280.0
+jump_interval = 0.55
+exp_reward = 10
+zeny_max = 12
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_poring_0"), SubResource("Drop_poring_1"), SubResource("Drop_poring_2"), SubResource("Drop_poring_card")])
+respawn_time = 6.0

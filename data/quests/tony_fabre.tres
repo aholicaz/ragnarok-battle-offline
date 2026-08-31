@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+
+[resource]
+script = ExtResource("1_quest")
+id = &"tony_fabre"
+title = "กำจัดแฟเบรให้โทนี่"
+description = "แฟเบรแอบกัดกระสอบสินค้าของพ่อค้าโทนี่จนเสียหาย ช่วยจัดการให้หน่อย"
+giver_name = "พ่อค้าโทนี่"
+dialog_offer = "เจ้าหนอนแฟเบรมันกัดกระสอบสินค้าข้าพังหมดเลย ช่วยล่าให้หน่อยสิ จ่ายดี"
+dialog_progress = "ยังไม่ครบร้อยตัวนะ ข้ารอสินค้าอยู่"
+dialog_complete = "สุดยอด! นี่ค่าจ้างตามที่ตกลงกันไว้"
+kill_monster_id = &"fabre"
+kill_count = 100
+required_level = 1
+reward_item_id = &""
+reward_item_count = 0
+reward_zeny = 3000
+reward_exp = 800
+repeatable = false

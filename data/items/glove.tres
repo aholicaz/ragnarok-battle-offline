@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bwnv6cx4y6qow"]
+
+[ext_resource type="Script" uid="uid://dbdwo63bn67r7" path="res://scripts/resources/item_data.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"glove"
+display_name = "ถุงมือ"
+description = "เพิ่มความคล่องแคล่ว"
+required_level = 10
+type = 2
+slot = 7
+card_slots = 1
+max_stack = 1
+buy_price = 11000
+sell_price = 4400
+bonus_agi = 2

@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="JobData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/job_data.gd" id="1_job"]
+
+[resource]
+script = ExtResource("1_job")
+id = &"novice"
+display_name = "มือใหม่"
+description = "ผู้เริ่มต้นการผจญภัย"
+hp_base = 35
+hp_per_level = 10.0
+hp_vit_percent = 1.0
+sp_base = 10
+sp_per_level = 2.0
+sp_int_percent = 1.0
+atk_mod = 1.0
+matk_mod = 0.6
+def_mod = 1.0
+hit_mod = 1.0
+flee_mod = 1.0
+aspd_base = 1.0
+aspd_agi_percent = 1.0
+weapon_types = Array[StringName]([&"sword", &"dagger"])
+skill_ids = Array[StringName]([&"first_aid"])
+job_change_level = 10
+next_job_ids = Array[StringName]([&"swordsman"])

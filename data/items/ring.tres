@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"ring"
+display_name = "แหวนพลัง"
+description = "เพิ่มพลังโจมตี"
+required_level = 18
+type = 2
+slot = 7
+card_slots = 1
+max_stack = 1
+buy_price = 12000
+sell_price = 4800
+bonus_str = 2

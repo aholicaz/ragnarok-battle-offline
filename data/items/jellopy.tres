@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://boc6mvqj5ndjv"]
+
+[ext_resource type="Texture2D" uid="uid://c7oplbwj7swy8" path="res://Sprites/items/Jellopy.png" id="1_au18a"]
+[ext_resource type="Script" uid="uid://dbdwo63bn67r7" path="res://scripts/resources/item_data.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"jellopy"
+display_name = "เจลโลปี้"
+description = "เมือกแข็งของโพริง ขายได้ราคาดี"
+icon = ExtResource("1_au18a")
+buy_price = 15
+sell_price = 6

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_data.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+id = &"card_orc_warrior"
+display_name = "การ์ดออร์คนักรบ"
+description = "พลังดิบของนักรบออร์ค เพิ่มพลังโจมตีเป็นเปอร์เซ็นต์"
+type = 5
+slot = 0
+max_stack = 99
+buy_price = 0
+sell_price = 90000
+crit = 5
+monster_id = &"orc_warrior"
+fits_slot = 1
+rarity = 4
+percent_effects = {
+"atk_percent": 5.0
+}

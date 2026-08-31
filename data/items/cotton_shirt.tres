@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://poag84iwpt5l"]
+
+[ext_resource type="Texture2D" uid="uid://dtc8eyidt5417" path="res://Sprites/items/cotton_shirt.png" id="1_hvj45"]
+[ext_resource type="Script" uid="uid://dbdwo63bn67r7" path="res://scripts/resources/item_data.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"cotton_shirt"
+display_name = "เสื้อผ้าฝ้าย"
+description = "เสื้อธรรมดา"
+icon = ExtResource("1_hvj45")
+type = 2
+slot = 4
+card_slots = 1
+max_stack = 1
+buy_price = 200
+sell_price = 80
+def = 6
+refinable = true

@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://dvywtdemefg6g"]
+
+[ext_resource type="Script" uid="uid://uaq201fm38cf" path="res://attack.gd" id="1_wcwjw"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g4v7s"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": null
+}, {
+"duration": 1.0,
+"texture": null
+}, {
+"duration": 1.0,
+"texture": null
+}, {
+"duration": 1.0,
+"texture": null
+}, {
+"duration": 1.0,
+"texture": null
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": 1,
+"name": &"Attack",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_g4v7s"]
+radius = 48.0
+
+[node name="Attack" type="CharacterBody2D" unique_id=181424081]
+script = ExtResource("1_wcwjw")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1981169088]
+sprite_frames = SubResource("SpriteFrames_g4v7s")
+animation = &"Attack"
+frame_progress = 0.83452415
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=475596294]
+position = Vector2(-8, 3)
+shape = SubResource("CircleShape2D_g4v7s")

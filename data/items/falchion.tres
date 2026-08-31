@@ -1,0 +1,132 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bh0ffpawaly4o"]
+
+[ext_resource type="Script" uid="uid://dbdwo63bn67r7" path="res://scripts/resources/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" uid="uid://clp4swdg6qd8h" path="res://Sprites/Attack falchion.png" id="1_tvjxe"]
+[ext_resource type="Texture2D" uid="uid://bnmofjbs5igrk" path="res://Sprites/items/falchion.png" id="2_a5lgs"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wrmt8"]
+atlas = ExtResource("1_tvjxe")
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xy6fv"]
+atlas = ExtResource("1_tvjxe")
+region = Rect2(1536, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_06n3o"]
+atlas = ExtResource("1_tvjxe")
+region = Rect2(2048, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xfcjr"]
+atlas = ExtResource("1_tvjxe")
+region = Rect2(2560, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fgsbh"]
+atlas = ExtResource("1_tvjxe")
+region = Rect2(3072, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o6psb"]
+atlas = ExtResource("1_tvjxe")
+region = Rect2(1024, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ssct6"]
+atlas = ExtResource("1_tvjxe")
+region = Rect2(2048, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6jkx6"]
+atlas = ExtResource("1_tvjxe")
+region = Rect2(2560, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7x41i"]
+atlas = ExtResource("1_tvjxe")
+region = Rect2(3584, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ha728"]
+atlas = ExtResource("1_tvjxe")
+region = Rect2(2560, 1024, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v43hw"]
+atlas = ExtResource("1_tvjxe")
+region = Rect2(3584, 1024, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_15dnn"]
+atlas = ExtResource("1_tvjxe")
+region = Rect2(0, 1536, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nrf5p"]
+atlas = ExtResource("1_tvjxe")
+region = Rect2(1536, 1536, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s34nv"]
+atlas = ExtResource("1_tvjxe")
+region = Rect2(3584, 1536, 512, 512)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_tvjxe"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wrmt8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xy6fv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_06n3o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xfcjr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fgsbh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o6psb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ssct6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6jkx6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7x41i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ha728")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v43hw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_15dnn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nrf5p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s34nv")
+}],
+"loop": 1,
+"name": &"Attack falchion",
+"speed": 15.0
+}]
+
+[resource]
+script = ExtResource("1_item")
+id = &"falchion"
+display_name = "ฟัลชิออน"
+description = "ดาบใบกว้าง คมและเบา"
+icon = ExtResource("2_a5lgs")
+required_level = 12
+type = 1
+slot = 1
+weapon_type = &"sword"
+equip_sprite_frames = SubResource("SpriteFrames_tvjxe")
+attack_animation = &"Attack_Falchion"
+card_slots = 1
+max_stack = 1
+buy_price = 2200
+sell_price = 880
+atk = 39
+hit = 5
+crit = 2
+refinable = true

@@ -1,0 +1,57 @@
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://d18nbft3t6apl"]
+
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+
+[sub_resource type="Resource" id="Drop_chonchon_0"]
+script = ExtResource("2_drop")
+item_id = &"fluff"
+chance = 50.0
+max_count = 3
+
+[sub_resource type="Resource" id="Drop_chonchon_1"]
+script = ExtResource("2_drop")
+item_id = &"iron_ore"
+chance = 12.0
+
+[sub_resource type="Resource" id="Drop_chonchon_2"]
+script = ExtResource("2_drop")
+item_id = &"clover"
+chance = 20.0
+
+[sub_resource type="Resource" id="Drop_chonchon_card"]
+script = ExtResource("2_drop")
+item_id = &"card_chonchon"
+chance = 5.0
+
+[resource]
+script = ExtResource("1_monster")
+id = &"chonchon"
+display_name = "ชอนชอน"
+hitbox_size = Vector2(24, 22)
+hp_bar_offset_y = -42.0
+display_height = 72.0
+level = 7
+max_hp = 130
+atk_min = 20
+atk_max = 27
+def = 3
+hit = 16
+flee = 20
+element = 4
+race = 4
+size = 0
+ai_type = 1
+move_speed = 150.0
+jump_force = -200.0
+detect_range = 320.0
+attack_range = 64.0
+leash_range = 560.0
+wander_speed = 85.0
+wander_range = 340.0
+jump_interval = 0.5
+attack_cooldown = 1.1
+exp_reward = 48
+zeny_min = 14
+zeny_max = 35
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_chonchon_0"), SubResource("Drop_chonchon_1"), SubResource("Drop_chonchon_2"), SubResource("Drop_chonchon_card")])

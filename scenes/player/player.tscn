@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://bhp7c8ti14pnn"]
+
+[ext_resource type="Script" uid="uid://rixmgq6ex7yg" path="res://scripts/entities/player.gd" id="1_player"]
+[ext_resource type="SpriteFrames" uid="uid://msxbstaqhip3" path="res://data/sprites/player_frames.tres" id="2_frames"]
+[ext_resource type="Script" uid="uid://bnumx6j7mym6q" path="res://scripts/entities/character_visual.gd" id="3_visual"]
+
+[sub_resource type="CapsuleShape2D" id="Cap_player"]
+radius = 20.0
+height = 240.0
+
+[node name="Player" type="CharacterBody2D" unique_id=1488922768]
+collision_layer = 2
+floor_snap_length = 8.0
+script = ExtResource("1_player")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1373520025]
+sprite_frames = ExtResource("2_frames")
+animation = &"Attack_falchion_bash"
+frame_progress = 0.27499196
+
+[node name="EquipVisual" type="Node2D" parent="." unique_id=1678438290]
+script = ExtResource("3_visual")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1268451005]
+shape = SubResource("Cap_player")
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]

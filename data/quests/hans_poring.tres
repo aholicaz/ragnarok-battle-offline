@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+
+[resource]
+script = ExtResource("1_quest")
+id = &"hans_poring"
+title = "กำจัดโพริงให้ฮันส์"
+description = "โพริงเยอะเกินไปจนช่างตีเหล็กออกไปหาแร่ไม่ได้ ช่วยจัดการให้หน่อย"
+giver_name = "ช่างตีเหล็กฮันส์"
+dialog_offer = "เจ้าโพริงพวกนั้นเต็มทุ่งไปหมด ข้าออกไปหาแร่ไม่ได้เลย ช่วยล่าให้หน่อยได้ไหม"
+dialog_progress = "ยังไม่ครบร้อยตัวนะ อดทนอีกนิด"
+dialog_complete = "โอ้ เก่งมาก! นี่ฟราคอนที่ข้าเก็บไว้ เอาไปตีบวกอาวุธได้เลย"
+kill_monster_id = &"poring"
+kill_count = 100
+required_level = 1
+reward_item_id = &"phracon"
+reward_item_count = 3
+reward_zeny = 0
+reward_exp = 500
+repeatable = false

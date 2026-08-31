@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_data.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+id = &"card_lunatic"
+display_name = "การ์ดลูนาติก"
+description = "กระต่ายน้อยผู้โชคดี"
+type = 5
+slot = 0
+max_stack = 99
+buy_price = 0
+sell_price = 8000
+bonus_luk = 1
+crit = 3
+flee = 2
+monster_id = &"lunatic"
+fits_slot = 7
+rarity = 1

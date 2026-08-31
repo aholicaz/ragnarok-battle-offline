@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"buckler"
+display_name = "บัคเลอร์"
+description = "โล่กลมทนทาน"
+required_level = 12
+type = 2
+slot = 2
+card_slots = 1
+max_stack = 1
+buy_price = 3800
+sell_price = 1520
+def = 17
+max_hp = 40
+refinable = true
+max_refine = 10
+refine_atk_per_level = 3
+refine_def_per_level = 1

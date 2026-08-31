@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://demgkoyk5qnhx"]
+
+[ext_resource type="Texture2D" uid="uid://yv6iha5p82e0" path="res://Sprites/items/Drops Card.png" id="1_8pu2q"]
+[ext_resource type="Script" uid="uid://b3076eptxjrrr" path="res://scripts/resources/card_data.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+monster_id = &"drops"
+illustration = ExtResource("1_8pu2q")
+rarity = 2
+id = &"card_drops"
+display_name = "การ์ดดรอปส์"
+description = "ก้อนวุ้นสีฟ้าที่ช่วยให้เล็งแม่นขึ้น"
+type = 5
+buy_price = 0
+sell_price = 12000
+hit = 3
+bonus_agi = 2
+bonus_dex = 2

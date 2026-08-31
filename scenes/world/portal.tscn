@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://d3v8kjt45bnvr"]
+
+[ext_resource type="Script" uid="uid://da5imcstqr7fc" path="res://scripts/world/portal.gd" id="1_portal"]
+[ext_resource type="Texture2D" uid="uid://mf2r0an3hs56" path="res://Sprites/warp.png" id="2_lrc22"]
+
+[sub_resource type="RectangleShape2D" id="Rect_portal"]
+size = Vector2(60, 140)
+
+[node name="Portal" type="Area2D" unique_id=1254094876]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_portal")
+
+[node name="Visual" type="Polygon2D" parent="." unique_id=1946769975]
+position = Vector2(0, -3)
+color = Color(0.45, 0.75, 1, 0.35)
+polygon = PackedVector2Array(-30, -70, 30, -70, 30, 70, -30, 70)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=681698341]
+position = Vector2(-1, -4)
+shape = SubResource("Rect_portal")
+
+[node name="Label" type="Label" parent="." unique_id=1740584597]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -69.0
+offset_top = -241.0
+offset_right = 71.0
+offset_bottom = -215.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
+
+[node name="Warp" type="Sprite2D" parent="." unique_id=166565392]
+position = Vector2(-5, -55)
+scale = Vector2(0.6927861, 0.69278616)
+texture = ExtResource("2_lrc22")

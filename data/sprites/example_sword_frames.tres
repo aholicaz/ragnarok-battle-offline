@@ -1,0 +1,92 @@
+[gd_resource type="SpriteFrames" load_steps=19 format=3]
+
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_idle_1.png" id="1_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_idle_2.png" id="2_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_idle_3.png" id="3_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_idle_4.png" id="4_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_idle_5.png" id="5_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_idle_6.png" id="6_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_run_1.png" id="7_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_run_2.png" id="8_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_run_3.png" id="9_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_run_4.png" id="10_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_run_5.png" id="11_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_run_6.png" id="12_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_attack_1.png" id="13_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_attack_2.png" id="14_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_attack_3.png" id="15_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_attack_4.png" id="16_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_attack_5.png" id="17_sword"]
+[ext_resource type="Texture2D" path="res://Sprites/example/sword/sword_attack_6.png" id="18_sword"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_sword")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_sword")
+}],
+"loop": true,
+"name": &"Run",
+"speed": 11.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("13_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_sword")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_sword")
+}],
+"loop": false,
+"name": &"Attack",
+"speed": 13.0
+}]

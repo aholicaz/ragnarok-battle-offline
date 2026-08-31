@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://drruk6aq5kodr"]
+
+[ext_resource type="Script" uid="uid://ddhw6dj8ymdox" path="res://scripts/entities/dropped_item.gd" id="1_drop"]
+
+[sub_resource type="CircleShape2D" id="Circle_drop"]
+radius = 18.0
+
+[node name="DroppedItem" type="Area2D" unique_id=352803371]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_drop")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=253221935]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1168627034]
+shape = SubResource("Circle_drop")
+
+[node name="Label" type="Label" parent="." unique_id=1684548621]
+offset_left = -40.0
+offset_top = -44.0
+offset_right = 40.0
+offset_bottom = -20.0
+horizontal_alignment = 1

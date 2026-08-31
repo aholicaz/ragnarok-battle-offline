@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://ygy1o2fgu1ml"]
+
+[ext_resource type="Script" uid="uid://3sobam6f0wu5" path="res://scripts/resources/skill_data.gd" id="1_skill"]
+[ext_resource type="Texture2D" uid="uid://c34g25xmeim2b" path="res://Sprites/HP Recovery.png" id="1_wsfve"]
+
+[resource]
+script = ExtResource("1_skill")
+id = &"hp_recovery"
+display_name = "HP Recovery (ฟื้นฟูร่างกาย)"
+description = "เพิ่มเลือดสูงสุดถาวร"
+icon = ExtResource("1_wsfve")
+type = 4
+passive_effects = {
+"max_hp_percent": 2.0
+}

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c7ue800aqpoac"]
+
+[ext_resource type="Script" uid="uid://dbdwo63bn67r7" path="res://scripts/resources/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" uid="uid://gs0nr5v7qlj4" path="res://Sprites/items/hood.png" id="1_iwvy5"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"hood"
+display_name = "ผ้าคลุมไหล่"
+description = "ช่วยหลบหลีกได้ดีขึ้น"
+icon = ExtResource("1_iwvy5")
+required_level = 4
+type = 2
+slot = 5
+card_slots = 1
+max_stack = 1
+buy_price = 800
+sell_price = 320
+def = 4
+flee = 3
+refinable = true

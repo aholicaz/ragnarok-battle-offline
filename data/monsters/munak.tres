@@ -1,0 +1,66 @@
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://4r34mu13twir"]
+
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+
+[sub_resource type="Resource" id="Drop_munak_0"]
+script = ExtResource("2_drop")
+item_id = &"undead_bone"
+chance = 40.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_munak_1"]
+script = ExtResource("2_drop")
+item_id = &"emveretarcon"
+chance = 6.0
+
+[sub_resource type="Resource" id="Drop_munak_2"]
+script = ExtResource("2_drop")
+item_id = &"orange_potion"
+chance = 8.0
+
+[sub_resource type="Resource" id="Drop_munak_3"]
+script = ExtResource("2_drop")
+item_id = &"hood"
+chance = 4.0
+
+[sub_resource type="Resource" id="Drop_munak_card"]
+script = ExtResource("2_drop")
+item_id = &"card_munak"
+chance = 5.0
+
+[resource]
+script = ExtResource("1_monster")
+id = &"munak"
+display_name = "มูนัค"
+hitbox_size = Vector2(34, 40)
+hp_bar_offset_y = -64.0
+display_height = 170.0
+level = 18
+max_hp = 620
+atk_min = 68
+atk_max = 92
+def = 14
+mdef = 10
+hit = 32
+flee = 22
+element = 9
+race = 1
+ai_type = 1
+move_speed = 110.0
+jump_force = 0.0
+jump_while_chasing = false
+detect_range = 380.0
+attack_range = 85.0
+leash_range = 650.0
+wander_speed = 45.0
+hop_while_wandering = false
+jump_interval = 1.0
+attack_windup = 0.35
+attack_cooldown = 1.6
+knockback_force = 160.0
+exp_reward = 280
+zeny_min = 90
+zeny_max = 180
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_munak_0"), SubResource("Drop_munak_1"), SubResource("Drop_munak_2"), SubResource("Drop_munak_3"), SubResource("Drop_munak_card")])
+respawn_time = 12.0

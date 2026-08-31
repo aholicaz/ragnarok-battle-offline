@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://bdgqbnav4qg14"]
+
+[ext_resource type="Script" uid="uid://hmxtx2m6gvyk" path="res://scripts/world/npc.gd" id="1_npc"]
+
+[sub_resource type="RectangleShape2D" id="Rect_npc"]
+size = Vector2(70, 90)
+
+[node name="NPC" type="Area2D" unique_id=935831951]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_npc")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1645850465]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1816408793]
+shape = SubResource("Rect_npc")
+
+[node name="Label" type="Label" parent="." unique_id=15605380]
+offset_left = -59.0
+offset_top = -174.0
+offset_right = 61.0
+offset_bottom = -150.0
+horizontal_alignment = 1

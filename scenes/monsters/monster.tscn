@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://ce4i2xgacms7p"]
+
+[ext_resource type="Script" uid="uid://esliyvm5coy3" path="res://scripts/entities/monster_base.gd" id="1_monster"]
+
+[sub_resource type="CapsuleShape2D" id="Cap_monster"]
+radius = 14.0
+height = 28.0
+
+[node name="Monster" type="CharacterBody2D" unique_id=1994230289]
+collision_layer = 4
+floor_snap_length = 8.0
+script = ExtResource("1_monster")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=838897930]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1203044608]
+shape = SubResource("Cap_monster")

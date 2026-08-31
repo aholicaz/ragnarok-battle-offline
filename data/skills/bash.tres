@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://bbgfh78waffv1"]
+
+[ext_resource type="Texture2D" uid="uid://co56ckide5cgk" path="res://Sprites/Skill_bash.png" id="1_e2b7y"]
+[ext_resource type="Script" uid="uid://3sobam6f0wu5" path="res://scripts/resources/skill_data.gd" id="1_skill"]
+
+[resource]
+script = ExtResource("1_skill")
+display_name = "Bash (ฟันแรง)"
+description = "ฟาดดาบอย่างแรงใส่ศัตรูตรงหน้า 2 ตัว"
+icon = ExtResource("1_e2b7y")
+sp_cost_base = 4
+cooldown = 1.5
+cast_windup = 0.45
+damage_mult_base = 1.4
+damage_mult_per_level = 0.25
+hit_count = 2
+range_x = 150.0
+max_targets = 2

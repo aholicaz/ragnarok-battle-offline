@@ -197,8 +197,8 @@ func should_show() -> bool:
 
 func _refresh_visible() -> void:
 	var want: bool = should_show()
-	# ระหว่างเปิดหน้าต่าง/คุยกับ NPC ให้ซ่อนไว้ก่อน จะได้ไม่บังปุ่มในหน้าต่าง
-	if want and (UI.is_any_window_open() or (UI.dialogue != null and UI.dialogue.is_open())):
+	# ระหว่างเปิดหน้าต่าง/คุยกับ NPC/ตายอยู่ ให้ซ่อนไว้ก่อน จะได้ไม่บังปุ่มในกล่อง
+	if want and (UI.is_any_window_open() or UI.is_asking()):
 		want = false
 	# แถบคำใบ้ปุ่มคีย์บอร์ดล่างจอไม่มีประโยชน์บนมือถือ แถมทับปุ่ม — ซ่อนไว้
 	if UI.hud != null and UI.hud.bottom_panel != null:

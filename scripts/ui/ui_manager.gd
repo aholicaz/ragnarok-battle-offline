@@ -12,6 +12,12 @@ var item_popup: ItemInfoPopup
 var dialogue: DialogueBox
 ## ★ ปุ่มจอสัมผัสสำหรับมือถือ ★
 var touch: TouchControls
+## ★ แผนที่ย่อมุมขวาบน ★
+var minimap: Minimap
+## ★ แถบปุ่มไอคอนใต้มินิแมพ ★
+var menu_bar: IconMenuBar
+## ★ หน้าจอตอนตาย (คำอวยพรจากธอร์ + ปุ่มเกิดใหม่) ★
+var death_popup: DeathPopup
 var windows: Dictionary = {}   # StringName -> GameWindow
 
 
@@ -34,6 +40,15 @@ func _ready() -> void:
 	hud = HUD.new()
 	hud.name = "HUD"
 	root.add_child(hud)
+
+	# ---------- ★ มินิแมพ + แถบปุ่มไอคอน (มุมขวาบน) ★ ----------
+	# ใส่ก่อนหน้าต่าง จะได้อยู่หลังหน้าต่างเวลาเปิดทับกัน
+	minimap = Minimap.new()
+	root.add_child(minimap)
+
+	menu_bar = IconMenuBar.new()
+	menu_bar.minimap = minimap
+	root.add_child(menu_bar)
 
 	# ---------- หน้าต่างต่าง ๆ ----------
 	_add_window(&"status", StatusWindow.new(), Vector2(60, 90))
@@ -67,6 +82,11 @@ func _ready() -> void:
 	dialogue = DialogueBox.new()
 	dialogue.name = "DialogueBox"
 	layer.add_child(dialogue)
+
+	# ---------- ★ หน้าจอตอนตาย ★ ----------
+	# ต้องอยู่เกือบบนสุด (ทับทุกอย่างยกเว้นกล่องยืนยัน)
+	death_popup = DeathPopup.new()
+	layer.add_child(death_popup)
 
 	# ---------- กล่องยืนยัน ----------
 	confirm = ConfirmDialog.new()
@@ -148,6 +168,10 @@ func is_point_over_ui(point: Vector2) -> bool:
 	if item_popup != null and item_popup.visible \
 			and item_popup.get_global_rect().has_point(point):
 		return true
+	# ★ มินิแมพ + แถบปุ่มไอคอน ★ คลิกตรงนี้ไม่ใช่การสั่งตีมอน
+	for p in [minimap, menu_bar]:
+		if p != null and p.visible and p.get_global_rect().has_point(point):
+			return true
 	if hud != null:
 		for p in [hud.top_panel, hud.bottom_panel, hud.hotkey_panel]:
 			if p != null and p.visible and p.get_global_rect().has_point(point):
@@ -156,6 +180,8 @@ func is_point_over_ui(point: Vector2) -> bool:
 
 
 func is_asking() -> bool:
+	if death_popup != null and death_popup.is_open():
+		return true
 	if card_popup != null and card_popup.is_open():
 		return true
 	if dialogue != null and dialogue.is_open():
@@ -180,6 +206,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		toggle(&"system")
 	elif event.is_action_pressed("toggle_quests"):
 		toggle(&"quests")
+	elif InputMap.has_action("toggle_minimap") and event.is_action_pressed("toggle_minimap"):
+		if minimap != null:
+			minimap.toggle()
 	elif event.is_action_pressed("close_windows"):
 		close_all()
 	elif event.is_action_pressed("quick_save"):

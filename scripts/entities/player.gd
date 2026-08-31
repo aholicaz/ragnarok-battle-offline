@@ -11,6 +11,44 @@ extends CharacterBody2D
 const JUMP_VELOCITY := -420.0
 const KNOCKBACK_DECAY := 900.0
 
+# =========================================================
+# ★★ การกระโดด (ปรับใหม่รอบ 27) ★★
+#
+# ปัญหาเดิม: กระโดดแล้ว "เฟรมไม่เชื่อมกัน" — ท่ากระโดดวนลูปด้วยความเร็วคงที่
+# ไม่เกี่ยวกับว่าตัวละครกำลังลอยขึ้นหรือกำลังตก พอแตะพื้นก็ตัดไป Idle ทันที
+#
+# ของใหม่: เฟรมท่ากระโดด "เดินตามความเร็วแนวตั้งจริง"
+#   เฟรมแรก ๆ  = กำลังพุ่งขึ้น
+#   เฟรมกลาง   = จุดสูงสุด (ลอยนิ่ง)
+#   เฟรมท้าย ๆ = กำลังตกลง
+# แล้วพอแตะพื้นจะค้างเฟรมสุดท้าย (หรือเล่นท่า Land ถ้ามี) สั้น ๆ ก่อนกลับไป Idle/Run
+# ภาพเลยต่อกันเป็นชุดเดียว ไม่กระตุก
+#
+# ★ ถ้าสไปรท์กระโดดของคุณเรียงคนละแบบ ★ ปิด Jump Anim Follow Physics ได้
+# ระบบจะกลับไปเล่นวนแบบเดิม
+# =========================================================
+@export_group("การกระโดด")
+## แรงกระโดด (ยิ่งมากยิ่งสูง)
+@export var jump_power: float = 420.0
+## ★ ตกเร็วกว่าตอนพุ่งขึ้นกี่เท่า ★ 1.0 = เท่ากัน (ลอยนาน), 1.3-1.6 = กระโดดหนึบ ตกไว
+@export_range(1.0, 3.0) var fall_gravity_mult: float = 1.35
+## ★ ปล่อยปุ่มกลางอากาศ = กระโดดเตี้ยลง ★ (0.45 = ตัดแรงขึ้นเหลือ 45%)
+@export_range(0.0, 1.0) var jump_cut_mult: float = 0.45
+## ★ เดินตกขอบแล้วยังกดกระโดดทันได้กี่วินาที ★ (coyote time — ทำให้รู้สึก "ไม่หลุด")
+@export_range(0.0, 0.4) var coyote_time: float = 0.10
+## ★ กดกระโดดก่อนแตะพื้นกี่วินาที ระบบจะจำไว้ให้ ★ (ทำให้กระโดดต่อเนื่องลื่น)
+@export_range(0.0, 0.4) var jump_buffer_time: float = 0.12
+## ★ ให้เฟรมท่ากระโดดเดินตามฟิสิกส์จริง ★ (แก้อาการเฟรมไม่เชื่อมกัน)
+@export var jump_anim_follow_physics: bool = true
+## ค้างท่าลงพื้นไว้กี่วินาทีก่อนกลับไปยืน/วิ่ง (0 = ตัดทันทีแบบเดิม)
+@export_range(0.0, 0.5) var land_time: float = 0.10
+
+@export_group("ท่าโดนตี")
+## ★ ล็อกท่าโดนตีไว้กี่วินาที ★ 0 = คิดจากจำนวนเฟรมของท่านั้นให้อัตโนมัติ
+@export_range(0.0, 1.0) var hit_anim_time: float = 0.0
+## ท่าโดนตีนานสุดเท่าไหร่ (กันสไปรท์ที่ตั้ง FPS ช้ามากจนค้าง)
+@export_range(0.1, 1.5) var hit_anim_max: float = 0.6
+
 ## สไปรท์ต้นฉบับหันหน้าไปทางซ้ายหรือเปล่า (ตามที่ทำไว้เดิม = จริง)
 @export var sprite_faces_left: bool = true
 ## ★ ระยะโจมตีปกติ ★ วัดจาก "กลางตัวเรา" ไปถึง "ขอบตัวมอน" (ไม่ใช่กลางตัวมอน)
@@ -103,6 +141,16 @@ var knockback := Vector2.ZERO
 var _hurt_flash := 0.0
 var _dead := false
 
+# ★ สถานะการกระโดด ★
+var _coyote := 0.0          # เดินตกขอบแล้วยังกระโดดทันได้อีกกี่วินาที
+var _jump_buffer := 0.0     # กดกระโดดค้างไว้รอแตะพื้น
+var _jump_rising := false   # กำลังพุ่งขึ้นอยู่ (ใช้ตัดแรงตอนปล่อยปุ่ม)
+var _was_on_floor := true
+var _land_left := 0.0       # เหลือเวลาค้างท่าลงพื้น
+var _jump_anim := ""        # ชื่อท่ากระโดดที่กำลังเล่นอยู่จริง
+# ★ สถานะท่าโดนตี ★ ล็อกไว้ไม่ให้ Idle/Run มาทับก่อนเล่นจบ
+var _hit_left := 0.0
+
 # ★ สถานะตอนพุ่ง (สกิล ACTIVE_DASH เช่น Slash) ★
 var _dash_time := 0.0          # เหลือเวลาพุ่งอีกกี่วินาที
 var _dash_speed := 0.0
@@ -145,13 +193,24 @@ func _physics_process(delta: float) -> void:
 		if _hurt_flash <= 0.0:
 			sprite.modulate = Color.WHITE
 
+	_tick_jump_timers(delta)
+
 	# แรงกระเด็น
 	if knockback.length() > 1.0:
 		knockback = knockback.move_toward(Vector2.ZERO, KNOCKBACK_DECAY * delta)
 
-	# แรงโน้มถ่วง
+	# ★ แรงโน้มถ่วง ★ ตอนตกใช้แรงมากกว่าตอนพุ่งขึ้น = กระโดดหนึบ ไม่ลอยค้าง
 	if not is_on_floor():
-		velocity += get_gravity() * delta
+		var g := get_gravity()
+		if velocity.y > 0.0:
+			g *= fall_gravity_mult
+		velocity += g * delta
+		# ปล่อยปุ่มกลางอากาศตอนยังพุ่งขึ้น = ตัดแรงให้กระโดดเตี้ยลง (คุมความสูงได้)
+		if _jump_rising and velocity.y < 0.0 and not _jump_held():
+			velocity.y *= jump_cut_mult
+			_jump_rising = false
+		elif velocity.y >= 0.0:
+			_jump_rising = false
 
 	_handle_input()
 
@@ -165,10 +224,15 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 
-	# กระโดด — W / Space / ลูกศรขึ้น
-	if (Input.is_action_just_pressed("jump") or Input.is_action_just_pressed("ui_accept")) \
-			and is_on_floor():
-		velocity.y = JUMP_VELOCITY
+	# ★ กระโดด ★ — W / Space / ลูกศรขึ้น
+	# ใช้ทั้ง coyote time (เพิ่งตกขอบก็ยังกระโดดได้) และ buffer (กดก่อนถึงพื้นก็จำไว้ให้)
+	if _jump_buffer > 0.0 and _coyote > 0.0:
+		velocity.y = -absf(jump_power)
+		_jump_buffer = 0.0
+		_coyote = 0.0
+		_jump_rising = true
+		_land_left = 0.0
+		_jump_anim = ""
 
 	# เดิน — A / D (หรือลูกศรซ้าย-ขวา)
 	var speed := PlayerState.stats.move_speed
@@ -188,6 +252,92 @@ func _physics_process(delta: float) -> void:
 
 func _process(_delta: float) -> void:
 	_apply_auto_fit()
+
+
+# =========================================================
+# ★★ ตัวจับเวลาของการกระโดด ★★
+# =========================================================
+func _tick_jump_timers(delta: float) -> void:
+	var on_floor := is_on_floor()
+
+	# เพิ่งแตะพื้นเฟรมนี้ = เริ่มนับเวลาค้างท่าลงพื้น
+	if on_floor and not _was_on_floor:
+		_land_left = land_time
+		_jump_rising = false
+		# ปลดล็อกท่ากระโดดที่หยุดเฟรมไว้ ให้ท่าถัดไปเล่นต่อได้ปกติ
+		if _jump_anim != "" and land_time <= 0.0:
+			_jump_anim = ""
+	elif not on_floor and _was_on_floor:
+		# เพิ่งลอยขึ้น (กระโดด หรือเดินตกขอบ)
+		_land_left = 0.0
+	_was_on_floor = on_floor
+
+	if on_floor:
+		_coyote = coyote_time
+	else:
+		_coyote = maxf(0.0, _coyote - delta)
+
+	var pressed := Input.is_action_just_pressed("jump") or Input.is_action_just_pressed("ui_accept")
+	if not pressed and InputMap.has_action("move_up"):
+		pressed = Input.is_action_just_pressed("move_up")
+	if pressed:
+		_jump_buffer = jump_buffer_time
+	else:
+		_jump_buffer = maxf(0.0, _jump_buffer - delta)
+
+	if _land_left > 0.0:
+		_land_left -= delta
+		if _land_left <= 0.0:
+			_jump_anim = ""
+	if _hit_left > 0.0:
+		_hit_left -= delta
+
+
+## ยังกดปุ่มกระโดดค้างอยู่ไหม (ใช้ตัดสินว่าจะกระโดดสูงหรือเตี้ย)
+func _jump_held() -> bool:
+	if Input.is_action_pressed("jump") or Input.is_action_pressed("ui_accept"):
+		return true
+	return InputMap.has_action("move_up") and Input.is_action_pressed("move_up")
+
+
+## ★ ตำแหน่งในจังหวะกระโดด ★ 0 = พุ่งขึ้นสุด · 0.5 = จุดสูงสุด · 1 = กำลังตกเต็มที่
+func _jump_progress() -> float:
+	var span: float = maxf(80.0, absf(jump_power))
+	return clampf((velocity.y + span) / (span * 2.0), 0.0, 1.0)
+
+
+## เล่นท่ากระโดดโดยเลือกเฟรมตามความเร็วจริง (เฟรมเลยต่อเนื่องกับการลงพื้น)
+func _play_jump() -> void:
+	if _jump_anim == "" or sprite.animation != StringName(_jump_anim):
+		_jump_anim = _play("Jump")
+	if _jump_anim == "":
+		return
+	if not jump_anim_follow_physics:
+		return
+	var count := sprite.sprite_frames.get_frame_count(_jump_anim)
+	if count <= 1:
+		return
+	if sprite.is_playing():
+		sprite.pause()
+	sprite.frame = clampi(int(round(_jump_progress() * (count - 1))), 0, count - 1)
+
+
+## ความยาวของอนิเมชันนั้นเป็นวินาที (นับ frame duration ของ Godot 4 ด้วย)
+func _anim_length(real: String) -> float:
+	var frames := sprite.sprite_frames
+	if frames == null or real == "" or not frames.has_animation(real):
+		return 0.0
+	var fps: float = maxf(0.1, frames.get_animation_speed(real))
+	var total := 0.0
+	for i in range(frames.get_frame_count(real)):
+		total += frames.get_frame_duration(real, i)
+	return total / fps
+
+
+## ท่านี้เป็น "ท่าโดนตี" จริงหรือแค่ตัวสำรอง (Idle) ที่ไหลมาตามลำดับ fallback
+static func _is_hit_anim(real: String) -> bool:
+	var t := real.to_lower()
+	return t.begins_with("hit") or t.contains("hurt") or t.contains("damage")
 
 
 # =========================================================
@@ -281,9 +431,37 @@ func _update_facing() -> void:
 func _update_animation() -> void:
 	if is_attacking or sprite.sprite_frames == null:
 		return
-	if not is_on_floor() and _has_anim("Jump"):
-		_play("Jump")
-	elif absf(velocity.x) > 10.0:
+
+	# ★ โดนตีอยู่ ★ ปล่อยให้ท่า Hit เล่นจนจบก่อน ไม่ให้ Idle/Run มาทับ
+	if _hit_left > 0.0:
+		return
+
+	# ★ ลอยอยู่กลางอากาศ ★ เฟรมเดินตามความเร็วจริง
+	if not is_on_floor():
+		if _has_anim("Jump"):
+			_play_jump()
+		elif absf(velocity.x) > 10.0:
+			_play("Run")
+		else:
+			_play("Idle")
+		return
+
+	# ★ เพิ่งแตะพื้น ★ ค้างท่าลงพื้นสั้น ๆ ให้ภาพต่อกัน ไม่กระตุก
+	if _land_left > 0.0:
+		if _has_anim("Land"):
+			_play("Land")
+		elif _jump_anim != "":
+			# ค้างเฟรมสุดท้ายของท่ากระโดดไว้ (ไม่ต้องสั่งอะไรเพิ่ม)
+			var count := sprite.sprite_frames.get_frame_count(_jump_anim)
+			if jump_anim_follow_physics and count > 1:
+				sprite.frame = count - 1
+			return
+		else:
+			_play("Idle")
+		return
+
+	_jump_anim = ""
+	if absf(velocity.x) > 10.0:
 		_play("Run")
 	else:
 		_play("Idle")
@@ -363,7 +541,9 @@ func _play(anim: String) -> String:
 	for candidate in _fallback_chain(anim):
 		var real := _real_anim(String(candidate))
 		if real != "" and sprite.sprite_frames.get_frame_count(real) > 0:
-			if sprite.animation != real:
+			# ★ ต้องเช็ค is_playing ด้วย ★ ตอนกระโดดเราสั่ง pause() ค้างเฟรมไว้
+			# ถ้าเช็คแค่ชื่อท่า พอลงพื้นแล้วชื่อท่าเดิม ภาพจะค้างไม่เล่นต่อ
+			if sprite.animation != real or not sprite.is_playing():
 				sprite.play(real)
 			return real
 	return ""
@@ -542,6 +722,8 @@ func start_attack() -> void:
 	is_attacking = true
 	attack_cooldown = PlayerState.stats.attack_interval()
 	velocity.x = 0.0
+	_hit_left = 0.0
+	_jump_anim = ""
 	_play(attack_animation())
 
 	await get_tree().create_timer(attack_windup).timeout
@@ -775,8 +957,22 @@ func take_damage(amount: int, knockback_force: float = 0.0, from_direction: int 
 		if is_on_floor():
 			velocity.y = -140.0
 
+	# ★ ท่าโดนตี ★ เล่นแล้วล็อกไว้จนจบ ไม่ให้ Idle/Run มาทับในเฟรมถัดไป
 	if PlayerState.stats.hp > 0 and not is_attacking:
-		_play("Hit")
+		_play_hit()
+
+
+## เล่นท่าโดนตี แล้วล็อกไม่ให้ท่าอื่นมาทับจนกว่าจะเล่นจบ
+func _play_hit() -> void:
+	var real := _play("Hit")
+	if real == "" or not _is_hit_anim(real):
+		return   # ชุดภาพนี้ยังไม่มีท่าโดนตี — ไม่ต้องล็อกอะไร
+	# เริ่มใหม่ตั้งแต่เฟรมแรกทุกครั้งที่โดน
+	sprite.frame = 0
+	sprite.play(real)
+	var length: float = hit_anim_time if hit_anim_time > 0.0 else _anim_length(real)
+	_hit_left = clampf(length, 0.08, hit_anim_max)
+	_jump_anim = ""
 
 
 func _on_died() -> void:
@@ -784,16 +980,37 @@ func _on_died() -> void:
 		return
 	_dead = true
 	is_attacking = false
+	_hit_left = 0.0
+	_land_left = 0.0
+	_jump_anim = ""
 	velocity = Vector2.ZERO
 	sprite.modulate = Color.WHITE
 
 	# ท่าตายของผู้เล่น ตั้งชื่อ Death / Die / Dead ก็ได้ (พิมพ์เล็ก-ใหญ่ไม่สำคัญ)
 	var played := _play("Death")
-	if played != "":
+	var wait := 0.9
+	if played != "" and String(played).to_lower() != "idle":
 		sprite.frame = 0
 		sprite.play(played)
-	await get_tree().create_timer(1.2).timeout
-	Game.respawn_in_town()
+		wait = clampf(_anim_length(played), 0.4, 2.0)
+
+	await get_tree().create_timer(wait).timeout
+	if not is_instance_valid(self):
+		return
+
+	# ★ ค้างเฟรมสุดท้ายของท่าตายไว้ ★ ไม่ให้วนลูปลุกขึ้นมาตายซ้ำ ๆ
+	if played != "" and sprite.sprite_frames != null \
+			and sprite.sprite_frames.has_animation(played):
+		var count := sprite.sprite_frames.get_frame_count(played)
+		if count > 0:
+			sprite.pause()
+			sprite.frame = count - 1
+
+	# ★ popup ตอนตาย ★ ให้ผู้เล่นกดเองว่าจะเกิดใหม่ตอนไหน
+	if UI != null and UI.death_popup != null:
+		UI.death_popup.open()
+	else:
+		Game.respawn_in_town()
 
 
 func _on_level_up(new_level: int) -> void:
@@ -842,5 +1059,6 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 	if String(sprite.animation).begins_with("Attack"):
 		is_attacking = false
 		_update_animation()
-	elif sprite.animation == "Hit" and not _dead:
+	elif _is_hit_anim(String(sprite.animation)) and not _dead:
+		_hit_left = 0.0
 		_update_animation()

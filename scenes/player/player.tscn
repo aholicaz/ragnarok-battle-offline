@@ -14,9 +14,12 @@ floor_snap_length = 8.0
 script = ExtResource("1_player")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1373520025]
+position = Vector2(-1, 0)
 sprite_frames = ExtResource("2_frames")
-animation = &"Attack_falchion_bash"
-frame_progress = 0.27499196
+animation = &"Die"
+frame = 5
+frame_progress = 1.0
+offset = Vector2(-2.475, 0)
 
 [node name="EquipVisual" type="Node2D" parent="." unique_id=1678438290]
 script = ExtResource("3_visual")

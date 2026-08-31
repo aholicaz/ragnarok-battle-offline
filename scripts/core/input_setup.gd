@@ -18,6 +18,8 @@ const DEFAULT_KEYS := {
 	"toggle_equipment": [KEY_E],
 	"toggle_skills": [KEY_K],
 	"toggle_cards": [KEY_V],
+	## ★ เปิด/ปิดแผนที่ย่อมุมขวาบน ★
+	"toggle_minimap": [KEY_M],
 	"close_windows": [KEY_ESCAPE],
 	"quick_save": [KEY_F5],
 	"quick_load": [KEY_F9],

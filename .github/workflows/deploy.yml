@@ -28,11 +28,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # เปิด GitHub Pages ให้อัตโนมัติ (ไม่ต้องไปตั้งใน Settings เอง)
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
-
       - name: ติดตั้ง Godot + export templates
         run: |
           set -e

@@ -5,5 +5,5 @@
 # ไฟล์ที่ไม่ต้องเก็บขึ้น GitHub
 build/
 export_presets.cfg.bak
-_update*.zip
+_*.zip
 *.bak

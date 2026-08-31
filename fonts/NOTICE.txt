@@ -1,0 +1,13 @@
+NotoSansThai-Regular.ttf
+========================
+ฟอนต์ Noto Sans Thai
+Copyright 2022 The Noto Project Authors (https://github.com/notofonts/thai)
+
+สัญญาอนุญาต: SIL Open Font License, Version 1.1
+ข้อความสัญญาอนุญาตฉบับเต็ม: https://openfontlicense.org
+ที่มาของไฟล์: https://fonts.google.com/noto/specimen/Noto+Sans+Thai
+
+★ ทำไมต้องมีไฟล์นี้ ★
+เวอร์ชันเว็บ (และ Android/iOS) ไม่มีฟอนต์ของระบบให้ใช้
+ถ้าไม่ฝังฟอนต์ไทยไว้ในเกม ตัวหนังสือไทยทั้งหมดจะกลายเป็นสี่เหลี่ยม
+ตั้งค่าไว้ที่ project.godot -> [gui] theme/custom_font

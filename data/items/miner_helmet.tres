@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://Sprites/items/placeholder/miner_helmet.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"miner_helmet"
+display_name = "หมวกนักขุด"
+description = "หมวกของคนงานเหมืองคนแคระ มีตะเกียงเล็ก ๆ ติดอยู่"
+icon = ExtResource("2_icon")
+required_level = 24
+type = 2
+slot = 3
+card_slots = 1
+max_stack = 1
+buy_price = 8800
+sell_price = 3520
+def = 13
+bonus_vit = 1
+refinable = true

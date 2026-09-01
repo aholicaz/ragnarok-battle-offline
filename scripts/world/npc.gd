@@ -14,6 +14,19 @@ enum NPCType { DIALOG, SHOP, REFINER, HEALER, SAVE_POINT, QUEST }
 ## ★ ข้อความคุยเล่น ★ เว้นบรรทัดว่าง 1 บรรทัด = ขึ้นหน้าใหม่ในกล่องสนทนา
 @export_multiline var dialog: String = "สวัสดี นักผจญภัย"
 
+## ★★ บทพูดชุดพิเศษตามธงเนื้อเรื่อง (รอบ 30) ★★
+##
+## ใส่แบบ  {"saw_ceremony": "บทพูดชุดใหม่...", "beat_boss": "อีกชุด..."}
+## ระบบจะไล่จาก "ล่างขึ้นบน" — ธงตัวท้ายสุดที่ตั้งไว้แล้วชนะ
+## ไม่มีธงไหนตรงเลย = ใช้ช่อง Dialog ปกติ
+##
+## ตัวอย่างของตาแก่กุนนาร์:
+##   {
+##     "saw_ceremony": "ถ้าธอร์ปกป้องพวกเรา... แล้วเหตุใดทุกครั้งที่สายฟ้าฟาด\n\nป่าจึงเงียบลงเหมือนมีบางสิ่งตายไป?",
+##     "beat_stormscar": "เจ้าเห็นแสงมันไหลลงดินใช่ไหม..."
+##   }
+@export var dialog_by_flag: Dictionary = {}
+
 @export_group("รูปตัวละครในกล่องสนทนา")
 ## ★ รูปครึ่งตัว (หัวถึงเอว) พื้นหลังโปร่งใส สูงประมาณ 400-500 px ★
 ## ลากไฟล์ภาพมาใส่ช่องนี้ได้เลย
@@ -146,6 +159,11 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func interact() -> void:
+	# ★ เดินความคืบหน้าเควสชนิด "คุยกับ NPC" ★ (รอบ 30)
+	# ทำก่อนอย่างอื่น เผื่อการคุยครั้งนี้ทำให้เควสครบพอดี แล้วส่งเควสได้เลยในครั้งเดียว
+	if PlayerState.quests != null:
+		PlayerState.quests.on_talked_to(npc_name)
+
 	# ★ เรื่องเควสมาก่อน ★ คุยเรื่องเควสให้จบก่อน แล้วค่อยเปิดร้าน/ตีบวกตามปกติ
 	var quest_handled: bool = await _handle_quests()
 	if quest_handled and type == NPCType.DIALOG:
@@ -181,13 +199,27 @@ func interact() -> void:
 		_:
 			# ★ คุยผ่านกล่องสนทนา ★ เว้นบรรทัดว่าง = ขึ้นหน้าใหม่
 			var pages: Array = []
-			for part in dialog.split("\n\n", false):
+			for part in current_dialog().split("\n\n", false):
 				var t := String(part).strip_edges()
 				if t != "":
 					pages.append(line(t))
 			if pages.is_empty():
-				pages.append(line(dialog))
+				pages.append(line(current_dialog()))
 			await UI.talk(pages)
+
+
+## ★ บทพูดที่ควรใช้ตอนนี้ ★ ดูจากธงเนื้อเรื่องที่ตั้งไว้แล้ว
+## ไล่จากท้ายลิสต์ขึ้นมา — ธงตัวหลังชนะตัวหน้า (เขียนเรียงตามลำดับเนื้อเรื่องได้เลย)
+func current_dialog() -> String:
+	if not dialog_by_flag.is_empty() and PlayerState != null:
+		var keys: Array = dialog_by_flag.keys()
+		for i in range(keys.size() - 1, -1, -1):
+			var flag := StringName(keys[i])
+			if PlayerState.has_flag(flag):
+				var t := String(dialog_by_flag[keys[i]]).strip_edges()
+				if t != "":
+					return t
+	return dialog
 
 
 # =========================================================

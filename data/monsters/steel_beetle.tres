@@ -1,0 +1,71 @@
+[gd_resource type="Resource" script_class="MonsterData" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="SpriteFrames" path="res://data/sprites/placeholder/steel_beetle_frames.tres" id="3_frames"]
+
+[sub_resource type="Resource" id="Drop_steel_beetle_0"]
+script = ExtResource("2_drop")
+item_id = &"steel_shell"
+chance = 35.0
+
+[sub_resource type="Resource" id="Drop_steel_beetle_1"]
+script = ExtResource("2_drop")
+item_id = &"beetle_horn"
+chance = 12.0
+
+[sub_resource type="Resource" id="Drop_steel_beetle_2"]
+script = ExtResource("2_drop")
+item_id = &"iron_ore"
+chance = 40.0
+max_count = 3
+
+[sub_resource type="Resource" id="Drop_steel_beetle_3"]
+script = ExtResource("2_drop")
+item_id = &"iron_shield"
+chance = 1.0
+
+[sub_resource type="Resource" id="Drop_steel_beetle_card"]
+script = ExtResource("2_drop")
+item_id = &"card_steel_beetle"
+chance = 5.0
+
+[resource]
+script = ExtResource("1_monster")
+sprite_frames = ExtResource("3_frames")
+id = &"steel_beetle"
+display_name = "ด้วงเหล็ก"
+hitbox_size = Vector2(40, 34)
+hp_bar_offset_y = -60.8
+display_height = 160.0
+level = 22
+max_hp = 900
+atk_min = 80
+atk_max = 110
+def = 30
+mdef = 8
+hit = 36
+flee = 12
+crit = 1
+element = 3
+race = 4
+size = 1
+ai_type = 0
+move_speed = 80.0
+jump_force = -280.0
+jump_while_chasing = false
+detect_range = 250.0
+attack_range = 110.0
+leash_range = 750.0
+wander_range = 260.0
+hop_while_wandering = false
+attack_windup = 0.4
+attack_duration = 0.5
+attack_cooldown = 1.8
+knockback_force = 160.0
+exp_reward = 400
+job_exp_reward = 280
+zeny_min = 130
+zeny_max = 240
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_steel_beetle_0"), SubResource("Drop_steel_beetle_1"), SubResource("Drop_steel_beetle_2"), SubResource("Drop_steel_beetle_3"), SubResource("Drop_steel_beetle_card")])
+respawn_time = 15.0

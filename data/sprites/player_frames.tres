@@ -12,14 +12,20 @@
 [ext_resource type="Texture2D" uid="uid://rpgxk6r1vdtb" path="res://Sprites/frame_08.png" id="9_sc67g"]
 [ext_resource type="Texture2D" uid="uid://c342haykold7q" path="res://Sprites/frame_09.png" id="10_0ie5y"]
 [ext_resource type="Texture2D" uid="uid://cexf7k2gvtno6" path="res://Sprites/hit3.png" id="10_7ew31"]
+[ext_resource type="Texture2D" uid="uid://ceuyxo8lfmvfu" path="res://Sprites/Dash4.png" id="11_8s1s4"]
 [ext_resource type="Texture2D" uid="uid://b8a6yluigimwh" path="res://Sprites/frame_10.png" id="11_v1u58"]
+[ext_resource type="Texture2D" uid="uid://cpxa6tu3sh51c" path="res://Sprites/Dash5.png" id="12_c41ku"]
+[ext_resource type="Texture2D" uid="uid://duaw5fx7iawo0" path="res://Sprites/Dash6.png" id="13_0cfwv"]
 [ext_resource type="Texture2D" uid="uid://dvh1m5gj06ago" path="res://Sprites/frame_01.png" id="13_li2g5"]
 [ext_resource type="Texture2D" uid="uid://do41j5melvkiw" path="res://Sprites/run_01.png" id="13_sc67g"]
 [ext_resource type="Texture2D" uid="uid://dkbc7e3cy6yxl" path="res://Sprites/frame_02.png" id="14_0cfwv"]
 [ext_resource type="Texture2D" uid="uid://b3t32tiox6f11" path="res://Sprites/run_02.png" id="14_0ie5y"]
+[ext_resource type="Texture2D" uid="uid://bq07me6hjyush" path="res://Sprites/Dash7.png" id="14_q8go2"]
+[ext_resource type="Texture2D" uid="uid://dc4elt0v2klg7" path="res://Sprites/Dash8.png" id="15_d3yvj"]
 [ext_resource type="Texture2D" uid="uid://ckaost373k2h4" path="res://Sprites/frame_03.png" id="15_q8go2"]
 [ext_resource type="Texture2D" uid="uid://wtu1k5ik14a" path="res://Sprites/run_03.png" id="15_v1u58"]
 [ext_resource type="Texture2D" uid="uid://bb6d2uejxwx5" path="res://Sprites/run_04.png" id="16_4jidt"]
+[ext_resource type="Texture2D" uid="uid://casloay7v40u1" path="res://Sprites/Dash9.png" id="16_8v1ov"]
 [ext_resource type="Texture2D" uid="uid://8vc8d2on76hb" path="res://Sprites/frame_04.png" id="16_d3yvj"]
 [ext_resource type="Texture2D" uid="uid://dph5rm0hll657" path="res://Sprites/frame_05.png" id="17_8v1ov"]
 [ext_resource type="Texture2D" uid="uid://dqs5m2nphlr4b" path="res://Sprites/hero jump.png" id="17_fo6hg"]
@@ -761,7 +767,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"Attack_falchion",
-"speed": 16.0
+"speed": 13.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -808,6 +814,29 @@ animations = [{
 "speed": 13.0
 }, {
 "frames": [{
+"duration": 0.5,
+"texture": ExtResource("11_8s1s4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_c41ku")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_0cfwv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_q8go2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_d3yvj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_8v1ov")
+}],
+"loop": 0,
+"name": &"Dash",
+"speed": 9.0
+}, {
+"frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_omv3j")
 }, {
@@ -842,7 +871,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"Hit",
-"speed": 5.0
+"speed": 3.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -874,7 +903,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"Idle",
-"speed": 5.0
+"speed": 6.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -897,7 +926,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"Jump",
-"speed": 5.0
+"speed": 6.0
 }, {
 "frames": [{
 "duration": 1.0,

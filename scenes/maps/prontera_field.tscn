@@ -30,7 +30,7 @@ size = Vector2(300, 32)
 [node name="Map" type="Node2D"]
 script = ExtResource("map_base")
 map_id = &"prontera_field"
-display_name = "ทุ่งหญ้าพรอนเทรา"
+display_name = "ทุ่งวิหาร"
 map_bounds = Rect2(0, 0, 4200, 1100)
 player_scene = ExtResource("player")
 
@@ -145,4 +145,4 @@ label_text = "→ เมือง"
 position = Vector2(4130, 740)
 target_map = &"dark_forest"
 target_spawn_point = &"from_field"
-label_text = "→ ป่ามืด"
+label_text = "→ ป่าเงาลึก"

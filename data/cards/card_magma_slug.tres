@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_data.gd" id="1_card"]
+[ext_resource type="Texture2D" path="res://Sprites/items/placeholder/card_magma_slug.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_card")
+monster_id = &"magma_slug"
+fits_slot = 6
+rarity = 3
+id = &"card_magma_slug"
+display_name = "การ์ดทากลาวา"
+description = "ร่างที่ร้อนดั่งลาวา"
+icon = ExtResource("2_icon")
+type = 5
+slot = 0
+max_stack = 99
+buy_price = 0
+sell_price = 40500
+max_hp = 120
+mdef = 3

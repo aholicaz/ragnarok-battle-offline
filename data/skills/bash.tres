@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://co56ckide5cgk" path="res://Sprites/Skill_bash.png" id="1_e2b7y"]
 [ext_resource type="Script" uid="uid://3sobam6f0wu5" path="res://scripts/resources/skill_data.gd" id="1_skill"]
+[ext_resource type="SpriteFrames" uid="uid://c4txli5k15ntp" path="res://data/sprites/fx_bash.tres" id="2_fx"]
 
 [resource]
 script = ExtResource("1_skill")
@@ -16,3 +17,13 @@ damage_mult_per_level = 0.25
 hit_count = 2
 range_x = 150.0
 max_targets = 2
+effect_frames = ExtResource("2_fx")
+effect_anim = &"slash"
+effect_offset = Vector2(120, -5)
+effect_height = 300.0
+effect_speed = 640.0
+effect_delay = 0.34
+effect_damage = true
+effect_hit_size = Vector2(200, 260)
+effect_max_targets = 1
+effect_hit_count = 2

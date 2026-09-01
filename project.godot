@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="โปรเจกต์เกมใหม่"
-run/main_scene="res://Sprites/world_node_2d.tscn"
+run/main_scene="res://scenes/ui/title_screen.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 

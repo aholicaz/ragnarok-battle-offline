@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
 [ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="Texture2D" uid="uid://ij47u1ybiwu4" path="res://Sprites/lunatic idle.png" id="3_h4spa"]
+[ext_resource type="Texture2D" uid="uid://bwtqgdl5vg0v1" path="res://Sprites/lunatic run.png" id="4_vcd0d"]
 
 [sub_resource type="Resource" id="Drop_lunatic_0"]
 script = ExtResource("2_drop")
@@ -24,15 +26,157 @@ script = ExtResource("2_drop")
 item_id = &"card_lunatic"
 chance = 5.0
 
+[sub_resource type="Resource" id="Drop_lunatic_junk_lunatic_tail"]
+script = ExtResource("2_drop")
+item_id = &"lunatic_tail"
+chance = 30.0
+
+[sub_resource type="Resource" id="Drop_lunatic_junk_chewed_carrot"]
+script = ExtResource("2_drop")
+item_id = &"chewed_carrot"
+chance = 20.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_lunatic_eq_ribbon"]
+script = ExtResource("2_drop")
+item_id = &"ribbon"
+chance = 1.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dri1a"]
+atlas = ExtResource("3_h4spa")
+region = Rect2(0, 0, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s3a75"]
+atlas = ExtResource("3_h4spa")
+region = Rect2(384, 0, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1mmuy"]
+atlas = ExtResource("3_h4spa")
+region = Rect2(768, 0, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uoqt6"]
+atlas = ExtResource("3_h4spa")
+region = Rect2(1152, 0, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5dc0b"]
+atlas = ExtResource("3_h4spa")
+region = Rect2(0, 512, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iry6w"]
+atlas = ExtResource("3_h4spa")
+region = Rect2(384, 512, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mq82i"]
+atlas = ExtResource("3_h4spa")
+region = Rect2(768, 512, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hvvcc"]
+atlas = ExtResource("3_h4spa")
+region = Rect2(1152, 512, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3q4bo"]
+atlas = ExtResource("4_vcd0d")
+region = Rect2(0, 0, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rgqdn"]
+atlas = ExtResource("4_vcd0d")
+region = Rect2(384, 0, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_067f7"]
+atlas = ExtResource("4_vcd0d")
+region = Rect2(768, 0, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0m4oj"]
+atlas = ExtResource("4_vcd0d")
+region = Rect2(1152, 0, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bd5c7"]
+atlas = ExtResource("4_vcd0d")
+region = Rect2(0, 512, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tpekf"]
+atlas = ExtResource("4_vcd0d")
+region = Rect2(384, 512, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6p1fv"]
+atlas = ExtResource("4_vcd0d")
+region = Rect2(768, 512, 384, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8d66e"]
+atlas = ExtResource("4_vcd0d")
+region = Rect2(1152, 512, 384, 512)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_a21wg"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dri1a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s3a75")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1mmuy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uoqt6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5dc0b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iry6w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mq82i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hvvcc")
+}],
+"loop": 1,
+"name": &"Idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3q4bo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rgqdn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_067f7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0m4oj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bd5c7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tpekf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6p1fv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8d66e")
+}],
+"loop": 1,
+"name": &"Run",
+"speed": 5.0
+}]
+
 [resource]
 script = ExtResource("1_monster")
 id = &"lunatic"
 display_name = "ลูนาติก"
+sprite_frames = SubResource("SpriteFrames_a21wg")
 hitbox_size = Vector2(26, 24)
 hp_bar_offset_y = -44.0
-display_height = 82.0
-level = 4
-max_hp = 95
+display_height = 180.0
+level = 6
+max_hp = 130
 atk_min = 13
 atk_max = 18
 def = 2
@@ -53,5 +197,5 @@ attack_cooldown = 1.2
 exp_reward = 28
 zeny_min = 8
 zeny_max = 22
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_lunatic_0"), SubResource("Drop_lunatic_1"), SubResource("Drop_lunatic_2"), SubResource("Drop_lunatic_card")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_lunatic_0"), SubResource("Drop_lunatic_1"), SubResource("Drop_lunatic_2"), SubResource("Drop_lunatic_card"), SubResource("Drop_lunatic_junk_lunatic_tail"), SubResource("Drop_lunatic_junk_chewed_carrot"), SubResource("Drop_lunatic_eq_ribbon")])
 respawn_time = 7.0

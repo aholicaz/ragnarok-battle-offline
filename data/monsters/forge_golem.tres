@@ -1,0 +1,76 @@
+[gd_resource type="Resource" script_class="MonsterData" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="SpriteFrames" path="res://data/sprites/placeholder/forge_golem_frames.tres" id="3_frames"]
+
+[sub_resource type="Resource" id="Drop_forge_golem_0"]
+script = ExtResource("2_drop")
+item_id = &"golem_plate"
+chance = 30.0
+
+[sub_resource type="Resource" id="Drop_forge_golem_1"]
+script = ExtResource("2_drop")
+item_id = &"hot_gear"
+chance = 20.0
+
+[sub_resource type="Resource" id="Drop_forge_golem_2"]
+script = ExtResource("2_drop")
+item_id = &"iron_ore"
+chance = 50.0
+max_count = 4
+
+[sub_resource type="Resource" id="Drop_forge_golem_3"]
+script = ExtResource("2_drop")
+item_id = &"emveretarcon"
+chance = 12.0
+
+[sub_resource type="Resource" id="Drop_forge_golem_4"]
+script = ExtResource("2_drop")
+item_id = &"chain_mail"
+chance = 1.5
+
+[sub_resource type="Resource" id="Drop_forge_golem_card"]
+script = ExtResource("2_drop")
+item_id = &"card_forge_golem"
+chance = 5.0
+
+[resource]
+script = ExtResource("1_monster")
+sprite_frames = ExtResource("3_frames")
+id = &"forge_golem"
+display_name = "โกเลมเตาหลอม"
+hitbox_size = Vector2(60, 64)
+hp_bar_offset_y = -91.2
+display_height = 240.0
+level = 30
+max_hp = 2400
+atk_min = 150
+atk_max = 210
+def = 40
+mdef = 12
+hit = 48
+flee = 5
+crit = 1
+element = 3
+race = 0
+size = 2
+ai_type = 1
+move_speed = 70.0
+jump_force = -280.0
+jump_while_chasing = false
+detect_range = 420.0
+attack_range = 130.0
+leash_range = 750.0
+wander_range = 260.0
+hop_while_wandering = false
+attack_windup = 0.4
+attack_duration = 0.5
+attack_cooldown = 1.8
+knockback_force = 260.0
+exp_reward = 950
+job_exp_reward = 665
+zeny_min = 250
+zeny_max = 450
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_forge_golem_0"), SubResource("Drop_forge_golem_1"), SubResource("Drop_forge_golem_2"), SubResource("Drop_forge_golem_3"), SubResource("Drop_forge_golem_4"), SubResource("Drop_forge_golem_card")])
+respawn_time = 15.0

@@ -1,0 +1,95 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://c4txli5k15ntp"]
+
+[ext_resource type="Texture2D" uid="uid://bd1ff0pdvaek0" path="res://Sprites/effects/bash_slash.png" id="1_tex"]
+
+[sub_resource type="AtlasTexture" id="fx_0"]
+atlas = ExtResource("1_tex")
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="fx_1"]
+atlas = ExtResource("1_tex")
+region = Rect2(512, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="fx_2"]
+atlas = ExtResource("1_tex")
+region = Rect2(1024, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="fx_3"]
+atlas = ExtResource("1_tex")
+region = Rect2(1536, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="fx_4"]
+atlas = ExtResource("1_tex")
+region = Rect2(2048, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="fx_5"]
+atlas = ExtResource("1_tex")
+region = Rect2(2560, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="fx_6"]
+atlas = ExtResource("1_tex")
+region = Rect2(3072, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="fx_7"]
+atlas = ExtResource("1_tex")
+region = Rect2(3584, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="fx_8"]
+atlas = ExtResource("1_tex")
+region = Rect2(4096, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="fx_9"]
+atlas = ExtResource("1_tex")
+region = Rect2(4608, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="fx_10"]
+atlas = ExtResource("1_tex")
+region = Rect2(5120, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="fx_11"]
+atlas = ExtResource("1_tex")
+region = Rect2(5632, 0, 512, 512)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("fx_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_7")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_8")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_9")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_10")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_11")
+}],
+"loop": 0,
+"name": &"slash",
+"speed": 24.0
+}]

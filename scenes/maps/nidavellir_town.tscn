@@ -1,0 +1,135 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/map_base.gd" id="map_base"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="player"]
+[ext_resource type="PackedScene" path="res://scenes/monsters/monster.tscn" id="monster_scene"]
+[ext_resource type="Script" path="res://scripts/world/map_spawner.gd" id="map_spawner"]
+[ext_resource type="Script" path="res://scripts/world/monster_spawner.gd" id="spawner"]
+[ext_resource type="Script" path="res://scripts/resources/monster_data.gd" id="monster_data"]
+[ext_resource type="PackedScene" path="res://scenes/world/portal.tscn" id="portal"]
+[ext_resource type="PackedScene" path="res://scenes/npc/npc.tscn" id="npc"]
+[ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore"]
+
+[sub_resource type="RectangleShape2D" id="Rect_ground"]
+size = Vector2(3800, 240)
+
+[node name="Map" type="Node2D"]
+script = ExtResource("map_base")
+map_id = &"nidavellir_town"
+display_name = "นิดาเวลลิร์ นครเตาหลอม"
+chapter = 2
+region = "สวาร์ทัลฟ์เฮม"
+map_bounds = Rect2(-100, -200, 3600, 1200)
+player_scene = ExtResource("player")
+
+[node name="Background" type="Node2D" parent="."]
+
+[node name="Sky" type="Polygon2D" parent="Background"]
+z_index = -100
+position = Vector2(-100, -200)
+color = Color(0.14, 0.1, 0.09, 1)
+polygon = PackedVector2Array(0, 0, 3600, 0, 3600, 1200, 0, 1200)
+
+[node name="FarLayer" type="Polygon2D" parent="Background"]
+z_index = -90
+position = Vector2(-100, 520)
+color = Color(0.26, 0.17, 0.12, 1)
+polygon = PackedVector2Array(0, 0, 3600, 0, 3600, 360, 0, 360)
+
+[node name="Art" type="Sprite2D" parent="Background"]
+z_index = -80
+position = Vector2(1700, 500)
+
+[node name="Terrain" type="Node2D" parent="."]
+
+[node name="Ground" type="StaticBody2D" parent="Terrain"]
+position = Vector2(1700, 1000)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Ground"]
+shape = SubResource("Rect_ground")
+
+[node name="Visual" type="Polygon2D" parent="Terrain/Ground"]
+color = Color(0.34, 0.26, 0.2, 1)
+polygon = PackedVector2Array(-1900, -120, 1900, -120, 1900, 120, -1900, 120)
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(300, 820)
+
+[node name="from_road" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(200, 820)
+
+[node name="from_mine" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(3200, 820)
+
+[node name="Spawners" type="Node2D" parent="."]
+
+[node name="Portals" type="Node2D" parent="."]
+
+[node name="ToRoad" parent="Portals" instance=ExtResource("portal")]
+position = Vector2(60, 880)
+target_map = &"iron_road"
+target_spawn_point = &"from_town"
+label_text = "← ทางเหล็ก"
+destination_name = "ทางเหล็ก"
+
+[node name="ToMine" parent="Portals" instance=ExtResource("portal")]
+position = Vector2(3340, 880)
+target_map = &"ember_mine"
+target_spawn_point = &"from_town"
+label_text = "→ เหมืองถ่านไฟ"
+destination_name = "เหมืองถ่านไฟ"
+
+[node name="NPCs" type="Node2D" parent="."]
+
+[node name="Helga" parent="NPCs" instance=ExtResource("npc")]
+position = Vector2(350, 820)
+npc_name = "นายหน้าเฮลกา"
+type = 1
+dialog = "คนบนดินสินะ ของที่นี่แพงหน่อยนะ แต่ของดีทุกชิ้น\n\nอย่าถามว่าใครตี... ที่นี่ไม่ถามกัน"
+shop_items = Array[StringName]([&"red_potion", &"orange_potion", &"white_potion", &"blue_potion", &"iron_ore", &"phracon", &"emveretarcon", &"bastard_sword", &"iron_blade", &"forge_saber", &"iron_shield", &"iron_helm", &"miner_helmet", &"chain_mail", &"scale_mail", &"iron_greaves", &"miner_boots", &"rosary", &"belt"])
+
+[node name="Dvalin" parent="NPCs" instance=ExtResource("npc")]
+position = Vector2(900, 820)
+npc_name = "ช่างเอกดวาลิน"
+type = 2
+dialog = "เอาของมาตีบวกก็วางตรงนี้\n\n...เจ้ามากับฮันส์ใช่ไหม บอกมันว่าข้ายังไม่ให้อภัย"
+
+[node name="Brokk" parent="NPCs" instance=ExtResource("npc")]
+position = Vector2(1450, 820)
+npc_name = "บรอกก์"
+type = 0
+dialog = "ข้าไม่พูดเรื่องเก่าแล้ว ไปเถอะ\n\n...ค้อนน่ะ? ค้อนอะไร"
+dialog_by_flag = {
+"read_sindri_grave": "เจ้าไปดูหลุมนั้นมาแล้วสินะ\n\nใช่ ข้ากับซินดริตีค้อนเล่มนั้น\nแต่เราไม่เคยตีมันเพื่อปกป้องใครทั้งนั้น"
+}
+
+[node name="SavePoint" parent="NPCs" instance=ExtResource("npc")]
+position = Vector2(1950, 820)
+npc_name = "ศิลาสลักโบราณ"
+type = 4
+dialog = "ศิลาเก่าแก่ ตราค้อนที่สลักไว้ดูใหม่กว่าตัวหินมาก"
+
+[node name="Healer" parent="NPCs" instance=ExtResource("npc")]
+position = Vector2(2400, 820)
+npc_name = "หมอคนแคระเฮดิน"
+type = 3
+dialog = "เจ็บตรงไหน ให้ข้าดู\n\nที่นี่ไม่มีใครขอบคุณธอร์หรอกนะ อย่าแปลกใจ"
+
+[node name="Hans" parent="NPCs" instance=ExtResource("npc")]
+position = Vector2(2850, 820)
+npc_name = "ช่างตีเหล็กฮันส์"
+type = 0
+dialog = "ข้าตามเจ้ามาถึงนี่แล้ว...\n\nสิบปีที่ไม่ได้กลับบ้าน ทุกคนยังจำหน้าข้าได้ แต่ไม่มีใครทัก"
+
+[node name="Lore" type="Node2D" parent="."]
+
+[node name="SindriGrave" parent="Lore" instance=ExtResource("lore")]
+position = Vector2(3050, 790)
+lore_id = &"sindri_grave"
+title = "หลุมศพไร้ชื่อ"
+text = "หลุมศพเก่า ชื่อบนป้ายถูกสกัดออกจนอ่านไม่ได้\n\nเหมือนกับศิลาสลักที่พรอนเทรา... รอยสกัดแบบเดียวกัน\n\nมีดอกไม้แห้งวางอยู่ ใครบางคนยังมาเยี่ยม"
+label_text = "หลุมศพเก่า"

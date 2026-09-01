@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_data.gd" id="1_card"]
+[ext_resource type="Texture2D" path="res://Sprites/items/placeholder/card_steel_beetle.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_card")
+monster_id = &"steel_beetle"
+fits_slot = 4
+rarity = 2
+id = &"card_steel_beetle"
+display_name = "การ์ดด้วงเหล็ก"
+description = "เปลือกแข็งดั่งเหล็ก"
+icon = ExtResource("2_icon")
+type = 5
+slot = 0
+max_stack = 99
+buy_price = 0
+sell_price = 33000
+max_hp = 60
+def = 8

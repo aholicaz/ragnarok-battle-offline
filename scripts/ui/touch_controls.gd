@@ -64,7 +64,7 @@ func _define_zones() -> void:
 		{"id": "down",    "action": "move_down",  "arrow": "down",  "size": PAD_MID},
 
 		{"id": "attack",  "action": "attack",   "label": "โจมตี",  "size": PAD_BIG},
-		{"id": "jump",    "action": "jump",     "label": "กระโดด", "size": PAD_MID},
+		{"id": "jump",    "action": "jump",     "label": "พุ่งหลบ", "size": PAD_MID},
 		{"id": "interact","action": "interact", "label": "คุย/เก็บ", "size": PAD_MID},
 
 		{"id": "skill_1", "action": "skill_1", "label": "1", "size": PAD_SMALL},

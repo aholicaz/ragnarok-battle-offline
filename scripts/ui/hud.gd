@@ -429,7 +429,7 @@ func _build_bottom() -> void:
 	panel.add_child(box)
 
 	var hint := UITheme.make_label(
-		"WASD เดิน/กระโดด  |  J หรือ คลิกซ้าย = โจมตี  |  คลิกขวา = สกิลช่อง 1  |  F เก็บของ/คุย/เข้าประตู\n"
+		"A/D เดิน  |  W หรือ Space = พุ่งหลบ  |  J หรือ คลิกซ้าย = โจมตี  |  คลิกขวา = สกิลช่อง 1  |  F เก็บของ/คุย/เข้าประตู\n"
 		+ "Q ยาเลือด  |  R ยามานา  |  1-4 สกิล  |  C สเตตัส  |  I กระเป๋า  |  E สวมใส่  |  K สกิล  |  V การ์ด  |  U เควส  |  M แผนที่  |  Tab เมนู",
 		12, UITheme.TEXT_DIM)
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

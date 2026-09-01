@@ -17,6 +17,21 @@ const MONSTER_BASE_HIT_RATE := 72.0
 const MIN_HIT_RATE := 5.0
 const MAX_HIT_RATE := 98.0
 
+# =========================================================
+# ★★ มอนเลเวลต่ำหลบเก่งเกินไป — ลดค่าหลบให้ (รอบ 29) ★★
+#
+# ช่วงต้นเกมผู้เล่นมี HIT น้อย (100 + Lv + Dex x 1.5) แต่มอนอย่างชอนชอน/ฮอร์เน็ต
+# ค่าหลบสูงจนตี 10 ครั้งพลาด 4-5 ครั้ง เล่นแล้วหงุดหงิด
+# เลยลดค่า FLEE ของมอนที่ "เลเวลต่ำกว่า LOW_LEVEL_FLEE_CAP" ลงตามสัดส่วนข้างล่าง
+#
+# ★ อยากให้ตีโดนง่ายขึ้นอีก ★ เพิ่ม LOW_LEVEL_FLEE_REDUCTION (0.20 = ลด 20%)
+# ★ อยากให้ครอบคลุมมอนเลเวลสูงขึ้นด้วย ★ เพิ่ม LOW_LEVEL_FLEE_CAP
+# =========================================================
+## มอนที่เลเวล "ต่ำกว่า" ค่านี้ จะโดนลดค่าหลบ
+const LOW_LEVEL_FLEE_CAP := 15
+## ลดค่าหลบลงกี่ส่วน (0.20 = ลด 20%)
+const LOW_LEVEL_FLEE_REDUCTION := 0.20
+
 ## ตารางธาตุ [ธาตุที่โจมตี][ธาตุของเป้าหมาย] = ตัวคูณดาเมจ
 ## ลำดับ: NEUTRAL FIRE WATER EARTH WIND POISON HOLY SHADOW GHOST UNDEAD
 const ELEMENT_CHART := [
@@ -60,7 +75,11 @@ static func monster_hit(monster: MonsterData) -> int:
 
 
 static func monster_flee(monster: MonsterData) -> int:
-	return 100 + monster.level + monster.flee
+	var value: float = float(100 + monster.level + monster.flee)
+	# ★ มอนเลเวลต่ำ หลบยากขึ้น ★ (ดูเหตุผลที่หัวไฟล์)
+	if monster.level < LOW_LEVEL_FLEE_CAP:
+		value *= (1.0 - LOW_LEVEL_FLEE_REDUCTION)
+	return int(roundf(value))
 
 
 ## ตัวลดดาเมจจากค่า DEF — DEF 100 = ลดดาเมจครึ่งหนึ่ง

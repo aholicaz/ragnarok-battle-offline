@@ -25,6 +25,16 @@ script = ExtResource("2_drop")
 item_id = &"card_poring"
 chance = 5.0
 
+[sub_resource type="Resource" id="Drop_poring_junk_poring_core"]
+script = ExtResource("2_drop")
+item_id = &"poring_core"
+chance = 8.0
+
+[sub_resource type="Resource" id="Drop_poring_eq_wooden_sword"]
+script = ExtResource("2_drop")
+item_id = &"wooden_sword"
+chance = 1.0
+
 [resource]
 script = ExtResource("1_monster")
 sprite_frames = ExtResource("3_frames")
@@ -43,5 +53,5 @@ wander_range = 280.0
 jump_interval = 0.55
 exp_reward = 10
 zeny_max = 12
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_poring_0"), SubResource("Drop_poring_1"), SubResource("Drop_poring_2"), SubResource("Drop_poring_card")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_poring_0"), SubResource("Drop_poring_1"), SubResource("Drop_poring_2"), SubResource("Drop_poring_card"), SubResource("Drop_poring_junk_poring_core"), SubResource("Drop_poring_eq_wooden_sword")])
 respawn_time = 6.0

@@ -1,0 +1,56 @@
+[gd_resource type="SpriteFrames" load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://Sprites/monsters/placeholder/silent_wraith.png" id="1_tex"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}],
+"loop": false,
+"name": &"Attack",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}],
+"loop": false,
+"name": &"Hit",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_tex")
+}],
+"loop": false,
+"name": &"Die",
+"speed": 5.0
+}]

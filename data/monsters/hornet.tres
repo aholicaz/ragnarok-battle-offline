@@ -23,6 +23,21 @@ script = ExtResource("2_drop")
 item_id = &"card_hornet"
 chance = 5.0
 
+[sub_resource type="Resource" id="Drop_hornet_junk_stinger"]
+script = ExtResource("2_drop")
+item_id = &"stinger"
+chance = 35.0
+
+[sub_resource type="Resource" id="Drop_hornet_junk_honey_drop"]
+script = ExtResource("2_drop")
+item_id = &"honey_drop"
+chance = 15.0
+
+[sub_resource type="Resource" id="Drop_hornet_eq_brooch"]
+script = ExtResource("2_drop")
+item_id = &"brooch"
+chance = 0.5
+
 [resource]
 script = ExtResource("1_monster")
 id = &"hornet"
@@ -53,4 +68,4 @@ knockback_force = 90.0
 exp_reward = 62
 zeny_min = 18
 zeny_max = 42
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_hornet_0"), SubResource("Drop_hornet_1"), SubResource("Drop_hornet_2"), SubResource("Drop_hornet_card")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_hornet_0"), SubResource("Drop_hornet_1"), SubResource("Drop_hornet_2"), SubResource("Drop_hornet_card"), SubResource("Drop_hornet_junk_stinger"), SubResource("Drop_hornet_junk_honey_drop"), SubResource("Drop_hornet_eq_brooch")])

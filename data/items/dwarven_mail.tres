@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://Sprites/items/placeholder/dwarven_mail.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"dwarven_mail"
+display_name = "เกราะคนแคระ"
+description = "เกราะเหล็กตีโดยช่างคนแคระ แน่นหนาเหมือนกำแพง"
+icon = ExtResource("2_icon")
+required_level = 34
+type = 2
+slot = 4
+card_slots = 1
+max_stack = 1
+buy_price = 38000
+sell_price = 15200
+def = 36
+max_hp = 200
+bonus_str = 1
+aspd_percent = -6.0
+refinable = true

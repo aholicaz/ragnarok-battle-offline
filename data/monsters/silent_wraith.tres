@@ -1,0 +1,70 @@
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://bq4d88cglhnd1"]
+
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="SpriteFrames" path="res://data/sprites/placeholder/silent_wraith_frames.tres" id="3_frames"]
+
+[sub_resource type="Resource" id="Drop_silent_wraith_0"]
+script = ExtResource("2_drop")
+item_id = &"silent_veil"
+chance = 25.0
+
+[sub_resource type="Resource" id="Drop_silent_wraith_1"]
+script = ExtResource("2_drop")
+item_id = &"wraith_dust"
+chance = 40.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_silent_wraith_2"]
+script = ExtResource("2_drop")
+item_id = &"blue_potion"
+chance = 8.0
+
+[sub_resource type="Resource" id="Drop_silent_wraith_3"]
+script = ExtResource("2_drop")
+item_id = &"emveretarcon"
+chance = 15.0
+
+[sub_resource type="Resource" id="Drop_silent_wraith_card"]
+script = ExtResource("2_drop")
+item_id = &"card_silent_wraith"
+chance = 5.0
+
+[resource]
+script = ExtResource("1_monster")
+id = &"silent_wraith"
+display_name = "ภูตไร้เสียง"
+sprite_frames = ExtResource("3_frames")
+hitbox_size = Vector2(36, 50)
+hp_bar_offset_y = -72.2
+display_height = 190.0
+level = 33
+max_hp = 1600
+atk_min = 140
+atk_max = 190
+def = 18
+mdef = 35
+hit = 58
+flee = 48
+crit = 6
+element = 7
+race = 6
+ai_type = 1
+move_speed = 150.0
+jump_force = -280.0
+jump_while_chasing = false
+detect_range = 420.0
+attack_range = 106.0
+leash_range = 750.0
+wander_range = 260.0
+hop_while_wandering = false
+attack_windup = 0.4
+attack_duration = 0.5
+attack_cooldown = 1.8
+knockback_force = 160.0
+exp_reward = 1100
+job_exp_reward = 770
+zeny_min = 280
+zeny_max = 500
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_silent_wraith_0"), SubResource("Drop_silent_wraith_1"), SubResource("Drop_silent_wraith_2"), SubResource("Drop_silent_wraith_3"), SubResource("Drop_silent_wraith_card")])
+respawn_time = 15.0

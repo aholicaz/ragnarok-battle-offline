@@ -37,6 +37,16 @@ script = ExtResource("2_drop")
 item_id = &"card_baphomet"
 chance = 5.0
 
+[sub_resource type="Resource" id="Drop_baphomet_junk_giant_hoof"]
+script = ExtResource("2_drop")
+item_id = &"giant_hoof"
+chance = 100.0
+
+[sub_resource type="Resource" id="Drop_baphomet_junk_cursed_scythe_shard"]
+script = ExtResource("2_drop")
+item_id = &"cursed_scythe_shard"
+chance = 50.0
+
 [resource]
 script = ExtResource("1_monster")
 id = &"baphomet"
@@ -74,5 +84,5 @@ knockback_force = 320.0
 exp_reward = 9000
 zeny_min = 3000
 zeny_max = 6000
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_baphomet_0"), SubResource("Drop_baphomet_1"), SubResource("Drop_baphomet_2"), SubResource("Drop_baphomet_3"), SubResource("Drop_baphomet_4"), SubResource("Drop_baphomet_card")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_baphomet_0"), SubResource("Drop_baphomet_1"), SubResource("Drop_baphomet_2"), SubResource("Drop_baphomet_3"), SubResource("Drop_baphomet_4"), SubResource("Drop_baphomet_card"), SubResource("Drop_baphomet_junk_giant_hoof"), SubResource("Drop_baphomet_junk_cursed_scythe_shard")])
 respawn_time = 120.0

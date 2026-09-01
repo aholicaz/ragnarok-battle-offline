@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_data.gd" id="1_card"]
+[ext_resource type="Texture2D" path="res://Sprites/items/placeholder/card_pitman.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_card")
+monster_id = &"pitman"
+fits_slot = 1
+rarity = 2
+id = &"card_pitman"
+display_name = "การ์ดพิตแมน"
+description = "พลังขุดจากใต้ดิน ทำให้โจมตีหนักขึ้น"
+icon = ExtResource("2_icon")
+type = 5
+slot = 0
+max_stack = 99
+buy_price = 0
+sell_price = 28500
+atk = 8
+bonus_str = 1

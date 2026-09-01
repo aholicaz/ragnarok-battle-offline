@@ -42,7 +42,7 @@ animations = [{
 [node name="Map" type="Node2D" unique_id=983589772]
 script = ExtResource("map_base")
 map_id = &"prontera_town"
-display_name = "เมืองพรอนเทรา"
+display_name = "พรอนเทรา นครแห่งสายฟ้า"
 map_bounds = Rect2(-1036, -73, 3620, 1060)
 auto_fit_bounds = false
 player_scene = ExtResource("player")
@@ -97,7 +97,7 @@ position = Vector2(2200, 600)
 position = Vector2(2330, 570)
 target_map = &"prontera_field"
 target_spawn_point = &"from_town"
-label_text = "→ ทุ่งหญ้า"
+label_text = "→ ทุ่งวิหาร"
 auto_enter = false
 
 [node name="NPCs" type="Node2D" parent="." unique_id=524951142]
@@ -106,15 +106,15 @@ auto_enter = false
 quest_ids = Array[StringName]([&"tony_fabre"])
 position = Vector2(-70, 590)
 npc_name = "พ่อค้าโทนี่"
-dialog = "มีของดีมาขายนะ"
-shop_items = Array[StringName]([&"red_potion", &"orange_potion", &"blue_potion", &"meat", &"novice_sword", &"falchion", &"cotton_shirt", &"guard", &"cap", &"hood", &"sandals", &"phracon", &"emveretarcon"])
+dialog = "มีของดีมาขายนะ\n\n...ถึงจะไม่ค่อยมีของใหม่ก็เถอะ ของจากทางเหนือไม่ได้ส่งมาสามเดือนแล้ว\nไม่มีใครบอกว่าทำไม"
+shop_items = Array[StringName]([&"red_potion", &"orange_potion", &"blue_potion", &"meat", &"wooden_sword", &"novice_sword", &"short_sword", &"rapier", &"falchion", &"wooden_shield", &"guard", &"ribbon", &"cap", &"leather_cap", &"cotton_shirt", &"leather_jacket", &"hood", &"muffler", &"sandals", &"leather_shoes", &"necklace", &"earring", &"brooch", &"phracon", &"emveretarcon"])
 
 [node name="Blacksmith" parent="NPCs" unique_id=1359939436 instance=ExtResource("npc")]
 quest_ids = Array[StringName]([&"hans_poring"])
 position = Vector2(478, 590)
 npc_name = "ช่างตีเหล็กฮันส์"
 type = 2
-dialog = "อยากให้อาวุธแกร่งขึ้นไหม"
+dialog = "อยากให้อาวุธแกร่งขึ้นไหม\n\nตีเหล็กแบบนี้ข้าเรียนมาจากใต้ภูเขา ที่นั่นเขาตีกันมาเป็นพันปีแล้ว\n...แต่ข้าถูกไล่ออกมา เพราะข้าถามคำถามที่ไม่ควรถาม"
 portrait_file = "res://Sprites/portraits/hans.png"
 
 [node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="NPCs/Blacksmith" unique_id=1862143772]
@@ -127,18 +127,42 @@ frame_progress = 0.39935097
 
 [node name="Healer" parent="NPCs" unique_id=981804629 instance=ExtResource("npc")]
 position = Vector2(1099, 590)
-npc_name = "ซิสเตอร์มาเรีย"
+npc_name = "นักบวชหญิงมาเรีย"
 type = 3
-dialog = "ขอพรให้เจ้าปลอดภัย"
+dialog = "บาดแผลของเจ้าจะหายดี จงขอบคุณธอร์เถิด"
 
 [node name="SavePoint" parent="NPCs" unique_id=1149238899 instance=ExtResource("npc")]
 position = Vector2(1650, 590)
-npc_name = "ศิลาบันทึก"
+npc_name = "ศิลาสลักแห่งธอร์"
 type = 4
-dialog = "บันทึกการเดินทาง"
+dialog = "ศิลาสลักตราค้อน · สัมผัสเพื่อบันทึกการเดินทาง"
 
 [node name="Guide" parent="NPCs" unique_id=1727980527 instance=ExtResource("npc")]
 position = Vector2(-624, 590)
-npc_name = "ไกด์นำทาง"
+npc_name = "ทหารยามเอริค"
 type = 0
-dialog = "กด C ดูสเตตัส, I เปิดกระเป๋า, K เรียนสกิล นะ"
+dialog = "เด็กใหม่สินะ ข้าเอริค ยามประตูเมืองนี้\n\nกด C ดูสเตตัส · I เปิดกระเป๋า · K เรียนสกิล · M ดูแผนที่\nJ หรือคลิกซ้าย = ฟันดาบ · W หรือ Space = พุ่งหลบ อย่าอาย ข้าเองก็หลบทุกครั้ง\n\n...แล้วก็อย่าเข้าป่าลึกตอนค่ำนะ ผู้กองสั่งห้ามไว้\nไม่ได้บอกเหตุผลด้วย"
+
+[node name="HighPriest" parent="NPCs" instance=ExtResource("npc")]
+position = Vector2(1380, 590)
+npc_name = "นักบวชสูงสุดวาลเดอร์"
+type = 0
+dialog = "เจ้ามาถูกที่แล้ว ลูกเอ๋ย\n\nทุกคนที่ยืนอยู่ในเมืองนี้ยืนอยู่ได้เพราะค้อนของพระองค์\nจงถือดาบไว้ให้มั่น แล้วสายฟ้าจะนำทางเจ้าเอง"
+
+[node name="OldMan" parent="NPCs" instance=ExtResource("npc")]
+position = Vector2(-330, 590)
+npc_name = "ตาแก่กุนนาร์"
+type = 0
+dialog = "เด็กใหม่สินะ...\n\nระวังตัวด้วยแล้วกัน"
+
+[node name="Ingrid" parent="NPCs" instance=ExtResource("npc")]
+position = Vector2(830, 590)
+npc_name = "อิงกริด"
+type = 0
+dialog = "พ่อของข้าเข้าป่าไปเมื่อสิบวันก่อน\n\nแกเป็นนักล่า แกไม่เคยหลงทาง\nแต่คราวนี้แกยังไม่กลับมา"
+
+[node name="GuildMaster" parent="NPCs" instance=ExtResource("npc")]
+position = Vector2(2020, 590)
+npc_name = "หัวหน้ากิลด์บียอร์น"
+type = 0
+dialog = "กิลด์นักผจญภัยพรอนเทรา ยินดีต้อนรับ\n\nงานล่ามีเรื่อย ๆ ถ้าอยากได้เงินก็มาถามข้าได้\n\nช่วงนี้มอนสเตอร์แถวทุ่งเยอะผิดปกติ\nแปลกนะ พวกมันไม่ได้วิ่งมาทางเมือง พวกมันวิ่งผ่านไป"

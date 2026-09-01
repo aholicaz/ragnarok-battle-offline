@@ -189,7 +189,19 @@ func is_asking() -> bool:
 	return confirm != null and confirm.is_open()
 
 
+## ★ อยู่ในเกมไหม (รอบ 32) ★ หน้าหลัก/หน้าโหลดจะซ่อน HUD + ปิดปุ่มลัดทั้งหมด
+var in_game := true
+
+func set_in_game(on: bool) -> void:
+	in_game = on
+	layer.visible = on
+	if not on:
+		close_all()
+
+
 func _unhandled_input(event: InputEvent) -> void:
+	if not in_game:
+		return
 	if is_asking():
 		return
 	if event.is_action_pressed("toggle_status"):

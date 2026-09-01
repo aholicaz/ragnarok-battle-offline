@@ -20,12 +20,26 @@ extends Resource
 @export_multiline var dialog_complete: String = "เยี่ยมมาก นี่ของตอบแทน"
 
 @export_group("เงื่อนไข")
-## ★ ต้องล่ามอนตัวไหน ★ (id ของ MonsterData) เว้นว่าง = ไม่ต้องล่า
+## ★★ เงื่อนไขแบบใหม่ (หลายข้อ หลายชนิด) ★★ รอบ 30
+## กด + แล้วเลือก New ObjectiveData · ใส่ได้หลายข้อ ต้องครบทุกข้อถึงจะส่งเควสได้
+## ชนิด: ฆ่ามอน · หาไอเทม · คุยกับ NPC · ไปให้ถึงแมพ · ตรวจของในแมพ · ธงเนื้อเรื่อง
+##
+## ★ ใส่ช่องนี้แล้ว 2 ช่องข้างล่างจะถูกมองข้าม ★
+@export var objectives: Array[ObjectiveData] = []
+
+## ★ แบบเก่า ★ ต้องล่ามอนตัวไหน (id ของ MonsterData) เว้นว่าง = ไม่ต้องล่า
+## เควสเก่าที่กรอกช่องนี้ไว้ยังใช้ได้ปกติ — ระบบแปลงเป็นเงื่อนไข KILL 1 ข้อให้เอง
 @export var kill_monster_id: StringName = &""
 ## ล่ากี่ตัว
 @export var kill_count: int = 100
 ## ต้องเลเวลเท่าไหร่ถึงจะรับเควสได้
 @export var required_level: int = 1
+## ★ ต้องทำเควสไหนจบก่อน ★ ใส่ id ของเควสก่อนหน้า (ว่าง = รับได้เลย)
+@export var required_quests: Array[StringName] = []
+## ★ ต้องมีธงเนื้อเรื่องนี้ก่อน ★ ว่าง = ไม่ต้องมี
+@export var required_flag: StringName = &""
+## ★ ส่งเควสแล้วตั้งธงนี้ ★ ใช้ปลดล็อกเควสถัดไป / เปลี่ยนบทพูด NPC
+@export var set_flag_on_complete: StringName = &""
 
 @export_group("รางวัล")
 ## ไอเทมที่จะได้ (id ของไอเทม)
@@ -39,6 +53,29 @@ extends Resource
 @export_group("อื่น ๆ")
 ## ทำซ้ำได้ไหม (ส่งเควสแล้วรับใหม่ได้อีก)
 @export var repeatable: bool = false
+
+
+var _legacy_steps: Array[ObjectiveData] = []
+
+
+## ★★ รายการเงื่อนไขจริงของเควสนี้ ★★
+## ใส่ Objectives ไว้ = ใช้อันนั้น · ไม่ได้ใส่ = แปลงช่องแบบเก่าให้เป็นเงื่อนไข KILL 1 ข้อ
+func steps() -> Array[ObjectiveData]:
+	if not objectives.is_empty():
+		return objectives
+	if kill_monster_id == &"":
+		return _legacy_steps   # ว่าง = ไม่มีเงื่อนไข (เควสแค่คุยจบ)
+	if _legacy_steps.is_empty():
+		var o := ObjectiveData.new()
+		o.kind = ObjectiveData.Kind.KILL
+		o.target = kill_monster_id
+		o.count = kill_count
+		_legacy_steps = [o] as Array[ObjectiveData]
+	return _legacy_steps
+
+
+func step_count() -> int:
+	return steps().size()
 
 
 ## ชื่อมอนที่ต้องล่า (เอาไว้โชว์)

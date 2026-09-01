@@ -30,6 +30,22 @@ script = ExtResource("2_drop")
 item_id = &"card_wolf"
 chance = 5.0
 
+[sub_resource type="Resource" id="Drop_wolf_junk_wolf_fang"]
+script = ExtResource("2_drop")
+item_id = &"wolf_fang"
+chance = 30.0
+
+[sub_resource type="Resource" id="Drop_wolf_junk_wolf_claw"]
+script = ExtResource("2_drop")
+item_id = &"wolf_claw"
+chance = 15.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_wolf_eq_wolf_cloak"]
+script = ExtResource("2_drop")
+item_id = &"wolf_cloak"
+chance = 2.0
+
 [resource]
 script = ExtResource("1_monster")
 id = &"wolf"
@@ -61,5 +77,5 @@ knockback_force = 140.0
 exp_reward = 140
 zeny_min = 40
 zeny_max = 95
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_wolf_0"), SubResource("Drop_wolf_1"), SubResource("Drop_wolf_2"), SubResource("Drop_wolf_3"), SubResource("Drop_wolf_card")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_wolf_0"), SubResource("Drop_wolf_1"), SubResource("Drop_wolf_2"), SubResource("Drop_wolf_3"), SubResource("Drop_wolf_card"), SubResource("Drop_wolf_junk_wolf_fang"), SubResource("Drop_wolf_junk_wolf_claw"), SubResource("Drop_wolf_eq_wolf_cloak")])
 respawn_time = 10.0

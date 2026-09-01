@@ -29,6 +29,26 @@ script = ExtResource("2_drop")
 item_id = &"card_orc_warrior"
 chance = 5.0
 
+[sub_resource type="Resource" id="Drop_orc_warrior_junk_broken_axe_blade"]
+script = ExtResource("2_drop")
+item_id = &"broken_axe_blade"
+chance = 30.0
+
+[sub_resource type="Resource" id="Drop_orc_warrior_junk_orc_bandana"]
+script = ExtResource("2_drop")
+item_id = &"orc_bandana"
+chance = 12.0
+
+[sub_resource type="Resource" id="Drop_orc_warrior_eq_bastard_sword"]
+script = ExtResource("2_drop")
+item_id = &"bastard_sword"
+chance = 1.5
+
+[sub_resource type="Resource" id="Drop_orc_warrior_eq_iron_helm"]
+script = ExtResource("2_drop")
+item_id = &"iron_helm"
+chance = 1.0
+
 [resource]
 script = ExtResource("1_monster")
 id = &"orc_warrior"
@@ -64,5 +84,5 @@ knockback_force = 200.0
 exp_reward = 480
 zeny_min = 160
 zeny_max = 320
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_orc_warrior_0"), SubResource("Drop_orc_warrior_1"), SubResource("Drop_orc_warrior_2"), SubResource("Drop_orc_warrior_3"), SubResource("Drop_orc_warrior_card")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_orc_warrior_0"), SubResource("Drop_orc_warrior_1"), SubResource("Drop_orc_warrior_2"), SubResource("Drop_orc_warrior_3"), SubResource("Drop_orc_warrior_card"), SubResource("Drop_orc_warrior_junk_broken_axe_blade"), SubResource("Drop_orc_warrior_junk_orc_bandana"), SubResource("Drop_orc_warrior_eq_bastard_sword"), SubResource("Drop_orc_warrior_eq_iron_helm")])
 respawn_time = 15.0

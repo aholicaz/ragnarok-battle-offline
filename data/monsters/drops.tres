@@ -40,6 +40,16 @@ item_id = &"cotton_shirt"
 chance = 2.0
 metadata/_custom_type_script = "uid://lfvvfifv5f84"
 
+[sub_resource type="Resource" id="Drop_drops_junk_orange_jelly"]
+script = ExtResource("2_drop")
+item_id = &"orange_jelly"
+chance = 45.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_drops_junk_sun_dew"]
+script = ExtResource("2_drop")
+item_id = &"sun_dew"
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_fpjnn"]
 atlas = ExtResource("3_cvli4")
 region = Rect2(0, 0, 688, 768)
@@ -311,5 +321,5 @@ jump_interval = 0.6
 exp_reward = 34
 zeny_min = 10
 zeny_max = 28
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_drops_0"), SubResource("Drop_drops_1"), SubResource("Drop_drops_2"), SubResource("Drop_drops_card"), SubResource("Resource_g4v7s"), SubResource("Resource_yf5fn")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_drops_0"), SubResource("Drop_drops_1"), SubResource("Drop_drops_2"), SubResource("Drop_drops_card"), SubResource("Resource_g4v7s"), SubResource("Resource_yf5fn"), SubResource("Drop_drops_junk_orange_jelly"), SubResource("Drop_drops_junk_sun_dew")])
 respawn_time = 7.0

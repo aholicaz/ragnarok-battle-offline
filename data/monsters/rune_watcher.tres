@@ -1,0 +1,84 @@
+[gd_resource type="Resource" script_class="MonsterData" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="SpriteFrames" path="res://data/sprites/placeholder/rune_watcher_frames.tres" id="3_frames"]
+
+[sub_resource type="Resource" id="Drop_rune_watcher_0"]
+script = ExtResource("2_drop")
+item_id = &"broken_rune"
+chance = 40.0
+
+[sub_resource type="Resource" id="Drop_rune_watcher_1"]
+script = ExtResource("2_drop")
+item_id = &"watcher_lens"
+chance = 10.0
+
+[sub_resource type="Resource" id="Drop_rune_watcher_2"]
+script = ExtResource("2_drop")
+item_id = &"emveretarcon"
+chance = 30.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_rune_watcher_3"]
+script = ExtResource("2_drop")
+item_id = &"white_potion"
+chance = 15.0
+
+[sub_resource type="Resource" id="Drop_rune_watcher_4"]
+script = ExtResource("2_drop")
+item_id = &"runic_blade"
+chance = 1.0
+
+[sub_resource type="Resource" id="Drop_rune_watcher_card"]
+script = ExtResource("2_drop")
+item_id = &"card_rune_watcher"
+chance = 5.0
+
+[resource]
+script = ExtResource("1_monster")
+sprite_frames = ExtResource("3_frames")
+id = &"rune_watcher"
+display_name = "ผู้เฝ้ารูน"
+hitbox_size = Vector2(56, 60)
+hp_bar_offset_y = -87.4
+display_height = 230.0
+level = 35
+max_hp = 3200
+atk_min = 170
+atk_max = 230
+def = 30
+mdef = 30
+hit = 62
+flee = 30
+crit = 3
+element = 0
+race = 0
+size = 2
+ai_type = 1
+move_speed = 90.0
+jump_force = -280.0
+jump_while_chasing = false
+detect_range = 420.0
+attack_range = 126.0
+leash_range = 750.0
+wander_range = 260.0
+hop_while_wandering = false
+attack_windup = 0.4
+attack_duration = 0.5
+attack_cooldown = 1.8
+knockback_force = 220.0
+exp_reward = 1600
+job_exp_reward = 1120
+zeny_min = 400
+zeny_max = 700
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_rune_watcher_0"), SubResource("Drop_rune_watcher_1"), SubResource("Drop_rune_watcher_2"), SubResource("Drop_rune_watcher_3"), SubResource("Drop_rune_watcher_4"), SubResource("Drop_rune_watcher_card")])
+respawn_time = 15.0
+skill_name = "รูนระเบิด"
+skill_anim = &"Attack"
+skill_range = 340.0
+skill_radius_x = 260.0
+skill_radius_y = 160.0
+skill_damage_mult = 2.0
+skill_windup = 0.8
+skill_duration = 0.7

@@ -11,6 +11,12 @@ const MAPS := {
 	## ★ แมพใหม่ ★ Asgard Forest 2 (ต่อจากทุ่งของคุณไปทางขวา)
 	&"asgard_forest_2": "res://scenes/maps/asgard_forest_2.tscn",
 	&"dark_forest": "res://scenes/maps/dark_forest.tscn",
+	## ★ บทที่ 2 — สวาร์ทัลฟ์เฮม (รอบ 31) ★
+	&"iron_road": "res://scenes/maps/iron_road.tscn",
+	&"nidavellir_town": "res://scenes/maps/nidavellir_town.tscn",
+	&"ember_mine": "res://scenes/maps/ember_mine.tscn",
+	&"hall_of_silence": "res://scenes/maps/hall_of_silence.tscn",
+	&"cold_forge": "res://scenes/maps/cold_forge.tscn",
 }
 
 var _spawn_point_name: StringName = &"default"
@@ -58,6 +64,24 @@ func change_map(map_id: StringName, spawn_point: StringName = &"default") -> voi
 	await get_tree().process_frame
 	await get_tree().process_frame
 	Events.map_changed.emit(map_id)
+	await _fade_to(0.0, 0.3)
+	_is_changing = false
+
+
+## ★ กลับหน้าหลัก (รอบ 32) ★
+const TITLE_SCENE := "res://scenes/ui/title_screen.tscn"
+
+func go_title() -> void:
+	if _is_changing:
+		return
+	_is_changing = true
+	get_tree().paused = false
+	if UI != null:
+		UI.set_in_game(false)
+	await _fade_to(1.0, 0.3)
+	get_tree().change_scene_to_file(TITLE_SCENE)
+	await get_tree().process_frame
+	await get_tree().process_frame
 	await _fade_to(0.0, 0.3)
 	_is_changing = false
 

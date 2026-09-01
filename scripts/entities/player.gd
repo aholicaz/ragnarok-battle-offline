@@ -12,23 +12,52 @@ const JUMP_VELOCITY := -420.0
 const KNOCKBACK_DECAY := 900.0
 
 # =========================================================
-# ★★ การกระโดด (รอบ 27 · ปรับซ้ำรอบ 28) ★★
+# ★★ พุ่งหลบ (Dash) — รอบ 29 ★★
 #
-# ท่ากระโดดที่วาดกันทั่วไปจะมี 3 ช่วงในไฟล์เดียว เช่นของโปรเจกต์นี้ 6 เฟรม:
+# ปุ่มเดิมของ "กระโดด" (W / Space / ลูกศรขึ้น / ปุ่มบนจอมือถือ) เปลี่ยนมาเป็น
+# ★ พุ่งไปข้างหน้าเพื่อหลบการโจมตี ★
 #
-#   เฟรม 0-2  = ★ ย่อตัวถีบพื้น ★  (ยืน -> ย่อ -> ถีบ)   <- อยู่บนพื้น เล่นรวดเดียวตอนออกตัว
-#   เฟรม 3-4  = ★ ลอยกลางอากาศ ★  (ตัวลอย -> เริ่มตก)   <- เดินตามความเร็วแนวตั้งจริง
-#   เฟรม 5    = ★ ลงพื้น ★         (ยืนรับน้ำหนัก)        <- ค้างสั้น ๆ ตอนแตะพื้น
+#   · พุ่งไปทางที่กดค้างอยู่ (ไม่ได้กดทิศ = พุ่งไปทางที่หันหน้า)
+#   · ระหว่างพุ่งมี "ช่วงอมตะ" สั้น ๆ โดนตีไม่เข้า ขึ้นคำว่า "หลบ!" แทนดาเมจ
+#   · ระหว่างพุ่งไม่ตกลงพื้น (ลอยตรง) พุ่งข้ามหลุมได้
+#   · มีคูลดาวน์ กันกดรัว
 #
-# ★ ปัญหาที่เจอ ★ ถ้าเอาทั้ง 6 เฟรมไปผูกกับความเร็วรวดเดียว
-# เฟรม "ย่อตัว" จะไปโผล่ตอนที่ตัวละครพุ่งขึ้นแล้ว ดูเหมือนภาพเดินถอยหลัง
-# แล้วพอลงพื้นก็กระโดดข้ามไป Idle = ไม่เชื่อมกัน
+# อยากได้ "กระโดด" กลับมาด้วย เปิดช่อง Can Jump ในกลุ่ม "การกระโดด" ได้เลย
+# (ใช้ปุ่มเดียวกัน ถ้าเปิดทั้งคู่ ปุ่มจะเป็นพุ่งหลบก่อน)
+# =========================================================
+@export_group("พุ่งหลบ (Dash)")
+## เปิด/ปิดการพุ่งหลบ
+@export var dodge_enabled: bool = true
+## พุ่งไปไกลกี่พิกเซล
+@export var dodge_distance: float = 260.0
+## ความเร็วตอนพุ่ง (พิกเซล/วินาที) — เวลาที่ใช้พุ่ง = ระยะ ÷ ความเร็ว
+@export var dodge_speed: float = 1100.0
+## ★ ช่วงอมตะ ★ กี่วินาทีนับจากเริ่มพุ่ง (0 = ไม่มีช่วงอมตะ พุ่งเฉย ๆ)
+@export_range(0.0, 1.0) var dodge_invincible: float = 0.28
+## รอกี่วินาทีถึงพุ่งได้อีก (นับหลังพุ่งจบ)
+@export_range(0.0, 3.0) var dodge_cooldown: float = 0.55
+## เสีย SP ต่อการพุ่ง 1 ครั้ง (0 = ฟรี)
+@export_range(0, 50) var dodge_sp_cost: int = 0
+## ชนกำแพงแล้วหยุดพุ่งทันที
+@export var dodge_stop_on_wall: bool = true
+## ★ ชื่อท่าตอนพุ่ง ★ ไม่มีท่านี้ในชุดภาพ จะยืม "เฟรมลอยกลางอากาศ" ของท่ากระโดดมาใช้ให้
+@export var dodge_anim: StringName = &"Dash"
+
+# =========================================================
+# ★★ การกระโดด (รอบ 27 · ปรับซ้ำรอบ 28 · ปิดไว้ตั้งแต่รอบ 29) ★★
 #
-# ★ ตอนนี้ ★ แยกเป็น 3 ช่วงตามด้านบน ภาพเลยไหลต่อกันเป็นชุดเดียว
-# บอกระบบว่าเฟรมไหนเป็นช่วงไหนได้ที่ช่อง Jump Takeoff Frames / Jump Land Frames
-# (สไปรท์ที่ไม่มีช่วงย่อตัว ก็ตั้งเป็น 0 ได้)
+# ท่ากระโดด 6 เฟรมของโปรเจกต์นี้แบ่งเป็น 3 ช่วง:
+#   เฟรม 0-2 = ย่อตัวถีบพื้น (บนพื้น) · เฟรม 3-4 = ลอยกลางอากาศ · เฟรม 5 = ลงพื้น
+# ระบบเลยเล่นแยกช่วง ไม่เอาทั้งชีทไปผูกกับความเร็วรวดเดียว (ไม่งั้นเฟรมเดินถอยหลัง)
+# บอกช่วงได้ที่ช่อง Jump Takeoff Frames / Jump Land Frames
+#
+# ★ ตอนนี้ปุ่มกระโดดถูกเปลี่ยนไปเป็น "พุ่งหลบ" แล้ว ★ ค่ากลุ่มนี้ยังใช้ได้ถ้าเปิด Can Jump
+# และเฟรม "ลอยกลางอากาศ" ยังถูกยืมไปใช้เป็นท่าพุ่งหลบด้วย
 # =========================================================
 @export_group("การกระโดด")
+## ★ ปิดการกระโดดไว้ (รอบ 29 เปลี่ยนปุ่มไปเป็นพุ่งหลบแทน) ★
+## เปิดกลับได้ถ้าอยากให้มีทั้งกระโดดและพุ่งหลบ — แต่ใช้ปุ่มเดียวกัน พุ่งหลบจะมาก่อน
+@export var can_jump: bool = false
 ## แรงกระโดด (ยิ่งมากยิ่งสูง)
 @export var jump_power: float = 420.0
 ## ★ ตกเร็วกว่าตอนพุ่งขึ้นกี่เท่า ★ 1.0 = เท่ากัน (ลอยนาน), 1.3-1.6 = กระโดดหนึบ ตกไว
@@ -157,6 +186,11 @@ var _land_left := 0.0       # เหลือเวลาค้างท่า�
 var _jump_anim := ""        # ชื่อท่ากระโดดที่กำลังเล่นอยู่จริง
 var _air_time := 0.0        # ลอยอยู่กลางอากาศมากี่วินาทีแล้ว
 var _jump_kick := false     # ★ ลอยเพราะ "กดกระโดด" ★ (ไม่ใช่เดินตกขอบ) = ต้องเล่นท่าย่อตัว
+
+# ★ สถานะพุ่งหลบ ★
+var _dodge_time := 0.0      # เหลือเวลาพุ่งอีกกี่วินาที (0 = ไม่ได้พุ่งอยู่)
+var _dodge_cd := 0.0        # รออีกกี่วินาทีถึงพุ่งได้ใหม่
+var _iframe := 0.0          # ★ ช่วงอมตะ ★ เหลืออีกกี่วินาที
 # ★ สถานะท่าโดนตี ★ ล็อกไว้ไม่ให้ Idle/Run มาทับก่อนเล่นจบ
 var _hit_left := 0.0
 
@@ -204,6 +238,16 @@ func _physics_process(delta: float) -> void:
 
 	_tick_jump_timers(delta)
 
+	if _dodge_cd > 0.0:
+		_dodge_cd -= delta
+	if _iframe > 0.0:
+		_iframe -= delta
+
+	# ★ กำลังพุ่งหลบอยู่ ★ ทำแค่พุ่งอย่างเดียว ไม่รับคำสั่งอื่น
+	if _dodge_time > 0.0:
+		_dodge_step(delta)
+		return
+
 	# แรงกระเด็น
 	if knockback.length() > 1.0:
 		knockback = knockback.move_toward(Vector2.ZERO, KNOCKBACK_DECAY * delta)
@@ -233,9 +277,14 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 
-	# ★ กระโดด ★ — W / Space / ลูกศรขึ้น
+	# ★★ พุ่งหลบ ★★ — ปุ่มเดิมของกระโดด (W / Space / ลูกศรขึ้น / ปุ่มบนจอ)
+	if dodge_enabled and _jump_buffer > 0.0 and _dodge_cd <= 0.0:
+		_start_dodge()
+		return
+
+	# ★ กระโดด ★ — ปิดไว้เป็นค่าเริ่มต้น (เปิดที่ช่อง Can Jump)
 	# ใช้ทั้ง coyote time (เพิ่งตกขอบก็ยังกระโดดได้) และ buffer (กดก่อนถึงพื้นก็จำไว้ให้)
-	if _jump_buffer > 0.0 and _coyote > 0.0:
+	if can_jump and _jump_buffer > 0.0 and _coyote > 0.0:
 		velocity.y = -absf(jump_power)
 		_jump_buffer = 0.0
 		_coyote = 0.0
@@ -309,6 +358,90 @@ func _tick_jump_timers(delta: float) -> void:
 			_jump_anim = ""
 	if _hit_left > 0.0:
 		_hit_left -= delta
+
+
+# =========================================================
+# ★★ พุ่งหลบ (Dash) ★★
+# =========================================================
+## พุ่งได้ตอนนี้ไหม (ใช้เช็คก่อนโชว์คูลดาวน์บนปุ่มก็ได้)
+func can_dodge() -> bool:
+	if not dodge_enabled or _dead or is_attacking or _dodge_time > 0.0 or _dodge_cd > 0.0:
+		return false
+	return dodge_sp_cost <= 0 or PlayerState.stats.sp >= dodge_sp_cost
+
+
+## กำลังอมตะอยู่ไหม (ระหว่างพุ่งหลบ) — มอนตีมาก็ไม่เข้า
+func is_invincible() -> bool:
+	return _iframe > 0.0
+
+
+func is_dodging() -> bool:
+	return _dodge_time > 0.0
+
+
+func _start_dodge() -> void:
+	if not can_dodge():
+		_jump_buffer = 0.0
+		return
+
+	# ทิศที่พุ่ง: ตามปุ่มที่กดค้างอยู่ · ไม่ได้กดทิศ = พุ่งไปทางที่หันหน้า
+	var dir := Input.get_axis("move_left", "move_right")
+	if dir == 0.0:
+		dir = Input.get_axis("ui_left", "ui_right")
+	if dir != 0.0:
+		facing = 1 if dir > 0.0 else -1
+		_update_facing()
+
+	if dodge_sp_cost > 0:
+		PlayerState.spend_sp(dodge_sp_cost)
+
+	_dodge_time = dodge_distance / maxf(50.0, dodge_speed)
+	_dodge_cd = _dodge_time + dodge_cooldown
+	_iframe = dodge_invincible
+	_jump_buffer = 0.0
+	_hit_left = 0.0
+	_land_left = 0.0
+	_jump_anim = ""
+	knockback = Vector2.ZERO
+	velocity.y = 0.0
+	_play_dodge()
+
+
+func _dodge_step(delta: float) -> void:
+	_dodge_time -= delta
+	velocity.x = facing * dodge_speed
+	velocity.y = 0.0          # ลอยตรง ไม่ตกระหว่างพุ่ง (ข้ามหลุมได้)
+	move_and_slide()
+
+	if dodge_stop_on_wall and is_on_wall():
+		_dodge_time = 0.0
+	if _dodge_time <= 0.0:
+		_dodge_time = 0.0
+		velocity.x = 0.0
+
+
+## ท่าตอนพุ่ง — มีท่า Dash ก็ใช้เลย ไม่มีก็ยืม "เฟรมลอยกลางอากาศ" ของท่ากระโดด
+func _play_dodge() -> void:
+	if sprite.sprite_frames == null:
+		return
+	if _has_anim(String(dodge_anim)):
+		var real := _play(String(dodge_anim))
+		if real != "":
+			sprite.frame = 0
+			sprite.play(real)
+		return
+
+	# ไม่มีท่า Dash — ยืมเฟรมลอยของท่ากระโดดมาค้างไว้ (ท่าตัวพุ่งไปข้างหน้าพอดี)
+	var jump_real := _play("Jump")
+	if jump_real == "":
+		return
+	_jump_anim = jump_real
+	var count := sprite.sprite_frames.get_frame_count(jump_real)
+	if count <= 1:
+		return
+	if sprite.is_playing():
+		sprite.pause()
+	sprite.frame = _jump_frame_ranges(count)[1]   # เฟรมแรกของช่วง "ลอย"
 
 
 ## ยังกดปุ่มกระโดดค้างอยู่ไหม (ใช้ตัดสินว่าจะกระโดดสูงหรือเตี้ย)
@@ -494,6 +627,10 @@ func _update_facing() -> void:
 
 func _update_animation() -> void:
 	if is_attacking or sprite.sprite_frames == null:
+		return
+
+	# ★ กำลังพุ่งหลบ ★ ท่าถูกตั้งไว้แล้วตอนเริ่มพุ่ง อย่าให้อะไรมาทับ
+	if _dodge_time > 0.0:
 		return
 
 	# ★ โดนตีอยู่ ★ ปล่อยให้ท่า Hit เล่นจนจบก่อน ไม่ให้ Idle/Run มาทับ
@@ -830,7 +967,7 @@ func use_skill(skill_id: StringName) -> void:
 			velocity.x = 0.0
 			_play(skill_animation(skill_id))
 			Events.floating_text(global_position, s.display_name, Color("#ffd54a"), 18, 0)
-			_spawn_skill_effect(s)
+			_spawn_skill_effect(s, s.damage_mult(lv))
 
 			await get_tree().create_timer(s.cast_windup).timeout
 			if not is_instance_valid(self) or _dead:
@@ -851,14 +988,21 @@ func use_skill(skill_id: StringName) -> void:
 			# ★ ท่าสกิลแยกตามอาวุธที่ถือ ★ เช่น ถือดาบมือใหม่ใช้ bash -> Attack_Blade_bash
 			_play(skill_animation(skill_id))
 			Events.floating_text(global_position, s.display_name, Color("#ffd54a"), 18, 0)
-			_spawn_skill_effect(s)
+			_spawn_skill_effect(s, s.damage_mult(lv))
 
-			for i in range(maxi(1, s.hit_count)):
-				await get_tree().create_timer(s.cast_windup if i == 0 else 0.12).timeout
-				if not is_instance_valid(self) or _dead:
-					return
-				var all_dir := s.type == SkillData.SkillType.ACTIVE_AOE
-				_deal_damage(s.range_x, s.range_y, s.damage_mult(lv), s.use_matk, s.max_targets, all_dir)
+			# ★ เปิด Effect Damage ไว้ = ตัวเอฟเฟกต์เป็นคนทำดาเมจเอง ★
+			# ไม่ต้องคิดดาเมจแบบกรอบรอบตัวซ้ำอีก ไม่งั้นมอนจะโดน 2 เด้ง
+			if not s.effect_damage:
+				for i in range(maxi(1, s.hit_count)):
+					await get_tree().create_timer(s.cast_windup if i == 0 else 0.12).timeout
+					if not is_instance_valid(self) or _dead:
+						return
+					var all_dir := s.type == SkillData.SkillType.ACTIVE_AOE
+					_deal_damage(s.range_x, s.range_y, s.damage_mult(lv), s.use_matk,
+						s.max_targets, all_dir)
+			else:
+				# รอให้ท่าร่ายเล่นจบพอ ๆ กับแบบเดิม (เอฟเฟกต์ทำดาเมจไปเองแล้ว)
+				await get_tree().create_timer(s.cast_windup).timeout
 
 			await get_tree().create_timer(0.2).timeout
 			if is_instance_valid(self):
@@ -867,10 +1011,10 @@ func use_skill(skill_id: StringName) -> void:
 
 ## ★ เอฟเฟกต์สกิล ★ เกิดเป็นโหนดแยกในแมพ เลยใหญ่/ไกลเกินตัวละครได้
 ## ใส่ SpriteFrames ลงช่อง "Effect Frames" ของ SkillData แล้วมันทำงานเอง
-func _spawn_skill_effect(s: SkillData) -> void:
+func _spawn_skill_effect(s: SkillData, damage_mult: float = 1.0) -> void:
 	if s == null or not s.has_effect():
 		return
-	SkillEffect.spawn(s, self, facing)
+	SkillEffect.spawn(s, self, facing, damage_mult)
 
 
 # =========================================================
@@ -1002,6 +1146,12 @@ func _deal_damage(range_x: float, range_y: float, mult: float, use_matk: bool,
 # =========================================================
 func take_damage(amount: int, knockback_force: float = 0.0, from_direction: int = 0) -> void:
 	if _dead:
+		return
+
+	# ★★ ช่วงอมตะตอนพุ่งหลบ ★★ โดนตีไม่เข้า ขึ้นคำว่า "หลบ!" แทนเลขดาเมจ
+	if is_invincible():
+		Events.floating_text(global_position + Vector2(0, -40), "หลบ!",
+			Color("#9be7ff"), 26, 0)
 		return
 
 	PlayerState.take_damage(amount)

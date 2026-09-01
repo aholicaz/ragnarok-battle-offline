@@ -1,0 +1,94 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/map_base.gd" id="map_base"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="player"]
+[ext_resource type="PackedScene" path="res://scenes/monsters/monster.tscn" id="monster_scene"]
+[ext_resource type="Script" path="res://scripts/world/map_spawner.gd" id="map_spawner"]
+[ext_resource type="Script" path="res://scripts/world/monster_spawner.gd" id="spawner"]
+[ext_resource type="Script" path="res://scripts/resources/monster_data.gd" id="monster_data"]
+[ext_resource type="PackedScene" path="res://scenes/world/portal.tscn" id="portal"]
+[ext_resource type="PackedScene" path="res://scenes/npc/npc.tscn" id="npc"]
+[ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore"]
+[ext_resource type="Resource" path="res://data/monsters/forge_guardian.tres" id="md_forge_guardian"]
+
+[sub_resource type="RectangleShape2D" id="Rect_ground"]
+size = Vector2(3400, 240)
+
+[node name="Map" type="Node2D"]
+script = ExtResource("map_base")
+map_id = &"cold_forge"
+display_name = "เตาหลอมร้าง"
+chapter = 2
+region = "สวาร์ทัลฟ์เฮม"
+map_bounds = Rect2(-100, -200, 3200, 1300)
+player_scene = ExtResource("player")
+
+[node name="Background" type="Node2D" parent="."]
+
+[node name="Sky" type="Polygon2D" parent="Background"]
+z_index = -100
+position = Vector2(-100, -200)
+color = Color(0.06, 0.05, 0.06, 1)
+polygon = PackedVector2Array(0, 0, 3200, 0, 3200, 1300, 0, 1300)
+
+[node name="FarLayer" type="Polygon2D" parent="Background"]
+z_index = -90
+position = Vector2(-100, 520)
+color = Color(0.16, 0.1, 0.08, 1)
+polygon = PackedVector2Array(0, 0, 3200, 0, 3200, 360, 0, 360)
+
+[node name="Art" type="Sprite2D" parent="Background"]
+z_index = -80
+position = Vector2(1500, 550)
+
+[node name="Terrain" type="Node2D" parent="."]
+
+[node name="Ground" type="StaticBody2D" parent="Terrain"]
+position = Vector2(1500, 1000)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Ground"]
+shape = SubResource("Rect_ground")
+
+[node name="Visual" type="Polygon2D" parent="Terrain/Ground"]
+color = Color(0.24, 0.18, 0.15, 1)
+polygon = PackedVector2Array(-1700, -120, 1700, -120, 1700, 120, -1700, 120)
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(200, 820)
+
+[node name="from_hall" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(200, 820)
+
+[node name="Spawners" type="Node2D" parent="."]
+
+[node name="Boss_forge_guardian" type="Node2D" parent="Spawners"]
+position = Vector2(2500, 850)
+script = ExtResource("spawner")
+monster_types = Array[ExtResource("monster_data")]([ExtResource("md_forge_guardian")])
+monster_scene = ExtResource("monster_scene")
+max_alive = 1
+spawn_width = 160
+
+[node name="Portals" type="Node2D" parent="."]
+
+[node name="ToHall" parent="Portals" instance=ExtResource("portal")]
+position = Vector2(60, 880)
+target_map = &"hall_of_silence"
+target_spawn_point = &"from_forge"
+label_text = "← ห้องโถงเงียบ"
+destination_name = "ห้องโถงเงียบ"
+
+[node name="Lore" type="Node2D" parent="."]
+
+[node name="HammerBlueprint" parent="Lore" instance=ExtResource("lore")]
+position = Vector2(1500, 790)
+lore_id = &"hammer_blueprint"
+title = "แบบร่างบนกำแพง"
+text = "แบบร่างค้อนขนาดใหญ่สลักบนกำแพงหิน\n\nวงจรรูนรอบหัวค้อน... ไม่ใช่รูนป้องกัน\n\nมันคือรูน «ดูด»"
+label_text = "แบบร่างโบราณ"
+required_flag = &"killed_forge_guardian"
+locked_text = "ผู้พิทักษ์ยังยืนขวางอยู่ มองไม่เห็นกำแพงด้านหลัง"

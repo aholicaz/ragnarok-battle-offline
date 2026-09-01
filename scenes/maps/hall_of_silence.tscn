@@ -1,0 +1,147 @@
+[gd_scene load_steps=17 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/map_base.gd" id="map_base"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="player"]
+[ext_resource type="PackedScene" path="res://scenes/monsters/monster.tscn" id="monster_scene"]
+[ext_resource type="Script" path="res://scripts/world/map_spawner.gd" id="map_spawner"]
+[ext_resource type="Script" path="res://scripts/world/monster_spawner.gd" id="spawner"]
+[ext_resource type="Script" path="res://scripts/resources/monster_data.gd" id="monster_data"]
+[ext_resource type="PackedScene" path="res://scenes/world/portal.tscn" id="portal"]
+[ext_resource type="PackedScene" path="res://scenes/npc/npc.tscn" id="npc"]
+[ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore"]
+[ext_resource type="Resource" path="res://data/monsters/forge_golem.tres" id="md_forge_golem"]
+[ext_resource type="Resource" path="res://data/monsters/silent_wraith.tres" id="md_silent_wraith"]
+[ext_resource type="Resource" path="res://data/monsters/rune_watcher.tres" id="md_rune_watcher"]
+
+[sub_resource type="RectangleShape2D" id="Rect_ground"]
+size = Vector2(5000, 240)
+
+[sub_resource type="RectangleShape2D" id="Rect_p0"]
+size = Vector2(360, 32)
+
+[sub_resource type="RectangleShape2D" id="Rect_p1"]
+size = Vector2(320, 32)
+
+[sub_resource type="RectangleShape2D" id="Rect_p2"]
+size = Vector2(360, 32)
+
+[node name="Map" type="Node2D"]
+script = ExtResource("map_base")
+map_id = &"hall_of_silence"
+display_name = "ห้องโถงเงียบ"
+chapter = 2
+region = "สวาร์ทัลฟ์เฮม"
+map_bounds = Rect2(-100, -200, 4800, 1400)
+player_scene = ExtResource("player")
+
+[node name="Background" type="Node2D" parent="."]
+
+[node name="Sky" type="Polygon2D" parent="Background"]
+z_index = -100
+position = Vector2(-100, -200)
+color = Color(0.07, 0.08, 0.12, 1)
+polygon = PackedVector2Array(0, 0, 4800, 0, 4800, 1400, 0, 1400)
+
+[node name="FarLayer" type="Polygon2D" parent="Background"]
+z_index = -90
+position = Vector2(-100, 540)
+color = Color(0.12, 0.14, 0.2, 1)
+polygon = PackedVector2Array(0, 0, 4800, 0, 4800, 360, 0, 360)
+
+[node name="Art" type="Sprite2D" parent="Background"]
+z_index = -80
+position = Vector2(2300, 600)
+
+[node name="Terrain" type="Node2D" parent="."]
+
+[node name="Ground" type="StaticBody2D" parent="Terrain"]
+position = Vector2(2300, 1020)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Ground"]
+shape = SubResource("Rect_ground")
+
+[node name="Visual" type="Polygon2D" parent="Terrain/Ground"]
+color = Color(0.2, 0.22, 0.28, 1)
+polygon = PackedVector2Array(-2500, -120, 2500, -120, 2500, 120, -2500, 120)
+
+[node name="Plat0" type="StaticBody2D" parent="Terrain"]
+position = Vector2(1000, 700)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat0"]
+shape = SubResource("Rect_p0")
+
+[node name="Visual" type="Polygon2D" parent="Terrain/Plat0"]
+color = Color(0.2, 0.22, 0.28, 1)
+polygon = PackedVector2Array(-180, -16, 180, -16, 180, 16, -180, 16)
+
+[node name="Plat1" type="StaticBody2D" parent="Terrain"]
+position = Vector2(2100, 620)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat1"]
+shape = SubResource("Rect_p1")
+
+[node name="Visual" type="Polygon2D" parent="Terrain/Plat1"]
+color = Color(0.2, 0.22, 0.28, 1)
+polygon = PackedVector2Array(-160, -16, 160, -16, 160, 16, -160, 16)
+
+[node name="Plat2" type="StaticBody2D" parent="Terrain"]
+position = Vector2(3200, 700)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat2"]
+shape = SubResource("Rect_p2")
+
+[node name="Visual" type="Polygon2D" parent="Terrain/Plat2"]
+color = Color(0.2, 0.22, 0.28, 1)
+polygon = PackedVector2Array(-180, -16, 180, -16, 180, 16, -180, 16)
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(200, 840)
+
+[node name="from_mine" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(200, 840)
+
+[node name="from_forge" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(4400, 840)
+
+[node name="Spawners" type="Node2D" parent="."]
+
+[node name="MapSpawner" type="Node2D" parent="Spawners"]
+script = ExtResource("map_spawner")
+monster_types = Array[ExtResource("monster_data")]([ExtResource("md_forge_golem"), ExtResource("md_silent_wraith")])
+count_per_type = 4
+monster_scene = ExtResource("monster_scene")
+max_spawn_distance = 1700.0
+
+[node name="Boss_rune_watcher" type="Node2D" parent="Spawners"]
+position = Vector2(4100, 870)
+script = ExtResource("spawner")
+monster_types = Array[ExtResource("monster_data")]([ExtResource("md_rune_watcher")])
+monster_scene = ExtResource("monster_scene")
+max_alive = 1
+spawn_width = 160
+
+[node name="Portals" type="Node2D" parent="."]
+
+[node name="ToMine" parent="Portals" instance=ExtResource("portal")]
+position = Vector2(60, 900)
+target_map = &"ember_mine"
+target_spawn_point = &"from_hall"
+label_text = "← เหมืองถ่านไฟ"
+destination_name = "เหมืองถ่านไฟ"
+
+[node name="ToForge" parent="Portals" instance=ExtResource("portal")]
+position = Vector2(4540, 900)
+target_map = &"cold_forge"
+target_spawn_point = &"from_hall"
+label_text = "→ เตาหลอมร้าง"
+destination_name = "เตาหลอมร้าง"

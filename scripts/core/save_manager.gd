@@ -21,6 +21,9 @@ func has_save(slot: int) -> bool:
 func save_game(slot: int = 0) -> bool:
 	var data := PlayerState.to_dict()
 	data["saved_at"] = Time.get_datetime_string_from_system()
+	# ★ ชื่อแมพที่โชว์ (รอบ 32) ★ ให้หน้าหลักโชว์ "ป่าสนธยา" แทน asgard_forest_2
+	var map = get_tree().get_first_node_in_group("map") if get_tree() != null else null
+	data["map_name"] = String(map.display_name) if map != null and "display_name" in map else ""
 
 	var file := FileAccess.open(slot_path(slot), FileAccess.WRITE)
 	if file == null:
@@ -73,5 +76,6 @@ func slot_info(slot: int) -> Dictionary:
 		"job": s.get("job_id", ""),
 		"zeny": parsed.get("zeny", 0),
 		"map": parsed.get("map", ""),
+		"map_name": parsed.get("map_name", ""),
 		"saved_at": parsed.get("saved_at", ""),
 	}

@@ -44,10 +44,10 @@ const INFO_DARK := Color("#8a5a12")       # ข้อความเสริม
 const HINT_DARK := Color("#8b8f9b")       # คำใบ้มุมล่าง
 const LINE_SOFT := Color("#d6d0c2")       # เส้นคั่นในกล่อง
 ## ขนาดตัวอักษร
-const FONT_TEXT := 22
+const FONT_TEXT := 28
 const FONT_NAME := 19
-const FONT_INFO := 15
-const FONT_HINT := 13
+const FONT_INFO := 20
+const FONT_HINT := 16
 ## ระยะขอบในกล่อง
 const PAD_X := 22.0
 const PAD_TOP := 16.0

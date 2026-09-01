@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://Sprites/items/placeholder/iron_blade.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"iron_blade"
+display_name = "ใบมีดเหล็กคนแคระ"
+description = "ดาบเหล็กจากใต้ภูเขา หนา ทื่อแต่ทนทาน"
+icon = ExtResource("2_icon")
+required_level = 22
+type = 1
+slot = 1
+weapon_type = &"sword"
+attack_animation = &"Attack_Blade"
+card_slots = 1
+max_stack = 1
+buy_price = 14000
+sell_price = 5600
+atk = 50
+def = 3
+refinable = true
+refine_atk_per_level = 3

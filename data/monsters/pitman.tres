@@ -1,0 +1,73 @@
+[gd_resource type="Resource" script_class="MonsterData" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="SpriteFrames" path="res://data/sprites/placeholder/pitman_frames.tres" id="3_frames"]
+
+[sub_resource type="Resource" id="Drop_pitman_0"]
+script = ExtResource("2_drop")
+item_id = &"mole_claw"
+chance = 40.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_pitman_1"]
+script = ExtResource("2_drop")
+item_id = &"dirt_clump"
+chance = 30.0
+max_count = 3
+
+[sub_resource type="Resource" id="Drop_pitman_2"]
+script = ExtResource("2_drop")
+item_id = &"iron_ore"
+chance = 25.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_pitman_3"]
+script = ExtResource("2_drop")
+item_id = &"red_potion"
+chance = 5.0
+
+[sub_resource type="Resource" id="Drop_pitman_card"]
+script = ExtResource("2_drop")
+item_id = &"card_pitman"
+chance = 5.0
+
+[resource]
+script = ExtResource("1_monster")
+sprite_frames = ExtResource("3_frames")
+id = &"pitman"
+display_name = "พิตแมน"
+hitbox_size = Vector2(30, 30)
+hp_bar_offset_y = -57.0
+display_height = 150.0
+level = 19
+max_hp = 700
+atk_min = 72
+atk_max = 98
+def = 16
+mdef = 4
+hit = 34
+flee = 18
+crit = 2
+element = 3
+race = 2
+size = 0
+ai_type = 0
+move_speed = 95.0
+jump_force = -280.0
+jump_while_chasing = false
+detect_range = 250.0
+attack_range = 100.0
+leash_range = 750.0
+wander_range = 260.0
+hop_while_wandering = false
+attack_windup = 0.4
+attack_duration = 0.5
+attack_cooldown = 1.8
+knockback_force = 160.0
+exp_reward = 300
+job_exp_reward = 210
+zeny_min = 100
+zeny_max = 190
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_pitman_0"), SubResource("Drop_pitman_1"), SubResource("Drop_pitman_2"), SubResource("Drop_pitman_3"), SubResource("Drop_pitman_card")])
+respawn_time = 15.0

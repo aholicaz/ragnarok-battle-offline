@@ -74,6 +74,10 @@ func _build_content() -> void:
 	new_btn.pressed.connect(_do_new_game)
 	content.add_child(new_btn)
 
+	var title_btn := UITheme.make_button("กลับหน้าหลัก (อย่าลืมบันทึกก่อน)", 380)
+	title_btn.pressed.connect(_do_go_title)
+	content.add_child(title_btn)
+
 	_status = UITheme.make_label("", 12, UITheme.TEXT_DIM)
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	content.add_child(_status)
@@ -82,6 +86,12 @@ func _build_content() -> void:
 # =========================================================
 # ปุ่มต่าง ๆ
 # =========================================================
+func _do_go_title() -> void:
+	var ok: bool = await UI.ask("กลับหน้าหลัก", "ข้อมูลที่ยังไม่ได้บันทึกจะหายไป\nกลับหน้าหลักหรือไม่?", "กลับ", "ยังก่อน")
+	if ok:
+		Game.go_title()
+
+
 func _do_save(slot: int) -> void:
 	PlayerState.current_map_id = _current_map_id()
 	if SaveManager.save_game(slot):

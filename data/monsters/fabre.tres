@@ -27,6 +27,22 @@ script = ExtResource("2_drop")
 item_id = &"card_fabre"
 chance = 5.0
 
+[sub_resource type="Resource" id="Drop_fabre_junk_fabre_silk"]
+script = ExtResource("2_drop")
+item_id = &"fabre_silk"
+chance = 35.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_fabre_junk_feeler"]
+script = ExtResource("2_drop")
+item_id = &"feeler"
+chance = 15.0
+
+[sub_resource type="Resource" id="Drop_fabre_eq_wooden_shield"]
+script = ExtResource("2_drop")
+item_id = &"wooden_shield"
+chance = 1.0
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_fe1t8"]
 atlas = ExtResource("3_fisuj")
 region = Rect2(0, 0, 688, 768)
@@ -232,5 +248,5 @@ hop_while_wandering = false
 exp_reward = 18
 zeny_min = 5
 zeny_max = 15
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_fabre_0"), SubResource("Drop_fabre_1"), SubResource("Drop_fabre_2"), SubResource("Drop_fabre_card")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_fabre_0"), SubResource("Drop_fabre_1"), SubResource("Drop_fabre_2"), SubResource("Drop_fabre_card"), SubResource("Drop_fabre_junk_fabre_silk"), SubResource("Drop_fabre_junk_feeler"), SubResource("Drop_fabre_eq_wooden_shield")])
 respawn_time = 6.0

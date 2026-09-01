@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_data.gd" id="1_card"]
+[ext_resource type="Texture2D" path="res://Sprites/items/placeholder/card_ember_bat.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_card")
+monster_id = &"ember_bat"
+fits_slot = 5
+rarity = 3
+id = &"card_ember_bat"
+display_name = "การ์ดค้างคาวถ่านไฟ"
+description = "บินเร็วราวประกายไฟ"
+icon = ExtResource("2_icon")
+type = 5
+slot = 0
+max_stack = 99
+buy_price = 0
+sell_price = 37500
+flee = 8
+percent_effects = {
+"move_speed_percent": 5.0
+}

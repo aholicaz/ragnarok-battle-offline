@@ -7,3 +7,9 @@ build/
 export_presets.cfg.bak
 _*.zip
 *.bak
+
+# ★ ไฟล์ทำงานชั่วคราว (รอบ 32) ★ ไม่ต้องขึ้น GitHub
+_to_delete/
+*.tgz
+_dims.json
+_asset_report.json

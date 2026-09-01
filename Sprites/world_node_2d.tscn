@@ -22238,6 +22238,8 @@ size = Vector2(8, 777.5)
 
 [node name="WorldNode2D" type="Node2D" unique_id=698217290]
 script = ExtResource("map_base")
+map_id = &"prontera_field"
+display_name = "ทุ่งวิหาร"
 map_bounds = Rect2(-170, -320, 4500, 940)
 auto_fit_bounds = true
 player_scene = ExtResource("player_scene")
@@ -22287,10 +22289,10 @@ position = Vector2(214, 21)
 position = Vector2(4598, 402)
 target_map = &"asgard_forest_2"
 target_spawn_point = &"from_forest_1"
-label_text = "→ Asgard forest 2"
-destination_name = "Asgard Forest 2"
+label_text = "→ ป่าสนธยา"
+destination_name = "ป่าสนธยา"
 
 [node name="ToTown" parent="Portals" unique_id=1788592486 instance=ExtResource("portal")]
 position = Vector2(1102, 417)
 target_spawn_point = &"from_field"
-label_text = "→ เมือง (ร้านค้า/ตีบวก)"
+label_text = "→ พรอนเทรา"

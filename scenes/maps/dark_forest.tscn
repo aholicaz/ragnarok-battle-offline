@@ -36,7 +36,7 @@ size = Vector2(360, 32)
 [node name="Map" type="Node2D"]
 script = ExtResource("map_base")
 map_id = &"dark_forest"
-display_name = "ป่ามืด"
+display_name = "ป่าเงาลึก"
 map_bounds = Rect2(0, 0, 5600, 1300)
 player_scene = ExtResource("player")
 
@@ -136,6 +136,12 @@ position = Vector2(200, 850)
 [node name="from_field" type="Marker2D" parent="SpawnPoints"]
 position = Vector2(200, 850)
 
+[node name="from_forest_2" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(200, 850)
+
+[node name="from_iron_road" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(5300, 850)
+
 [node name="Spawners" type="Node2D" parent="."]
 
 [node name="MapSpawner" type="Node2D" parent="Spawners"]
@@ -162,6 +168,16 @@ spawn_width = 120
 
 [node name="ToField" parent="Portals" instance=ExtResource("portal")]
 position = Vector2(70, 900)
-target_map = &"prontera_field"
+target_map = &"asgard_forest_2"
+target_spawn_point = &"from_dark_forest"
+label_text = "← ป่าสนธยา"
+destination_name = "ป่าสนธยา"
+
+[node name="ToIronRoad" parent="Portals" instance=ExtResource("portal")]
+position = Vector2(5560, 900)
+target_map = &"iron_road"
 target_spawn_point = &"from_forest"
-label_text = "→ ทุ่งหญ้า"
+label_text = "→ ทางเหล็ก"
+destination_name = "ทางเหล็ก (บทที่ 2)"
+required_flag = &"chapter2_open"
+locked_text = "ทางเดินแคบ ๆ ลงไปใต้ดิน... มืดเกินกว่าจะไปต่อโดยไม่มีแผนที่"

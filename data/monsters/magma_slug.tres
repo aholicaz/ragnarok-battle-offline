@@ -1,0 +1,64 @@
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://ctesrl84xraec"]
+
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="SpriteFrames" path="res://data/sprites/placeholder/magma_slug_frames.tres" id="3_frames"]
+
+[sub_resource type="Resource" id="Drop_magma_slug_0"]
+script = ExtResource("2_drop")
+item_id = &"magma_core"
+chance = 12.0
+
+[sub_resource type="Resource" id="Drop_magma_slug_1"]
+script = ExtResource("2_drop")
+item_id = &"slug_slime"
+chance = 45.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_magma_slug_2"]
+script = ExtResource("2_drop")
+item_id = &"phracon"
+
+[sub_resource type="Resource" id="Drop_magma_slug_3"]
+script = ExtResource("2_drop")
+item_id = &"orange_potion"
+
+[sub_resource type="Resource" id="Drop_magma_slug_card"]
+script = ExtResource("2_drop")
+item_id = &"card_magma_slug"
+chance = 5.0
+
+[resource]
+script = ExtResource("1_monster")
+id = &"magma_slug"
+display_name = "ทากลาวา"
+sprite_frames = ExtResource("3_frames")
+hitbox_size = Vector2(46, 30)
+hp_bar_offset_y = -57.0
+display_height = 150.0
+level = 27
+max_hp = 1300
+atk_min = 110
+atk_max = 150
+def = 26
+mdef = 20
+hit = 42
+flee = 8
+element = 1
+move_speed = 60.0
+jump_force = -280.0
+jump_while_chasing = false
+attack_range = 116.0
+leash_range = 750.0
+wander_range = 260.0
+hop_while_wandering = false
+attack_windup = 0.4
+attack_duration = 0.5
+attack_cooldown = 1.8
+knockback_force = 160.0
+exp_reward = 640
+job_exp_reward = 448
+zeny_min = 170
+zeny_max = 320
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_magma_slug_0"), SubResource("Drop_magma_slug_1"), SubResource("Drop_magma_slug_2"), SubResource("Drop_magma_slug_3"), SubResource("Drop_magma_slug_card")])
+respawn_time = 15.0

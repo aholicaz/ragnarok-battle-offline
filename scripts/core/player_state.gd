@@ -29,16 +29,78 @@ var cooldowns: Dictionary = {}
 var _regen_timer := 0.0
 var _is_dead := false
 
+# =========================================================
+# ★★ ธงเนื้อเรื่อง (Story Flags) — รอบ 30 ★★
+#
+# ใช้จำว่า "เกิดอะไรขึ้นแล้วบ้าง" ในเนื้อเรื่อง เช่น
+#   สาบานต่อธอร์แล้วหรือยัง · เจอคนแปลกหน้าแล้วหรือยัง · ดูพิธีฉลองแล้วหรือยัง
+#
+# เอาไปใช้ได้ 3 ที่:
+#   1) เงื่อนไขเควส (ObjectiveData ชนิด FLAG · ช่อง Required Flag ของเควส)
+#   2) เลือกบทพูดของ NPC (NPC มีบทพูดหลายชุด ดูที่ npc.gd)
+#   3) เปลี่ยนพฤติกรรมเกม เช่น แมพกลางคืน / ข้อความหน้าจอตาย
+#
+# ตั้งค่า: PlayerState.set_flag(&"saw_ceremony")
+# อ่านค่า: PlayerState.has_flag(&"saw_ceremony")
+# =========================================================
+var story_flags: Dictionary = {}
+
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	new_game()
 	Events.monster_killed.connect(_on_monster_killed)
+	# ★ เดินความคืบหน้าเควสชนิดใหม่ ★
+	Events.map_changed.connect(_on_map_changed)
+	Events.inventory_changed.connect(_on_inventory_changed)
 
 
 func _on_monster_killed(monster_id: StringName, _level: int) -> void:
 	if quests != null:
 		quests.on_monster_killed(monster_id)
+
+
+func _on_map_changed(map_id: StringName) -> void:
+	if quests != null:
+		quests.on_map_entered(map_id)
+
+
+func _on_inventory_changed() -> void:
+	# เงื่อนไข "หาไอเทม" นับสดจากกระเป๋า — แค่แจ้งให้สมุดเควสอัปเดต
+	if quests != null:
+		quests.refresh_live()
+
+
+# =========================================================
+# ★ ธงเนื้อเรื่อง ★
+# =========================================================
+## ตั้งธง (ค่าเริ่มต้น = true) · ตั้งซ้ำค่าเดิมจะไม่ยิงสัญญาณซ้ำ
+func set_flag(flag: StringName, value: Variant = true) -> void:
+	if flag == &"":
+		return
+	if story_flags.get(flag, null) == value:
+		return
+	story_flags[flag] = value
+	if quests != null:
+		quests.refresh_live()
+	Events.quest_changed.emit()
+
+
+func has_flag(flag: StringName) -> bool:
+	var v = story_flags.get(flag, false)
+	if v is bool:
+		return v
+	return v != null
+
+
+## อ่านค่าธงแบบเก็บข้อมูลได้ (เช่น เก็บว่าผู้เล่นตอบอะไร)
+func get_flag(flag: StringName, fallback: Variant = false) -> Variant:
+	return story_flags.get(flag, fallback)
+
+
+func clear_flag(flag: StringName) -> void:
+	if story_flags.erase(flag):
+		Events.quest_changed.emit()
 
 
 ## รับรางวัลเควส แล้วส่งเควส — คืน true ถ้าส่งสำเร็จ
@@ -75,6 +137,7 @@ func new_game() -> void:
 	equipment = Equipment.new()
 	skills = SkillBook.new()
 	quests = QuestLog.new()
+	story_flags.clear()
 	zeny = 1000
 	active_buffs.clear()
 	cooldowns.clear()
@@ -430,6 +493,25 @@ func gain_item(inst: ItemInstance) -> int:
 	return leftover
 
 
+## ★ ให้ไอเทมจาก id ★ ใช้ตอนอ่าน lore / รางวัลเควส / ของจากเนื้อเรื่อง
+## คืนจำนวนที่ใส่กระเป๋าไม่ลง (0 = เข้าครบ)
+func gain_item_id(item_id: StringName, count: int = 1) -> int:
+	if item_id == &"" or count <= 0:
+		return 0
+	var d := GameData.get_item(item_id)
+	if d == null:
+		push_warning("[PlayerState] ไม่รู้จักไอเทม: " + String(item_id))
+		return count
+	var inst := ItemInstance.new()
+	inst.item_id = item_id
+	inst.count = count
+	var left := gain_item(inst)
+	if left < count:
+		Events.item_gained.emit(item_id, count - left)
+		Events.say("ได้รับ %s x%d" % [d.display_name, count - left])
+	return left
+
+
 ## เก็บการ์ดใบนี้ได้แล้วหรือยัง (นับทั้งในกระเป๋าและที่ใส่อยู่ในอุปกรณ์)
 func owns_card(card_id: StringName) -> bool:
 	if inventory.has(card_id, 1):
@@ -652,7 +734,15 @@ func to_dict() -> Dictionary:
 		"zeny": zeny,
 		"item_hotkeys": [String(item_hotkeys[0]), String(item_hotkeys[1])],
 		"map": String(current_map_id),
+		"flags": _flags_to_dict(),
 	}
+
+
+func _flags_to_dict() -> Dictionary:
+	var out: Dictionary = {}
+	for k in story_flags.keys():
+		out[String(k)] = story_flags[k]
+	return out
 
 
 func from_dict(d: Dictionary) -> void:
@@ -676,6 +766,12 @@ func from_dict(d: Dictionary) -> void:
 	for i in range(mini(ih.size(), ITEM_HOTKEY_COUNT)):
 		item_hotkeys[i] = StringName(ih[i])
 	current_map_id = StringName(d.get("map", "prontera_field"))
+
+	story_flags.clear()
+	var fl = d.get("flags", {})
+	if fl is Dictionary:
+		for k in fl.keys():
+			story_flags[StringName(k)] = fl[k]
 
 	refresh(false)
 	_emit_all()

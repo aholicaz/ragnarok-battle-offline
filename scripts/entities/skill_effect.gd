@@ -21,9 +21,29 @@ var _dir := 1
 var _follow: Node2D = null
 var _follow_offset := Vector2.ZERO
 
+# ★ ให้เอฟเฟกต์ทำดาเมจเอง (รอบ 29) ★
+var _damage := false
+var _mult := 1.0
+var _use_matk := false
+var _hit_size := Vector2.ZERO
+var _max_targets := 0
+var _hit_once := true
+var _pierce := true
+var _hits: Array = []
+## ★ ตีหลายครั้งต่อตัว (รอบ 32) ★
+var _hit_count := 1              # ตีกี่ครั้งต่อมอน 1 ตัว
+var _hit_interval := 0.2         # เว้นช่วงระหว่างครั้ง
+var _stick := true               # ชนครบโควตาแล้วหยุดวิ่ง
+var _hit_n: Dictionary = {}      # มอน -> ตีไปแล้วกี่ครั้ง
+var _next_hit: Dictionary = {}   # มอน -> อีกกี่วิถึงตีได้อีก
+var _ending := false
+var _delay := 0.0
+
 
 ## สร้างเอฟเฟกต์จากสกิลของผู้เล่น
-static func spawn(skill: SkillData, caster: Node2D, facing: int) -> SkillEffect:
+## damage_mult = ตัวคูณดาเมจที่เลเวลสกิลนี้ (ใช้ตอนเปิดช่อง Effect Damage)
+static func spawn(skill: SkillData, caster: Node2D, facing: int,
+		damage_mult: float = 1.0) -> SkillEffect:
 	if skill == null or skill.effect_frames == null:
 		return null
 	return spawn_config({
@@ -38,6 +58,17 @@ static func spawn(skill: SkillData, caster: Node2D, facing: int) -> SkillEffect:
 		"delay": skill.effect_delay,
 		"z": skill.effect_z,
 		"name": String(skill.id),
+		# ★ ดาเมจที่ตัวเอฟเฟกต์ทำเอง ★
+		"damage": skill.effect_damage,
+		"mult": damage_mult,
+		"use_matk": skill.use_matk,
+		"hit_size": skill.effect_hit_size,
+		"max_targets": skill.effect_max_targets,
+		"hit_once": skill.effect_hit_once,
+		"pierce": skill.effect_pierce,
+		"hits": skill.effect_hit_count if skill.effect_hit_count > 0 else skill.hit_count,
+		"hit_interval": skill.effect_hit_interval,
+		"stick": skill.effect_stick_on_hit,
 	}, caster, facing)
 
 
@@ -96,6 +127,19 @@ func _setup(cfg: Dictionary, caster: Node2D, facing: int) -> void:
 	_dir = 1 if facing >= 0 else -1
 	_speed = float(cfg.get("speed", 0.0))
 	_life = float(cfg.get("life", 0.0))
+
+	# ★ ตั้งค่าการทำดาเมจของตัวเอฟเฟกต์เอง ★
+	_damage = bool(cfg.get("damage", false))
+	_mult = float(cfg.get("mult", 1.0))
+	_use_matk = bool(cfg.get("use_matk", false))
+	_hit_size = cfg.get("hit_size", Vector2.ZERO)
+	_max_targets = int(cfg.get("max_targets", 0))
+	_hit_once = bool(cfg.get("hit_once", true))
+	_hit_count = maxi(1, int(cfg.get("hits", 1)))
+	_hit_interval = maxf(0.02, float(cfg.get("hit_interval", 0.2)))
+	_stick = bool(cfg.get("stick", true))
+	_pierce = bool(cfg.get("pierce", true))
+
 	if bool(cfg.get("follow", false)):
 		_follow = caster
 		_follow_offset = Vector2(base_offset.x * signf(facing), base_offset.y)
@@ -124,7 +168,11 @@ func _setup(cfg: Dictionary, caster: Node2D, facing: int) -> void:
 
 	_sprite.animation = StringName(anim)
 	_sprite.frame = 0
-	_sprite.play(StringName(anim))
+	# ★ เริ่มเล่นตอน "โผล่" เท่านั้น ★ (รอบ 32)
+	# ถ้าตั้ง Effect Delay ไว้ ห้ามเริ่มเล่นตรงนี้ ไม่งั้นภาพเดินไปแล้วตอนยังซ่อนอยู่
+	# พอโผล่มาก็เหลือแต่เฟรมท้าย ๆ (Bash เห็นแค่จังหวะเดียว — บั๊กที่ผู้ใช้เจอ)
+	if float(cfg.get("delay", 0.0)) <= 0.0:
+		_sprite.play(StringName(anim))
 
 	# ---------- ขนาด ----------
 	var k := float(cfg.get("scale", 1.0))
@@ -141,14 +189,22 @@ func _setup(cfg: Dictionary, caster: Node2D, facing: int) -> void:
 	if _life <= 0.0:
 		_life = 0.5
 
-	var delay := float(cfg.get("delay", 0.0))
-	if delay > 0.0:
+	# ★★ หน่วงก่อนโผล่ ★★
+	# ห้ามสร้าง SceneTree timer ตรงนี้ — _setup() ถูกเรียก "ก่อน add_child"
+	# ตอนนั้น get_tree() ยังเป็น null ตัวจับเวลาเลยไม่เกิด เอฟเฟกต์ซ่อนค้างตลอดไป
+	# (บั๊กนี้ไม่โผล่จนกว่าจะมีสกิลที่ตั้ง Effect Delay จริง ๆ — เจอตอนทำ Bash รอบ 29)
+	_delay = maxf(0.0, float(cfg.get("delay", 0.0)))
+	if _delay > 0.0:
 		visible = false
-		var t := get_tree().create_timer(delay) if get_tree() != null else null
-		if t != null:
-			t.timeout.connect(func():
-				if is_instance_valid(self):
-					visible = true)
+
+
+func _ready() -> void:
+	if _delay > 0.0:
+		await get_tree().create_timer(_delay).timeout
+		if is_instance_valid(self):
+			visible = true
+			_sprite.frame = 0
+			_sprite.play()          # เริ่มเล่นพร้อมกับที่โผล่ ภาพเลยครบทุกเฟรม
 
 
 func _anim_length(frames: SpriteFrames, anim: StringName) -> float:
@@ -162,15 +218,113 @@ func _anim_length(frames: SpriteFrames, anim: StringName) -> float:
 
 
 func _process(delta: float) -> void:
+	# ★ ยังไม่ถึงเวลาโผล่ (Effect Delay) ★ ยังไม่ต้องวิ่ง ไม่ต้องทำดาเมจ
+	if not visible:
+		return
+
 	if _follow != null and is_instance_valid(_follow):
 		global_position = _follow.global_position + _follow_offset
 	elif _speed != 0.0:
 		position.x += _dir * _speed * delta
 
+	# ★★ ดาเมจจากตัวเอฟเฟกต์ ★★ มอนตัวไหนโดนภาพนี้ ตัวนั้นกินดาเมจ
+	if _damage and visible:
+		_tick_hit_timers(delta)
+		_damage_step()
+
 	_life -= delta
 	if _life <= 0.0:
-		# จางหายแทนที่จะหายวับ
-		var tween := create_tween()
-		tween.tween_property(self, "modulate:a", 0.0, 0.12)
-		tween.tween_callback(queue_free)
-		set_process(false)
+		_expire()
+
+
+## จางหายแทนที่จะหายวับ
+func _expire() -> void:
+	if _ending:
+		return
+	_ending = true
+	set_process(false)
+	var tween := create_tween()
+	tween.tween_property(self, "modulate:a", 0.0, 0.12)
+	tween.tween_callback(queue_free)
+
+
+# =========================================================
+# ★★ กรอบชนของเอฟเฟกต์ ★★
+# ไม่ได้ตั้ง Effect Hit Size ไว้ = ใช้ขนาดภาพจริงของเฟรมที่กำลังโชว์อยู่
+# (ย่อ/ขยายตาม Effect Scale / Effect Height ให้แล้ว)
+# =========================================================
+func hit_rect() -> Rect2:
+	var size := _hit_size
+	if size.x <= 0.0 or size.y <= 0.0:
+		size = Vector2(80, 80)
+		if _sprite != null and _sprite.sprite_frames != null:
+			var frames := _sprite.sprite_frames
+			var anim := _sprite.animation
+			if frames.has_animation(anim) and frames.get_frame_count(anim) > 0:
+				var idx: int = clampi(_sprite.frame, 0, frames.get_frame_count(anim) - 1)
+				var tex := frames.get_frame_texture(anim, idx)
+				if tex != null:
+					size = Vector2(tex.get_width(), tex.get_height()) * _sprite.scale
+	return Rect2(global_position - size * 0.5, size)
+
+
+## กรอบตัวมอน — มอนบอกขนาดตัวเองได้ ถ้าไม่มีก็เดาให้ (เหมือนใน player.gd)
+static func _enemy_rect(enemy: Node) -> Rect2:
+	if enemy.has_method("body_rect"):
+		return enemy.body_rect()
+	var f: Vector2 = enemy.foot_position() if enemy.has_method("foot_position") \
+		else (enemy as Node2D).global_position
+	return Rect2(f.x - 20.0, f.y - 60.0, 40.0, 60.0)
+
+
+func _damage_step() -> void:
+	var tree := get_tree()
+	if tree == null or _ending:
+		return
+	var box := hit_rect()
+
+	for enemy in tree.get_nodes_in_group("enemy"):
+		if not is_instance_valid(enemy) or not enemy.has_method("take_damage_from_player"):
+			continue
+		if enemy.has_method("is_dead") and enemy.is_dead():
+			continue
+		var done: int = int(_hit_n.get(enemy, 0))
+		# ★ ตีครบจำนวนครั้งของตัวนี้แล้ว ★ (hit_once ปิด = ตีซ้ำได้เรื่อย ๆ ตามช่วงเวลา)
+		if _hit_once and done >= _hit_count:
+			continue
+		# ยังไม่ถึงเวลาตีครั้งถัดไป
+		if float(_next_hit.get(enemy, 0.0)) > 0.0:
+			continue
+		# ★ ตัวที่โดนไปแล้ว (คอมโบต่อเนื่อง) ให้กรอบกว้างขึ้น ★
+		# ครั้งแรกมักเด้งถอย (knockback) ออกจากกรอบ ถ้าเช็คเป๊ะจะโดนแค่ครั้งเดียว
+		var test_box := box if done == 0 else box.grow_individual(box.size.x * 0.5, box.size.y * 0.3, box.size.x * 0.5, box.size.y * 0.3)
+		if not test_box.intersects(_enemy_rect(enemy), true):
+			continue
+		# ★ โควตาจำนวนตัวเต็มแล้ว ★ ตัวใหม่ไม่โดน (ตัวเดิมยังโดนครั้งถัดไปได้)
+		if not (enemy in _hits):
+			if _max_targets > 0 and _hits.size() >= _max_targets:
+				continue
+			_hits.append(enemy)
+
+		var ex: float = enemy.foot_position().x if enemy.has_method("foot_position") \
+			else (enemy as Node2D).global_position.x
+		var dx: float = ex - global_position.x
+		enemy.take_damage_from_player(_mult, _use_matk,
+			signi(int(dx)) if dx != 0.0 else _dir)
+		_hit_n[enemy] = done + 1
+		_next_hit[enemy] = _hit_interval
+
+		# ไม่ทะลุ = ชนตัวแรกแล้วหายไปเลย (เหมือนกระสุน)
+		if not _pierce:
+			_expire()
+			return
+		# ★ ชนครบโควตาแล้ว: หยุดอยู่กับที่ เล่นภาพต่อจนจบ ★ (ไม่หายวับกลางคัน)
+		if _stick and _max_targets > 0 and _hits.size() >= _max_targets:
+			_speed = 0.0
+			_follow = null
+
+
+## นับถอยหลังช่วงเว้นระหว่างครั้ง
+func _tick_hit_timers(delta: float) -> void:
+	for k in _next_hit.keys():
+		_next_hit[k] = float(_next_hit[k]) - delta

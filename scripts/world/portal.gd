@@ -24,6 +24,13 @@ extends Area2D
 ## true = เดินชนแล้วไปเลย / false = ต้องกด F (ค่าเริ่มต้น)
 @export var auto_enter: bool = false
 
+@export_group("ล็อกด้วยเนื้อเรื่อง (รอบ 31)")
+## ★ ต้องมีธงเนื้อเรื่องนี้ก่อนถึงจะผ่านได้ ★ เว้นว่าง = ผ่านได้เสมอ
+## เช่น ประตูไปบทที่ 2 ใส่ "chapter2_open" แล้วให้เควส M13 ตั้งธงนี้ตอนส่ง
+@export var required_flag: StringName = &""
+## ข้อความตอนยังผ่านไม่ได้ (โชว์ในกล่องสนทนา)
+@export_multiline var locked_text: String = "ทางนี้ยังไปไม่ได้..."
+
 var _player_inside := false
 var _asked := false
 var _entering := false
@@ -127,7 +134,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		_enter()
 
 
+## ประตูนี้ยังล็อกอยู่ไหม
+func is_locked() -> bool:
+	return required_flag != &"" and not PlayerState.has_flag(required_flag)
+
+
 func _enter() -> void:
+	if is_locked():
+		if not UI.dialogue.is_open():
+			UI.talk([{"name": "", "text": locked_text}])
+		return
 	_entering = true
 	if _hint != null:
 		_hint.visible = false

@@ -31,6 +31,21 @@ script = ExtResource("2_drop")
 item_id = &"card_baphomet_jr"
 chance = 5.0
 
+[sub_resource type="Resource" id="Drop_baphomet_jr_junk_small_horn"]
+script = ExtResource("2_drop")
+item_id = &"small_horn"
+chance = 40.0
+
+[sub_resource type="Resource" id="Drop_baphomet_jr_junk_imp_tail"]
+script = ExtResource("2_drop")
+item_id = &"imp_tail"
+chance = 15.0
+
+[sub_resource type="Resource" id="Drop_baphomet_jr_eq_ember_cape"]
+script = ExtResource("2_drop")
+item_id = &"ember_cape"
+chance = 2.0
+
 [resource]
 script = ExtResource("1_monster")
 id = &"baphomet_jr"
@@ -63,5 +78,5 @@ knockback_force = 180.0
 exp_reward = 980
 zeny_min = 350
 zeny_max = 700
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_baphomet_jr_0"), SubResource("Drop_baphomet_jr_1"), SubResource("Drop_baphomet_jr_2"), SubResource("Drop_baphomet_jr_3"), SubResource("Drop_baphomet_jr_card")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_baphomet_jr_0"), SubResource("Drop_baphomet_jr_1"), SubResource("Drop_baphomet_jr_2"), SubResource("Drop_baphomet_jr_3"), SubResource("Drop_baphomet_jr_card"), SubResource("Drop_baphomet_jr_junk_small_horn"), SubResource("Drop_baphomet_jr_junk_imp_tail"), SubResource("Drop_baphomet_jr_eq_ember_cape")])
 respawn_time = 20.0

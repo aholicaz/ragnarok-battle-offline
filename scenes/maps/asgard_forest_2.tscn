@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://blodxsbqompev"]
 
-[ext_resource type="Texture2D" uid="uid://cnqab7kovdqj7" path="res://Sprites/Asgard forest 1.png" id="3_50dtd"]
+[ext_resource type="Texture2D" uid="uid://il0gkoxbttwk" path="res://Sprites/map/test.png" id="4_1lhe5"]
 [ext_resource type="Script" uid="uid://cj52mis2ydm4e" path="res://scripts/world/map_base.gd" id="map_base"]
 [ext_resource type="Script" uid="uid://cwutmh7bygsgm" path="res://scripts/world/map_spawner.gd" id="map_spawner"]
 [ext_resource type="Resource" uid="uid://5fqcedkqf7wo" path="res://data/monsters/fabre.tres" id="md_fabre"]
@@ -11,17 +11,18 @@
 [ext_resource type="PackedScene" uid="uid://ce4i2xgacms7p" path="res://scenes/monsters/monster.tscn" id="monster_scene"]
 [ext_resource type="PackedScene" uid="uid://bhp7c8ti14pnn" path="res://scenes/player/player.tscn" id="player"]
 [ext_resource type="PackedScene" uid="uid://d3v8kjt45bnvr" path="res://scenes/world/portal.tscn" id="portal"]
+[ext_resource type="Texture2D" uid="uid://bh2r555to20aj" path="res://Sprites/map/asgard forest2 sky.png" id="tex_sky"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_1lhe5"]
 load_path = "res://.godot/imported/Asgard forest 1.png-2c3d95c3f73e5942f9bcf732f2b48b72.ctex"
 
 [sub_resource type="RectangleShape2D" id="Rect_ground"]
-size = Vector2(3600, 240)
+size = Vector2(3600, 96)
 
 [node name="Map" type="Node2D" unique_id=542017039]
 script = ExtResource("map_base")
 map_id = &"asgard_forest_2"
-display_name = "Asgard Forest 2"
+display_name = "ป่าสนธยา"
 map_bounds = Rect2(-100, -200, 3800, 1200)
 player_scene = ExtResource("player")
 
@@ -29,24 +30,25 @@ player_scene = ExtResource("player")
 
 [node name="Sky" type="Polygon2D" parent="Background" unique_id=174662827]
 z_index = -100
-position = Vector2(1700, 400)
-color = Color(0.09, 0.16, 0.13, 1)
-texture = ExtResource("3_50dtd")
-polygon = PackedVector2Array(-1900, -650, 1900, -650, 1900, 650, -1900, 650)
-uv = PackedVector2Array(-1900, -650, 1900, -650, 1900, 650, -1900, 650)
+position = Vector2(-146, -311)
+texture = ExtResource("tex_sky")
+polygon = PackedVector2Array(0, 0, 3800, 0, 3800, 1200, 0, 1200)
+uv = PackedVector2Array(0, 0, 3800, 0, 3800, 1200, 0, 1200)
 
 [node name="FarTrees" type="Polygon2D" parent="Background" unique_id=2074509464]
+visible = false
 z_index = -90
-position = Vector2(1700, 760)
-color = Color(0.11, 0.24, 0.17, 1)
-polygon = PackedVector2Array(-1900, -260, 1900, -260, 1900, 260, -1900, 260)
+position = Vector2(-100, -200)
+polygon = PackedVector2Array(0, 0, 3800, 0, 3800, 1200, 0, 1200)
+uv = PackedVector2Array(0, 0, 3800, 0, 3800, 1200, 0, 1200)
 
 [node name="Art" type="Sprite2D" parent="Background" unique_id=1538886237]
 z_index = -80
 position = Vector2(1700, 500)
 
 [node name="AsgardForest1" type="Sprite2D" parent="Background" unique_id=867366698]
-position = Vector2(884, 525)
+visible = false
+position = Vector2(917.99994, 2281)
 scale = Vector2(1.4776834, 1.4776833)
 texture = SubResource("CompressedTexture2D_1lhe5")
 
@@ -57,23 +59,28 @@ position = Vector2(1700, 1000)
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Terrain/Ground" unique_id=598747573]
+position = Vector2(52, -391)
 shape = SubResource("Rect_ground")
 
 [node name="Visual" type="Polygon2D" parent="Terrain/Ground" unique_id=1490613768]
-position = Vector2(-20, 406)
-color = Color(0.22, 0.34, 0.2, 1)
-polygon = PackedVector2Array(-1800, -120, 1800, -120, 1800, 120, -1800, 120)
+position = Vector2(-3792, 280)
+texture = ExtResource("4_1lhe5")
+polygon = PackedVector2Array(0, 0, 3600, 0, 3600, 880, 0, 880)
+uv = PackedVector2Array(0, 0, 3500, 0, 3500, 880, 0, 880)
 
 [node name="SpawnPoints" type="Node2D" parent="." unique_id=1345571278]
 
 [node name="default" type="Marker2D" parent="SpawnPoints" unique_id=1072452141]
-position = Vector2(180, 820)
+position = Vector2(238, 563)
 
 [node name="from_forest_1" type="Marker2D" parent="SpawnPoints" unique_id=986032948]
-position = Vector2(180, 820)
+position = Vector2(242, 571)
+
+[node name="from_dark_forest" type="Marker2D" parent="SpawnPoints" unique_id=645602998]
+position = Vector2(3316, 571)
 
 [node name="boss_gate" type="Marker2D" parent="SpawnPoints" unique_id=448472448]
-position = Vector2(2900, 820)
+position = Vector2(2928, 607)
 
 [node name="Spawners" type="Node2D" parent="." unique_id=374590361]
 
@@ -98,12 +105,15 @@ despawn_distance = 0.0
 [node name="Portals" type="Node2D" parent="." unique_id=1498973762]
 
 [node name="ToForest1" parent="Portals" unique_id=532989640 instance=ExtResource("portal")]
-position = Vector2(60, 880)
+position = Vector2(81, 515)
 target_map = &"prontera_field"
 target_spawn_point = &"from_forest_2"
-label_text = "← Asgard Forest 1"
-destination_name = "Asgard Forest 1"
+label_text = "← ทุ่งวิหาร"
+destination_name = "ทุ่งวิหาร"
 
 [node name="ToTown" parent="Portals" unique_id=177933821 instance=ExtResource("portal")]
-position = Vector2(3380, 880)
-destination_name = "เมือง Asgard"
+position = Vector2(3362, 604)
+target_map = &"dark_forest"
+target_spawn_point = &"from_forest_2"
+label_text = "→ ป่าเงาลึก"
+destination_name = "ป่าเงาลึก"

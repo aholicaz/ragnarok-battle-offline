@@ -90,21 +90,28 @@ func _add_row(q: QuestData, progress: int, ready: bool, done: bool) -> void:
 
 	box.add_child(UITheme.make_label("จาก: %s" % q.giver_name, 11, UITheme.TEXT_DIM))
 
-	# ---------- ความคืบหน้า ----------
-	if q.kill_monster_id != &"":
+	# ---------- ★ ความคืบหน้า (รองรับหลายเงื่อนไข) ★ ----------
+	var steps := q.steps()
+	for i in range(steps.size()):
+		var o: ObjectiveData = steps[i]
+		var got: int = o.need() if done else PlayerState.quests.count_of(q.id, i)
+		var step_ok: bool = done or got >= o.need()
+
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 6)
 		box.add_child(row)
 
-		var obj := UITheme.make_label(q.objective_text(progress), 12,
-			UITheme.TEXT_DIM if done else UITheme.TEXT)
+		var obj := UITheme.make_label(o.line(got), 12,
+			UITheme.TEXT_DIM if done else (UITheme.GOOD if step_ok else UITheme.TEXT))
 		obj.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(obj)
 
-		var bar := UITheme.make_bar(UITheme.GOOD if ready or done else UITheme.EXP, 12)
-		bar.custom_minimum_size = Vector2(140, 12)
-		bar.max_value = maxi(1, q.kill_count)
-		bar.value = mini(progress, q.kill_count)
-		row.add_child(bar)
+		# แถบความคืบหน้าโชว์เฉพาะเงื่อนไขที่ต้องทำหลายครั้ง
+		if o.need() > 1:
+			var bar := UITheme.make_bar(UITheme.GOOD if step_ok else UITheme.EXP, 12)
+			bar.custom_minimum_size = Vector2(140, 12)
+			bar.max_value = o.need()
+			bar.value = mini(got, o.need())
+			row.add_child(bar)
 
 	box.add_child(UITheme.make_label("รางวัล: %s" % q.reward_text(), 11, Color("#ffe9a0")))

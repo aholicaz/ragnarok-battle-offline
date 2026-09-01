@@ -29,6 +29,22 @@ script = ExtResource("2_drop")
 item_id = &"card_munak"
 chance = 5.0
 
+[sub_resource type="Resource" id="Drop_munak_junk_old_hairpin"]
+script = ExtResource("2_drop")
+item_id = &"old_hairpin"
+chance = 25.0
+
+[sub_resource type="Resource" id="Drop_munak_junk_burial_cloth"]
+script = ExtResource("2_drop")
+item_id = &"burial_cloth"
+chance = 30.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_munak_eq_rosary"]
+script = ExtResource("2_drop")
+item_id = &"rosary"
+chance = 0.8
+
 [resource]
 script = ExtResource("1_monster")
 id = &"munak"
@@ -62,5 +78,5 @@ knockback_force = 160.0
 exp_reward = 280
 zeny_min = 90
 zeny_max = 180
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_munak_0"), SubResource("Drop_munak_1"), SubResource("Drop_munak_2"), SubResource("Drop_munak_3"), SubResource("Drop_munak_card")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_munak_0"), SubResource("Drop_munak_1"), SubResource("Drop_munak_2"), SubResource("Drop_munak_3"), SubResource("Drop_munak_card"), SubResource("Drop_munak_junk_old_hairpin"), SubResource("Drop_munak_junk_burial_cloth"), SubResource("Drop_munak_eq_rosary")])
 respawn_time = 12.0

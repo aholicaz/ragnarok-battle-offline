@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://Sprites/items/placeholder/golem_plate.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"golem_plate"
+display_name = "แผ่นเกราะโกเลม"
+description = "แผ่นโลหะจากตัวโกเลม มีรอยสลักรูนจาง ๆ"
+icon = ExtResource("2_icon")
+type = 3
+buy_price = 1050
+sell_price = 350

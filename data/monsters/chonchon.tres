@@ -25,6 +25,17 @@ script = ExtResource("2_drop")
 item_id = &"card_chonchon"
 chance = 5.0
 
+[sub_resource type="Resource" id="Drop_chonchon_junk_insect_wing"]
+script = ExtResource("2_drop")
+item_id = &"insect_wing"
+chance = 40.0
+max_count = 2
+
+[sub_resource type="Resource" id="Drop_chonchon_junk_chonchon_eye"]
+script = ExtResource("2_drop")
+item_id = &"chonchon_eye"
+chance = 8.0
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_qyd0n"]
 atlas = ExtResource("3_wick7")
 region = Rect2(0, 0, 842, 848)
@@ -106,4 +117,4 @@ attack_cooldown = 1.1
 exp_reward = 48
 zeny_min = 14
 zeny_max = 35
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_chonchon_0"), SubResource("Drop_chonchon_1"), SubResource("Drop_chonchon_2"), SubResource("Drop_chonchon_card")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_chonchon_0"), SubResource("Drop_chonchon_1"), SubResource("Drop_chonchon_2"), SubResource("Drop_chonchon_card"), SubResource("Drop_chonchon_junk_insect_wing"), SubResource("Drop_chonchon_junk_chonchon_eye")])

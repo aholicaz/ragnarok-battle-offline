@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/lore_object.gd" id="1_lore"]
+
+[sub_resource type="RectangleShape2D" id="Rect_lore"]
+size = Vector2(120, 200)
+
+[node name="LoreObject" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_lore")
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+shape = SubResource("Rect_lore")

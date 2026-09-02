@@ -1,8 +1,9 @@
-[gd_scene format=3 uid="uid://bykirat6m5hsc"]
+[gd_scene format=3 uid="uid://da6eey0rg7ufq"]
 
 [ext_resource type="Texture2D" uid="uid://cnqab7kovdqj7" path="res://Sprites/Asgard forest 1.png" id="3_y5mfp"]
 [ext_resource type="Resource" uid="uid://5fqcedkqf7wo" path="res://data/monsters/fabre.tres" id="7_1fvrm"]
 [ext_resource type="Resource" uid="uid://gl0q4jqqgbe8" path="res://data/monsters/drops.tres" id="8_1fvrm"]
+[ext_resource type="Texture2D" uid="uid://dp1fyg6evchyj" path="res://Sprites/รูปภาพ Codex 2 ก.ย. 2569 22_48_52.png" id="10_k861a"]
 [ext_resource type="Script" uid="uid://cj52mis2ydm4e" path="res://scripts/world/map_base.gd" id="map_base"]
 [ext_resource type="Script" uid="uid://cwutmh7bygsgm" path="res://scripts/world/map_spawner.gd" id="map_spawner"]
 [ext_resource type="Resource" uid="uid://dctfetjjy4cox" path="res://data/monsters/poring.tres" id="md_poring"]
@@ -22236,12 +22237,74 @@ size = Vector2(6750.5, 30)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_yf5fn"]
 size = Vector2(8, 777.5)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_fk1fu"]
+atlas = ExtResource("10_k861a")
+region = Rect2(0, 0, 384, 507)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m5tlm"]
+atlas = ExtResource("10_k861a")
+region = Rect2(384, 0, 384, 507)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a5fq2"]
+atlas = ExtResource("10_k861a")
+region = Rect2(768, 0, 384, 507)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r51ho"]
+atlas = ExtResource("10_k861a")
+region = Rect2(1152, 0, 384, 507)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c2cxu"]
+atlas = ExtResource("10_k861a")
+region = Rect2(0, 507, 384, 507)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gdmw5"]
+atlas = ExtResource("10_k861a")
+region = Rect2(384, 507, 384, 507)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oa5p8"]
+atlas = ExtResource("10_k861a")
+region = Rect2(768, 507, 384, 507)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_igunp"]
+atlas = ExtResource("10_k861a")
+region = Rect2(1152, 507, 384, 507)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g4v7s"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fk1fu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m5tlm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a5fq2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r51ho")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c2cxu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gdmw5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oa5p8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_igunp")
+}],
+"loop": 1,
+"name": &"Idle",
+"speed": 8.0
+}]
+
 [node name="PronteraField" type="Node2D" unique_id=698217290]
 script = ExtResource("map_base")
-map_id = &"prontera_field"
 display_name = "ทุ่งวิหาร"
 map_bounds = Rect2(120, -320, 5750, 950)
-auto_fit_bounds = false
 player_scene = ExtResource("player_scene")
 camera_offset = Vector2(0, -40)
 
@@ -22293,6 +22356,15 @@ label_text = "→ ป่าสนธยา"
 destination_name = "ป่าสนธยา"
 
 [node name="ToTown" parent="Portals" unique_id=1788592486 instance=ExtResource("portal")]
+visible = false
 position = Vector2(1102, 417)
 target_spawn_point = &"from_field"
 label_text = "→ พรอนเทรา"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Portals" unique_id=1146782479]
+position = Vector2(1093, 365)
+scale = Vector2(0.6286982, 0.6286982)
+sprite_frames = SubResource("SpriteFrames_g4v7s")
+animation = &"Idle"
+autoplay = "Idle"
+frame_progress = 0.8749341

@@ -13,3 +13,10 @@ _to_delete/
 *.tgz
 _dims.json
 _asset_report.json
+
+# ★ รอบ 43 ★ ไฟล์ที่ไม่ต้องขึ้น GitHub
+# แคชของ python
+__pycache__/
+*.pyc
+# วิดีโอต้นฉบับ (เกมใช้ .ogv ที่แปลงแล้ว ~24 MB ไม่ต้องขึ้น repo)
+*.mp4

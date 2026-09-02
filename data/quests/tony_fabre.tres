@@ -14,6 +14,7 @@ dialog_complete = "สุดยอด! นี่ค่าจ้างตาม�
 kill_monster_id = &"fabre"
 kill_count = 100
 required_level = 1
+required_quests = Array[StringName]([&"hans_poring"])
 reward_item_id = &""
 reward_item_count = 0
 reward_zeny = 3000

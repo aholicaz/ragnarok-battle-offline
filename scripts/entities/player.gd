@@ -769,11 +769,14 @@ func _apply_auto_fit() -> void:
 	var fd: Dictionary = list[clampi(sprite.frame, 0, list.size() - 1)]
 
 	# แนวนอน: จัดให้ตัวละครอยู่กึ่งกลาง (สลับข้างตอนหันกลับ)
-	sprite.offset.x = fd.dx if sprite.flip_h else -fd.dx
+	sprite.offset.x = fd.dx_use if sprite.flip_h else -fd.dx_use
 
 	# แนวตั้ง: ให้ปลายเท้าแตะระดับพื้นของกล่องชน
+	# ★ รอบ 39: ใช้ bottom_use (ค่ากลางของท่า) แทนค่าดิบรายเฟรม ★
+	# เดิมจัดเท้ารายเฟรม → ขอบล่างของภาพต่างกันเฟรมละ 1-3 px (เงา/ขอบเบลอ)
+	# ทำให้ทั้งตัวถูกดันขึ้น-ลงตามจังหวะเฟรม = "ยืน idle แล้วตัวเด้ง" ที่ผู้ใช้เห็น
 	if auto_fit_align_feet:
-		sprite.offset.y = (_feet_y() - sprite.position.y) / k - fd.bottom
+		sprite.offset.y = (_feet_y() - sprite.position.y) / k - fd.bottom_use
 
 
 ## ปรับกล่องชนให้พอดีกับขนาดตัวละคร
@@ -838,6 +841,24 @@ func _fit_info(anim: StringName) -> Dictionary:
 			# ตัวละครเยื้องจากกึ่งกลางผ้าใบไปทางขวาเท่าไหร่
 			"dx": float(used.position.x) + float(used.size.x) * 0.5 - tw * 0.5,
 		})
+
+	# ★ รอบ 39 — กันตัวเด้งตอน idle ★
+	# ขอบภาพแต่ละเฟรมคลาดกันเล็กน้อยเป็นเรื่องปกติของงานวาด (เงา/ขอบเบลอ/ผมปลิว)
+	# ถ้าจัดเท้าตามค่าดิบรายเฟรม ทั้งตัวจะกระตุกตาม → ใช้ "ค่ากลาง" ของทั้งท่าแทน
+	# เฟรมไหนต่างจากค่ากลางมากจริง ๆ (>12 px ในภาพต้นฉบับ เช่น ท่าก้ม/กระโดด) ค่อยใช้ค่าของเฟรมนั้น
+	const SNAP := 12.0
+	var bots: Array = []
+	var dxs: Array = []
+	for fdd in list:
+		bots.append(fdd.bottom)
+		dxs.append(fdd.dx)
+	bots.sort()
+	dxs.sort()
+	var med_bottom: float = bots[bots.size() >> 1] if not bots.is_empty() else 0.0
+	var med_dx: float = dxs[dxs.size() >> 1] if not dxs.is_empty() else 0.0
+	for fdd in list:
+		fdd["bottom_use"] = fdd.bottom if absf(fdd.bottom - med_bottom) > SNAP else med_bottom
+		fdd["dx_use"] = fdd.dx if absf(fdd.dx - med_dx) > SNAP else med_dx
 
 	var info := {
 		"scale": auto_fit_height / maxf(1.0, tallest),

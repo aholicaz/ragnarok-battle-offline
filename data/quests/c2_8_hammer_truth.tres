@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="Obj_0"]
+script = ExtResource("2_obj")
+kind = 4
+target = &"hammer_blueprint"
+count = 1
+text = "ดูแบบร่างบนกำแพงเตาหลอมร้าง"
+
+[resource]
+script = ExtResource("1_quest")
+id = &"c2_8_hammer_truth"
+title = "C2-8 ความจริงของค้อน"
+description = "ดูแบบร่างบนกำแพงในสุดของเตาหลอมร้าง แล้วกลับมาคุยกับบรอกก์"
+giver_name = "บรอกก์"
+dialog_offer = "ถ้าเจ้าผ่านผู้พิทักษ์มาได้จริง... ไปดูกำแพงด้านในสุดของเตาหลอมร้าง แล้วกลับมาบอกข้า ว่าเจ้าเห็นอะไร"
+dialog_progress = "แบบร่างอยู่บนกำแพงในสุดของเตาหลอมร้าง หลังจุดที่ผู้พิทักษ์เคยยืน"
+dialog_complete = "...เจ้าเห็นแล้วสินะ วงจรรูนบนหัวค้อน — มันไม่ใช่รูนป้องกัน มันคือรูน «ดูด» ...ใช่ เราสร้างค้อนให้ธอร์จริง แต่ฟังให้ดีนะมนุษย์ — เราไม่เคยสร้างมันเพื่อปกป้องพวกเจ้า"
+objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0")])
+kill_monster_id = &""
+required_level = 34
+required_quests = Array[StringName]([&"c2_7_forge_guardian"])
+set_flag_on_complete = &"chapter2_done"
+reward_item_id = &"forge_saber"
+reward_item_count = 1
+reward_zeny = 10000
+reward_exp = 20000

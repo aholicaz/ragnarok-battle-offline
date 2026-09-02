@@ -77,6 +77,19 @@ enum AIType {
 @export var wander_range: float = 240.0
 ## เด้ง/กระโดดตอนเดินเล่นด้วยไหม (โพริงควรเป็น true)
 @export var hop_while_wandering: bool = true
+
+## ★★ จังหวะยืนพักตอนเดินเล่น (รอบ 33) ★★
+## เดินไปสักพัก -> ยืนนิ่งเล่นท่า Idle -> เดินต่อ  ทำให้แมพดูมีชีวิตขึ้นมาก
+## โอกาสที่เดินจบ 1 ช่วงแล้วจะ "ยืนพัก" (0 = ไม่พักเลย เดินตลอด · 1 = พักทุกครั้ง)
+@export_range(0.0, 1.0) var wander_pause_chance: float = 0.65
+## ยืนพักนานเท่าไหร่ (วินาที) — สุ่มระหว่างสองค่านี้
+@export_range(0.2, 12.0) var wander_pause_min: float = 3.0
+@export_range(0.2, 12.0) var wander_pause_max: float = 5.0
+## เดินติดต่อกันนานเท่าไหร่ก่อนจะพักรอบถัดไป
+@export_range(0.3, 12.0) var wander_walk_min: float = 1.6
+@export_range(0.3, 12.0) var wander_walk_max: float = 3.2
+## ★ ระหว่างพักหันมองรอบ ๆ ★ โอกาสที่จะหันกลับด้านกลางช่วงพัก (0 = ยืนนิ่งอย่างเดียว)
+@export_range(0.0, 1.0) var wander_look_chance: float = 0.7
 ## เว้นกี่วินาทีถึงจะกระโดดได้อีกครั้ง (กันกระโดดรัวจนดูแปลก)
 @export var jump_interval: float = 0.7
 
@@ -109,6 +122,13 @@ enum AIType {
 @export var is_boss: bool = false
 ## คำนำหน้าชื่อตอนโชว์ (เช่น "MVP")
 @export var boss_title: String = "MVP"
+
+## ★ วิดีโอเปิดตัวบอส (รอบ 41) ★ เล่นตอนผู้เล่น "เจอบอสตัวนี้ครั้งแรก" — ครั้งเดียวต่อเซฟ
+## (จำด้วยธงเนื้อเรื่อง seen_intro_<id> เก็บลงเซฟ) · เว้นว่าง = ไม่มีฉากเปิดตัว
+## ต้องเป็น Ogg Theora (.ogv) — แปลงจาก mp4 ด้วย ffmpeg (ดูคู่มือ 7.50)
+@export_file("*.ogv") var intro_video: String = ""
+## ผู้เล่นเข้าใกล้กว่าระยะนี้ = เริ่มเล่นวิดีโอ
+@export var intro_range: float = 700.0
 
 # =========================================================
 # ★ สกิลมอนสเตอร์ (ใช้กับบอสเป็นหลัก) ★
@@ -166,6 +186,45 @@ enum AIType {
 ## หน่วงกี่วินาทีหลังเริ่มร่ายถึงจะโผล่ (ตั้งเท่า Skill Windup จะระเบิดพร้อมดาเมจพอดี)
 @export var skill_effect_delay: float = 0.0
 @export var skill_effect_z: int = 60
+
+@export_group("โจมตีระยะไกล — ยิงกระสุน (รอบ 36)")
+## ★ ใส่รูปแล้วท่าโจมตีปกติจะ "ยิงกระสุน" ใส่ผู้เล่นแทนการตีติดตัว ★ (เช่น ลูนาติกยิงบอล)
+## ยิงตอน Attack Windup · ตั้ง Attack Range ให้ไกล ๆ (300+) มอนจะหยุดยิงจากระยะนั้น
+@export var projectile_texture: Texture2D
+## ความเร็วกระสุน (พิกเซล/วิ)
+@export var projectile_speed: float = 520.0
+## ขนาดกระสุนบนจอ (ความสูง พิกเซล)
+@export var projectile_height: float = 64.0
+## จุดปล่อย นับจากเท้า (x = ไปข้างหน้าตามที่หัน · y ติดลบ = สูงขึ้น)
+@export var projectile_offset: Vector2 = Vector2(30, -80)
+## กล่องชนของกระสุน (0,0 = ใช้ขนาดรูป)
+@export var projectile_hit_size: Vector2 = Vector2.ZERO
+## รูปต้นฉบับหันซ้าย (ปกติสไปรท์มอนหันซ้าย) — ยิงไปขวาระบบจะพลิกให้
+@export var projectile_faces_left: bool = true
+## หมุนกี่รอบต่อวินาที (0 = ไม่หมุน)
+@export var projectile_spin: float = 0.0
+## วิ่งได้ไกลสุดแล้วหาย
+@export var projectile_range: float = 720.0
+
+@export_group("สกิล — บอลโค้งตกพื้นระเบิด (รอบ 36)")
+## ★ ใส่รูปแล้วสกิลจะ "ขว้างบอลโค้ง" ไปตกที่ตำแหน่งผู้เล่น แล้วระเบิดทำดาเมจรอบ ๆ ★
+## ดาเมจ/รัศมี/กระเด็นใช้ค่า Skill Damage Mult · Skill Radius X/Y · Skill Knockback ตามเดิม
+@export var skill_projectile_texture: Texture2D
+## ขนาดบอลบนจอ (สูง)
+@export var skill_projectile_height: float = 100.0
+## จุดปล่อย นับจากเท้า
+@export var skill_projectile_offset: Vector2 = Vector2(60, -170)
+## โค้งสูงขึ้นจากเส้นตรงเท่าไหร่ (พิกเซล)
+@export var skill_projectile_arc: float = 240.0
+## เวลาบินจนตกพื้น (วิ)
+@export var skill_projectile_time: float = 0.9
+## หมุนกี่รอบต่อวินาที
+@export var skill_projectile_spin: float = 0.8
+## เอฟเฟกต์ตอนระเบิด (เว้นว่าง = ใช้ Sprites/effects/slime_burst.png)
+@export var skill_explosion_frames: SpriteFrames
+@export var skill_explosion_anim: StringName = &"burst"
+## ขนาดเอฟเฟกต์ระเบิดบนจอ (สูง)
+@export var skill_explosion_height: float = 260.0
 
 @export_group("ท่าตาย")
 ## ★ ให้ท่าตายเล่นนานกี่วินาที ★ 0 = คิดจากจำนวนเฟรม/ความเร็วของอนิเมชันเอง

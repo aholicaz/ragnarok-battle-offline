@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://bhp7c8ti14pnn" path="res://scenes/player/player.tscn" id="player"]
 [ext_resource type="PackedScene" uid="uid://d3v8kjt45bnvr" path="res://scenes/world/portal.tscn" id="portal"]
 [ext_resource type="Texture2D" uid="uid://bh2r555to20aj" path="res://Sprites/map/asgard forest2 sky.png" id="tex_sky"]
+[ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore38"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_1lhe5"]
 load_path = "res://.godot/imported/Asgard forest 1.png-2c3d95c3f73e5942f9bcf732f2b48b72.ctex"
@@ -30,7 +31,8 @@ player_scene = ExtResource("player")
 
 [node name="Sky" type="Polygon2D" parent="Background" unique_id=174662827]
 z_index = -100
-position = Vector2(-146, -311)
+position = Vector2(-136, -191)
+scale = Vector2(0.9418422, 0.8466667)
 texture = ExtResource("tex_sky")
 polygon = PackedVector2Array(0, 0, 3800, 0, 3800, 1200, 0, 1200)
 uv = PackedVector2Array(0, 0, 3800, 0, 3800, 1200, 0, 1200)
@@ -55,11 +57,12 @@ texture = SubResource("CompressedTexture2D_1lhe5")
 [node name="Terrain" type="Node2D" parent="." unique_id=366158899]
 
 [node name="Ground" type="StaticBody2D" parent="Terrain" unique_id=358111948]
+visible = false
 position = Vector2(1700, 1000)
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Terrain/Ground" unique_id=598747573]
-position = Vector2(52, -391)
+position = Vector2(47, -356)
 shape = SubResource("Rect_ground")
 
 [node name="Visual" type="Polygon2D" parent="Terrain/Ground" unique_id=1490613768]
@@ -77,10 +80,10 @@ position = Vector2(238, 563)
 position = Vector2(242, 571)
 
 [node name="from_dark_forest" type="Marker2D" parent="SpawnPoints" unique_id=645602998]
-position = Vector2(3316, 571)
+position = Vector2(3251, 534)
 
 [node name="boss_gate" type="Marker2D" parent="SpawnPoints" unique_id=448472448]
-position = Vector2(2928, 607)
+position = Vector2(2863, 564)
 
 [node name="Spawners" type="Node2D" parent="." unique_id=374590361]
 
@@ -112,8 +115,27 @@ label_text = "← ทุ่งวิหาร"
 destination_name = "ทุ่งวิหาร"
 
 [node name="ToTown" parent="Portals" unique_id=177933821 instance=ExtResource("portal")]
-position = Vector2(3362, 604)
+position = Vector2(3253, 525)
 target_map = &"dark_forest"
 target_spawn_point = &"from_forest_2"
 label_text = "→ ป่าเงาลึก"
 destination_name = "ป่าเงาลึก"
+
+[node name="Lore38" type="Node2D" parent="."]
+
+[node name="DeadMonster" parent="Lore38" instance=ExtResource("lore38")]
+position = Vector2(1500, 570)
+lore_id = &"dead_monster"
+title = "ซากมอนสเตอร์"
+text = "ซากชอนชอนนอนแน่นิ่งอยู่หลายตัว\n\nไม่มีบาดแผลเลยสักแห่ง...\n\nราวกับชีวิตถูกดูดออกไปเฉย ๆ"
+label_text = "ซากมอนสเตอร์"
+prompt_text = "กด F เพื่อตรวจดู"
+
+[node name="BurntBark" parent="Lore38" instance=ExtResource("lore38")]
+position = Vector2(2450, 570)
+lore_id = &"burnt_bark"
+title = "ต้นไม้ไหม้เกรียม"
+text = "เปลือกไม้มีรอยไหม้เป็นเส้นตรงหลายเส้น\n\nไม่ใช่รอยไฟป่า... เส้นพวกนี้เป็นระเบียบเกินไป\n\n(ได้รับ เศษเปลือกไม้ไหม้)"
+give_item = &"burnt_bark_piece"
+label_text = "ต้นไม้ไหม้"
+prompt_text = "กด F เพื่อตรวจดู"

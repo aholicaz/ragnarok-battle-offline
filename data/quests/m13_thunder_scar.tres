@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="Obj_0"]
+script = ExtResource("2_obj")
+kind = 3
+target = &"thunder_scar"
+count = 1
+text = "ไปที่รอยสายฟ้า"
+
+[sub_resource type="Resource" id="Obj_1"]
+script = ExtResource("2_obj")
+kind = 0
+target = &"stormscar"
+count = 1
+
+[resource]
+script = ExtResource("1_quest")
+id = &"m13_thunder_scar"
+title = "M13 รอยสายฟ้า"
+description = "สายฟ้าฟาดซ้ำจุดเดิมกลางป่าเงาลึกทั้งที่ฟ้าเปิด — มีบางอย่างอยู่ที่นั่น"
+giver_name = "ทหารยามเอริค"
+dialog_offer = "เจ้าเห็นฟ้าแถวป่าลึกไหม สายฟ้าฟาดจุดเดิมซ้ำ ๆ ทั้งที่ไม่มีเมฆสักก้อน พวกเราเรียกที่นั่นว่า «รอยสายฟ้า» ...มีบางอย่างอยู่ตรงนั้น และมันไม่ใช่พรของธอร์แน่ ๆ จัดการมัน"
+dialog_progress = "ทางเข้ารอยสายฟ้าอยู่กลางป่าเงาลึก ตรงที่แสงฟ้าแลบไม่หยุด"
+dialog_complete = "เจ้าล้มมันได้จริง ๆ รึ... ว่าแต่ ซากมันสลายเป็นแสงทองแล้วไหลลงดินไปทางเหนืองั้นรึ? ...ทางเหนือน่ะ มีแต่ภูเขาของพวกคนแคระนี่นา"
+objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0"), SubResource("Obj_1")])
+kill_monster_id = &""
+required_level = 18
+required_quests = Array[StringName]([&"m12_shadow"])
+set_flag_on_complete = &"chapter2_open"
+reward_item_id = &"white_potion"
+reward_item_count = 5
+reward_zeny = 5000
+reward_exp = 12000

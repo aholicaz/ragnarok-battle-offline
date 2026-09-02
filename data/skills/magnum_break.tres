@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://c5vy458lj3wyi" path="res://Sprites/Magnum Break.png" id="1_6w7bh"]
 [ext_resource type="Script" uid="uid://3sobam6f0wu5" path="res://scripts/resources/skill_data.gd" id="1_skill"]
+[ext_resource type="SpriteFrames" path="res://data/sprites/fx_magnum.tres" id="2_fx"]
 
 [resource]
 script = ExtResource("1_skill")
@@ -13,13 +14,18 @@ type = 1
 required_skills = {
 "bash": 5
 }
-required_level = 10
-sp_cost_base = 14
+required_level = 5
+sp_cost_base = 12
 sp_cost_per_level = 2.0
 cooldown = 3.0
-cast_windup = 0.25
+cast_windup = 0.35
 damage_mult_base = 1.2
 damage_mult_per_level = 0.18
-range_x = 180.0
-range_y = 110.0
+range_x = 270.0
+range_y = 220.0
 max_targets = 6
+effect_frames = ExtResource("2_fx")
+effect_anim = &"burst"
+effect_offset = Vector2(0, 28)
+effect_height = 340.0
+effect_delay = 0.2

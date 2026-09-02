@@ -2,6 +2,8 @@
 
 [ext_resource type="Texture2D" uid="uid://c0c4ch4fqer4e" path="res://Sprites/Map_Asgard.png" id="3_xle50"]
 [ext_resource type="Texture2D" uid="uid://bcow0cy6fmyvp" path="res://Sprites/NPC_1_Idle.png" id="6_vu1bs"]
+[ext_resource type="Texture2D" uid="uid://kiyk8tj45tby" path="res://Sprites/npc/Healer.png" id="7_bhb5w"]
+[ext_resource type="Texture2D" uid="uid://bptw0ygh6fhvd" path="res://Sprites/npc/HighPriest.png" id="8_ose2u"]
 [ext_resource type="Script" uid="uid://cj52mis2ydm4e" path="res://scripts/world/map_base.gd" id="map_base"]
 [ext_resource type="PackedScene" uid="uid://bdgqbnav4qg14" path="res://scenes/npc/npc.tscn" id="npc"]
 [ext_resource type="PackedScene" uid="uid://bhp7c8ti14pnn" path="res://scenes/player/player.tscn" id="player"]
@@ -39,12 +41,33 @@ animations = [{
 "speed": 3.0
 }]
 
+[sub_resource type="SpriteFrames" id="SpriteFrames_g4v7s"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_bhb5w")
+}],
+"loop": 1,
+"name": &"Idle",
+"speed": 5.0
+}]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_57qmd"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_ose2u")
+}],
+"loop": 1,
+"name": &"Idle",
+"speed": 5.0
+}]
+
 [node name="Map" type="Node2D" unique_id=983589772]
 script = ExtResource("map_base")
 map_id = &"prontera_town"
 display_name = "พรอนเทรา นครแห่งสายฟ้า"
 map_bounds = Rect2(-1036, -73, 3620, 1060)
-auto_fit_bounds = false
 player_scene = ExtResource("player")
 
 [node name="Background" type="Node2D" parent="." unique_id=587235148]
@@ -74,11 +97,11 @@ position = Vector2(1200, 720)
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Terrain/Ground0" unique_id=1171894742]
-position = Vector2(-426.0, 15.0)
+position = Vector2(-426, 15)
 shape = SubResource("Rect_0")
 
 [node name="Visual" type="Polygon2D" parent="Terrain/Ground0" unique_id=1532239276]
-position = Vector2(-426.0, 289)
+position = Vector2(-426, 289)
 scale = Vector2(1.508333, 1)
 color = Color(0.41960785, 0.36078432, 0.3019608, 1)
 polygon = PackedVector2Array(-1200, -80, 1200, -80, 1200, 80, -1200, 80, -1200.0002, 1.7828369)
@@ -98,24 +121,29 @@ position = Vector2(2330, 570)
 target_map = &"prontera_field"
 target_spawn_point = &"from_town"
 label_text = "→ ทุ่งวิหาร"
-auto_enter = false
 
 [node name="NPCs" type="Node2D" parent="." unique_id=524951142]
 
 [node name="Merchant" parent="NPCs" unique_id=1565733649 instance=ExtResource("npc")]
-quest_ids = Array[StringName]([&"tony_fabre"])
 position = Vector2(-70, 590)
 npc_name = "พ่อค้าโทนี่"
-dialog = "มีของดีมาขายนะ\n\n...ถึงจะไม่ค่อยมีของใหม่ก็เถอะ ของจากทางเหนือไม่ได้ส่งมาสามเดือนแล้ว\nไม่มีใครบอกว่าทำไม"
+dialog = "มีของดีมาขายนะ
+
+...ถึงจะไม่ค่อยมีของใหม่ก็เถอะ ของจากทางเหนือไม่ได้ส่งมาสามเดือนแล้ว
+ไม่มีใครบอกว่าทำไม"
 shop_items = Array[StringName]([&"red_potion", &"orange_potion", &"blue_potion", &"meat", &"wooden_sword", &"novice_sword", &"short_sword", &"rapier", &"falchion", &"wooden_shield", &"guard", &"ribbon", &"cap", &"leather_cap", &"cotton_shirt", &"leather_jacket", &"hood", &"muffler", &"sandals", &"leather_shoes", &"necklace", &"earring", &"brooch", &"phracon", &"emveretarcon"])
+quest_ids = Array[StringName]([&"tony_fabre"])
 
 [node name="Blacksmith" parent="NPCs" unique_id=1359939436 instance=ExtResource("npc")]
-quest_ids = Array[StringName]([&"hans_poring"])
 position = Vector2(478, 590)
 npc_name = "ช่างตีเหล็กฮันส์"
 type = 2
-dialog = "อยากให้อาวุธแกร่งขึ้นไหม\n\nตีเหล็กแบบนี้ข้าเรียนมาจากใต้ภูเขา ที่นั่นเขาตีกันมาเป็นพันปีแล้ว\n...แต่ข้าถูกไล่ออกมา เพราะข้าถามคำถามที่ไม่ควรถาม"
+dialog = "อยากให้อาวุธแกร่งขึ้นไหม
+
+ตีเหล็กแบบนี้ข้าเรียนมาจากใต้ภูเขา ที่นั่นเขาตีกันมาเป็นพันปีแล้ว
+...แต่ข้าถูกไล่ออกมา เพราะข้าถามคำถามที่ไม่ควรถาม"
 portrait_file = "res://Sprites/portraits/hans.png"
+quest_ids = Array[StringName]([&"hans_poring", &"m5_old_mine_iron"])
 
 [node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="NPCs/Blacksmith" unique_id=1862143772]
 position = Vector2(1.0000057, -27.000015)
@@ -130,6 +158,13 @@ position = Vector2(1099, 590)
 npc_name = "นักบวชหญิงมาเรีย"
 type = 3
 dialog = "บาดแผลของเจ้าจะหายดี จงขอบคุณธอร์เถิด"
+portrait = ExtResource("7_bhb5w")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/Healer" unique_id=1369066492]
+position = Vector2(-5.9999747, 9.536743e-07)
+scale = Vector2(0.12634282, 0.12634282)
+sprite_frames = SubResource("SpriteFrames_g4v7s")
+animation = &"Idle"
 
 [node name="SavePoint" parent="NPCs" unique_id=1149238899 instance=ExtResource("npc")]
 position = Vector2(1650, 590)
@@ -140,29 +175,68 @@ dialog = "ศิลาสลักตราค้อน · สัมผัสเ
 [node name="Guide" parent="NPCs" unique_id=1727980527 instance=ExtResource("npc")]
 position = Vector2(-624, 590)
 npc_name = "ทหารยามเอริค"
+quest_ids = Array[StringName]([&"m1_adventurer_badge", &"m7_silent_forest", &"m13_thunder_scar"])
 type = 0
-dialog = "เด็กใหม่สินะ ข้าเอริค ยามประตูเมืองนี้\n\nกด C ดูสเตตัส · I เปิดกระเป๋า · K เรียนสกิล · M ดูแผนที่\nJ หรือคลิกซ้าย = ฟันดาบ · W หรือ Space = พุ่งหลบ อย่าอาย ข้าเองก็หลบทุกครั้ง\n\n...แล้วก็อย่าเข้าป่าลึกตอนค่ำนะ ผู้กองสั่งห้ามไว้\nไม่ได้บอกเหตุผลด้วย"
+dialog = "เด็กใหม่สินะ ข้าเอริค ยามประตูเมืองนี้
 
-[node name="HighPriest" parent="NPCs" instance=ExtResource("npc")]
+กด C ดูสเตตัส · I เปิดกระเป๋า · K เรียนสกิล · M ดูแผนที่
+J หรือคลิกซ้าย = ฟันดาบ · W หรือ Space = พุ่งหลบ อย่าอาย ข้าเองก็หลบทุกครั้ง
+
+...แล้วก็อย่าเข้าป่าลึกตอนค่ำนะ ผู้กองสั่งห้ามไว้
+ไม่ได้บอกเหตุผลด้วย"
+
+[node name="HighPriest" parent="NPCs" unique_id=1318346366 instance=ExtResource("npc")]
 position = Vector2(1380, 590)
 npc_name = "นักบวชสูงสุดวาลเดอร์"
+dialog_by_flag = {
+"thunder_scar_open": "เศษแก้วอยู่ในที่ที่ปลอดภัยแล้ว เจ้าไม่ต้องถามถึงมันอีก\n\nจงขอบคุณธอร์ แล้วทำหน้าที่ของเจ้าต่อไป"
+}
+quest_ids = Array[StringName]([&"m2_oath", &"m6_ceremony", &"m8_burnt_bark", &"m12_shadow"])
 type = 0
-dialog = "เจ้ามาถูกที่แล้ว ลูกเอ๋ย\n\nทุกคนที่ยืนอยู่ในเมืองนี้ยืนอยู่ได้เพราะค้อนของพระองค์\nจงถือดาบไว้ให้มั่น แล้วสายฟ้าจะนำทางเจ้าเอง"
+dialog = "เจ้ามาถูกที่แล้ว ลูกเอ๋ย
 
-[node name="OldMan" parent="NPCs" instance=ExtResource("npc")]
+ทุกคนที่ยืนอยู่ในเมืองนี้ยืนอยู่ได้เพราะค้อนของพระองค์
+จงถือดาบไว้ให้มั่น แล้วสายฟ้าจะนำทางเจ้าเอง"
+portrait = ExtResource("8_ose2u")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/HighPriest" unique_id=1929005518]
+position = Vector2(-2.0000253, -14.000024)
+scale = Vector2(0.15429683, 0.15429683)
+sprite_frames = SubResource("SpriteFrames_57qmd")
+animation = &"Idle"
+
+[node name="OldMan" parent="NPCs" unique_id=1084804787 instance=ExtResource("npc")]
 position = Vector2(-330, 590)
 npc_name = "ตาแก่กุนนาร์"
+dialog_by_flag = {
+"saw_ceremony": "เมื่อคืนเจ้าก็อยู่ในพิธีสินะ...\n\nถ้าธอร์ปกป้องพวกเราจริง แล้วเหตุใดทุกครั้งที่สายฟ้าฟาด\n\nป่าจึงเงียบลง เหมือนมีบางสิ่งตายไป",
+"read_hunter_journal": "«พวกมันไม่ได้ล่า พวกมันหนี» งั้นรึ...\n\nสัตว์น่ะ มันรู้ก่อนคนเสมอแหละ ว่าอะไรกำลังมา",
+"killed_stormscar": "เจ้าเห็นกับตาแล้วใช่ไหม... แสงที่ไหลลงดินน่ะ\n\nสายฟ้าไม่เคยให้อะไรใครฟรี ๆ หรอกหนุ่มน้อย\n\nมันมาเก็บของมันต่างหาก",
+"chapter2_done": "กลับมาจากใต้ภูเขาแล้วสินะ\n\nตอนนี้เจ้าก็รู้แล้วว่าค้อนเล่มนั้นตีขึ้นมาเพื่ออะไร\n\n...ระวังตัวให้มาก อย่าให้ใครรู้ว่าเจ้ารู้"
+}
 type = 0
-dialog = "เด็กใหม่สินะ...\n\nระวังตัวด้วยแล้วกัน"
+dialog = "เด็กใหม่สินะ...
 
-[node name="Ingrid" parent="NPCs" instance=ExtResource("npc")]
+ระวังตัวด้วยแล้วกัน"
+
+[node name="Ingrid" parent="NPCs" unique_id=1434718339 instance=ExtResource("npc")]
 position = Vector2(830, 590)
 npc_name = "อิงกริด"
+quest_ids = Array[StringName]([&"m9_missing_hunter", &"m10_hunter_journal"])
 type = 0
-dialog = "พ่อของข้าเข้าป่าไปเมื่อสิบวันก่อน\n\nแกเป็นนักล่า แกไม่เคยหลงทาง\nแต่คราวนี้แกยังไม่กลับมา"
+dialog = "พ่อของข้าเข้าป่าไปเมื่อสิบวันก่อน
 
-[node name="GuildMaster" parent="NPCs" instance=ExtResource("npc")]
+แกเป็นนักล่า แกไม่เคยหลงทาง
+แต่คราวนี้แกยังไม่กลับมา"
+
+[node name="GuildMaster" parent="NPCs" unique_id=907818509 instance=ExtResource("npc")]
 position = Vector2(2020, 590)
 npc_name = "หัวหน้ากิลด์บียอร์น"
+quest_ids = Array[StringName]([&"m11_king_poring"])
 type = 0
-dialog = "กิลด์นักผจญภัยพรอนเทรา ยินดีต้อนรับ\n\nงานล่ามีเรื่อย ๆ ถ้าอยากได้เงินก็มาถามข้าได้\n\nช่วงนี้มอนสเตอร์แถวทุ่งเยอะผิดปกติ\nแปลกนะ พวกมันไม่ได้วิ่งมาทางเมือง พวกมันวิ่งผ่านไป"
+dialog = "กิลด์นักผจญภัยพรอนเทรา ยินดีต้อนรับ
+
+งานล่ามีเรื่อย ๆ ถ้าอยากได้เงินก็มาถามข้าได้
+
+ช่วงนี้มอนสเตอร์แถวทุ่งเยอะผิดปกติ
+แปลกนะ พวกมันไม่ได้วิ่งมาทางเมือง พวกมันวิ่งผ่านไป"

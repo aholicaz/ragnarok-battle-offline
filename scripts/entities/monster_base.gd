@@ -15,8 +15,8 @@ enum State { IDLE, WANDER, CHASE, ATTACK, HURT, DEAD }
 const AGGRO_MEMORY := 8.0
 
 ## ★ ขนาดตัวเลขดาเมจ ★ อยากให้ใหญ่ขึ้นอีก แก้สองเลขนี้
-const DAMAGE_FONT_SIZE := 34
-const DAMAGE_FONT_CRIT := 44
+const DAMAGE_FONT_SIZE := 32
+const DAMAGE_FONT_CRIT := 40
 
 signal died(monster: Node, data: MonsterData)
 
@@ -35,6 +35,11 @@ var _player: Node2D = null
 var _attack_timer := 0.0
 var _wander_timer := 0.0
 var _wander_dir := 0
+var _look_timer := 0.0
+## ★ กันติดกำแพง (รอบ 35) ★ จะเดินแต่ไม่ขยับ = ติด
+var _stuck_time := 0.0
+var _last_x := 0.0
+var _want_vx := 0.0   # ความเร็วที่ "ตั้งใจ" ก่อน move_and_slide (มันแก้ velocity ให้หลังไถล)      # ★ หันมองรอบ ๆ ระหว่างยืนพัก (รอบ 33) ★ 0 = ไม่ต้องหัน
 var _hurt_flash := 0.0
 var _hp_bar: ProgressBar
 var _aggro := false
@@ -48,6 +53,10 @@ var _fit_cache: Dictionary = {}
 ## ให้ Spawner เรียกหลังวางตำแหน่งเสร็จ เพื่อบอกว่า "บ้าน" อยู่ตรงไหน
 func set_home(pos: Vector2) -> void:
 	spawn_position = pos
+	_last_x = global_position.x
+	# ★ สุ่มจังหวะเริ่มต้น ★ ไม่งั้นมอนทั้งฝูงจะเดิน/หยุดพร้อมกันเป๊ะ ดูเป็นหุ่นยนต์
+	_wander_timer = randf() * 1.5
+	_wander_dir = 0 if randf() < 0.35 else (-1 if randf() < 0.5 else 1)
 	_spawn_locked = true
 
 
@@ -199,6 +208,7 @@ func _process(_delta: float) -> void:
 # PHYSICS
 # =========================================================
 func _physics_process(delta: float) -> void:
+	_check_boss_intro()
 	if state == State.DEAD:
 		return
 
@@ -297,7 +307,9 @@ func _physics_process(delta: float) -> void:
 	else:
 		_do_wander(delta)
 
+	_want_vx = velocity.x
 	move_and_slide()
+	_check_stuck(delta)
 
 
 ## มีพื้นอยู่ข้างหน้าไหม (กันมอนเดินตกขอบแมพ/ตกแท่น)
@@ -321,6 +333,59 @@ func _try_hop(power_scale: float = 1.0) -> void:
 	velocity.y = data.jump_force * power_scale
 	_jump_cd = maxf(0.15, data.jump_interval)
 	_play("Jump")
+
+
+# =========================================================
+# ★★ กันมอนติดกำแพง (รอบ 35) ★★
+# =========================================================
+## ขยับได้ช้ากว่านี้ (พิกเซล/วินาที) ทั้งที่สั่งให้เดิน = ถือว่าติด
+const STUCK_SPEED := 8.0
+## ติดนานเกินนี้ (วินาที) ถึงจะแก้ให้
+const STUCK_LIMIT := 0.7
+
+func _check_stuck(delta: float) -> void:
+	if state == State.DEAD or state == State.ATTACK or state == State.HURT:
+		_stuck_time = 0.0
+		_last_x = global_position.x
+		return
+	var moved: float = absf(global_position.x - _last_x)
+	_last_x = global_position.x
+
+	# สั่งให้เดินอยู่ แต่แทบไม่ขยับ = โดนอะไรบางอย่างขวาง
+	if absf(_want_vx) > 1.0 and moved < STUCK_SPEED * delta:
+		_stuck_time += delta
+	else:
+		_stuck_time = maxf(0.0, _stuck_time - delta * 2.0)
+		return
+
+	if _stuck_time < STUCK_LIMIT:
+		return
+	_stuck_time = 0.0
+	_free_from_wall()
+
+
+## ★ หลุดจากกำแพง ★ กลับตัว + ย้าย "บ้าน" มาฝั่งนี้
+## ถ้าไม่ย้ายบ้าน ระบบ leash จะลากมันกลับไปชนกำแพงเดิมซ้ำ ๆ ไม่จบ
+func _free_from_wall() -> void:
+	var away: int = -signi(int(signf(_want_vx)))
+	if away == 0:
+		away = -facing
+
+	# กระโดดข้ามได้ก็ลองข้ามก่อน (มอนที่กระโดดไม่ได้ jump_force = 0)
+	if data.jump_force < 0.0 and is_on_floor():
+		velocity.y = data.jump_force
+
+	# กำลังไล่ผู้เล่นอยู่ ไม่ต้องเลิกไล่ แค่ลองกระโดดข้าม
+	if state == State.CHASE:
+		return
+
+	_wander_dir = away
+	_wander_timer = randf_range(1.2, 2.2)
+	_look_timer = 0.0
+	velocity.x = away * data.wander_speed
+	_face_to(away)
+	# ★ ย้ายบ้านมาอยู่ฝั่งที่เดินได้ ★
+	spawn_position.x = global_position.x + away * 60.0
 
 
 # =========================================================
@@ -357,8 +422,14 @@ func _do_wander(delta: float) -> void:
 		_wander_timer = randf_range(1.0, 2.0)
 
 	if _wander_dir == 0:
+		# ★ ยืนพัก ★ หยุดสนิทแล้วเล่นท่า Idle
 		velocity.x = move_toward(velocity.x, 0.0, data.wander_speed * 4.0)
 		_play("Idle")
+		# หันไปมองอีกด้านหนึ่งกลางช่วงพัก — ทำให้ดูเหมือนกำลังมองรอบ ๆ ไม่ใช่ค้างแข็ง
+		if _look_timer > 0.0:
+			_look_timer -= delta
+			if _look_timer <= 0.0:
+				_face_to(-facing)
 	else:
 		velocity.x = _wander_dir * data.wander_speed
 		_face_to(_wander_dir)
@@ -368,13 +439,18 @@ func _do_wander(delta: float) -> void:
 
 
 func _pick_new_wander() -> void:
-	# ยืนพักสั้น ๆ สลับกับเดิน และห้ามยืนพักติดกัน 2 รอบ (กันมอนยืนนิ่งนานจนดูแปลก)
-	if _wander_dir != 0 and randf() < 0.28:
+	# ★★ สลับ "เดิน" กับ "ยืนพัก" ★★ (รอบ 33 — ปรับค่าได้ต่อมอนในไฟล์ .tres)
+	# ห้ามพักติดกัน 2 รอบ (เช็ค _wander_dir != 0) ไม่งั้นมอนจะยืนแช่ยาวผิดปกติ
+	if _wander_dir != 0 and randf() < data.wander_pause_chance:
 		_wander_dir = 0
-		_wander_timer = randf_range(0.5, 1.3)
+		_wander_timer = randf_range(data.wander_pause_min, data.wander_pause_max)
+		# หันมองรอบ ๆ ประมาณกลางช่วงพัก
+		_look_timer = _wander_timer * randf_range(0.35, 0.65) \
+			if randf() < data.wander_look_chance else 0.0
 	else:
 		_wander_dir = -1 if randf() < 0.5 else 1
-		_wander_timer = randf_range(1.8, 3.6)
+		_wander_timer = randf_range(data.wander_walk_min, data.wander_walk_max)
+		_look_timer = 0.0
 
 
 func _face_to(dir_x: float) -> void:
@@ -491,7 +567,14 @@ func _cast_skill() -> void:
 	if state == State.DEAD or not is_instance_valid(self):
 		return
 
-	_skill_hit()
+	# ★ สกิลขว้างบอลโค้ง (รอบ 36) ★ บอลไปตกที่ตำแหน่งผู้เล่นแล้วระเบิดเอง — ดาเมจคิดตอนระเบิด
+	if data.skill_projectile_texture != null:
+		var target: Vector2 = foot_position() + Vector2(facing * 300.0, 0)
+		if _player != null and is_instance_valid(_player):
+			target = _player.foot_position() if _player.has_method("foot_position") else _player.global_position
+		MonsterProjectile.fire_lob(data, self, target)
+	else:
+		_skill_hit()
 
 	await get_tree().create_timer(maxf(0.05, data.skill_duration - data.skill_windup)).timeout
 	if state == State.DEAD or not is_instance_valid(self):
@@ -537,7 +620,12 @@ func _attack() -> void:
 	if state == State.DEAD or not is_instance_valid(self):
 		return
 
-	if _player != null and is_instance_valid(_player) and not PlayerState.is_dead():
+	# ★ โจมตีระยะไกล (รอบ 36) ★ ใส่รูปกระสุนไว้ = ยิงบอลแทนตีติดตัว
+	if data.projectile_texture != null:
+		if _player != null and is_instance_valid(_player):
+			_face_to(_player.global_position.x - global_position.x)
+		MonsterProjectile.fire_straight(data, self, facing)
+	elif _player != null and is_instance_valid(_player) and not PlayerState.is_dead():
 		var pf: Vector2 = _player.foot_position() if _player.has_method("foot_position") \
 			else _player.global_position
 		var dist := foot_position().distance_to(pf)
@@ -651,9 +739,11 @@ func _die() -> void:
 		"+%d EXP   +%d JOB" % [data.exp_reward, job_exp], Color("#8ad6ff"), 18, 4)
 	Events.monster_killed.emit(data.id, data.level)
 
-	# ★ ล้มบอส = ป้าย MVP เหนือหัวผู้เล่น ★
+	# ★ ล้มบอส = ป้าย MVP เหนือหัวผู้เล่น + ตั้งธงเนื้อเรื่อง killed_<id> (รอบ 38) ★
+	# ธงนี้ใช้ปลดล็อก LoreObject / เควส เช่น killed_forge_guardian เปิดแบบร่างค้อน
 	if data.is_boss:
 		_show_mvp()
+		PlayerState.set_flag(StringName("killed_" + String(data.id)))
 
 	_spawn_drops()
 	died.emit(self, data)
@@ -748,3 +838,32 @@ func _update_hp_bar() -> void:
 	var fill := _hp_bar.get_theme_stylebox("fill") as StyleBoxFlat
 	if fill != null:
 		fill.bg_color = Color(0.9, 0.2, 0.2) if ratio < 0.3 else Color(0.2, 0.85, 0.3)
+
+
+# =========================================================
+# ★ วิดีโอเปิดตัวบอส (รอบ 41) ★
+# ผู้เล่นเดินเข้าใกล้บอสครั้งแรก (ระยะ Intro Range) = เล่นวิดีโอที่ตั้งไว้ 1 ครั้ง
+# จำด้วยธง seen_intro_<id> (เก็บลงเซฟ) — โหลดเซฟ/กลับมาใหม่ไม่เล่นซ้ำ
+# =========================================================
+var _intro_done := false
+
+func _check_boss_intro() -> void:
+	if _intro_done:
+		return
+	# ★ รอบ 42: ไม่บังคับว่าต้อง is_boss ★ ขอแค่ตั้งช่อง Intro Video ก็ใช้ได้
+	# (บาฟโฟเมทไม่ได้ติ๊ก is_boss ไว้ วิดีโอเลยไม่เล่น — เจอตอนตรวจข้อมูลรอบ 42)
+	if data == null or data.intro_video == "" or state == State.DEAD:
+		_intro_done = true
+		return
+	var intro_flag := StringName("seen_intro_" + String(data.id))
+	if PlayerState.has_flag(intro_flag):
+		_intro_done = true
+		return
+	var player := get_tree().get_first_node_in_group("player")
+	if player == null or PlayerState.is_dead():
+		return
+	if global_position.distance_to(player.global_position) > data.intro_range:
+		return
+	_intro_done = true
+	PlayerState.set_flag(intro_flag)
+	UI.play_video(data.intro_video)

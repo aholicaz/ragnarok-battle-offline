@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="Obj_0"]
+script = ExtResource("2_obj")
+kind = 3
+target = &"cold_forge"
+count = 1
+text = "ไปที่เตาหลอมร้าง"
+
+[sub_resource type="Resource" id="Obj_1"]
+script = ExtResource("2_obj")
+kind = 0
+target = &"forge_golem"
+count = 5
+
+[resource]
+script = ExtResource("1_quest")
+id = &"c2_6_to_cold_forge"
+title = "C2-6 สู่เตาหลอมร้าง"
+description = "บุกเข้าเตาหลอมร้าง ที่ที่คนแคระเลิกพูดถึงไปนานแล้ว"
+giver_name = "ช่างเอกดวาลิน"
+dialog_offer = "เตาหลอมร้างคือที่ที่พวกเราเลิกเอ่ยถึง... ถ้าเจ้าจะลงไปจริง ๆ ระวังพวกโกเลม — มันยังทำงานตามคำสั่งสุดท้ายที่ได้รับ แม้คนสั่งจะไม่อยู่แล้วก็ตาม"
+dialog_progress = "พวกโกเลมเตาหลอมช้าแต่หนักมาก อย่าให้มันต้อนมุม"
+dialog_complete = "เจ้ากลับมาได้ทั้งตัว... ดีแล้ว ข้างในสุดมีอะไร เจ้าคงเห็นแล้วสินะ — ผู้พิทักษ์ตัวนั้นยังเฝ้าอยู่ใช่ไหม"
+objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0"), SubResource("Obj_1")])
+kill_monster_id = &""
+required_level = 31
+required_quests = Array[StringName]([&"c2_5_hall_of_silence"])
+reward_item_id = &"dwarven_mail"
+reward_item_count = 1
+reward_zeny = 0
+reward_exp = 9000

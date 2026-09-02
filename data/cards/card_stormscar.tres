@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/card_data.gd" id="1_card"]
+
+[resource]
+script = ExtResource("1_card")
+monster_id = &"stormscar"
+fits_slot = 3
+rarity = 4
+id = &"card_stormscar"
+display_name = "การ์ดอสูรสายฟ้า"
+description = "ซากของมันสลายเป็นแสงทอง... แล้วไหลลงดินไปทางเหนือ"
+type = 5
+slot = 0
+max_stack = 99
+buy_price = 0
+sell_price = 30000
+atk = 5
+bonus_agi = 2
+percent_effects = {
+"aspd_percent": 5.0
+}

@@ -2,7 +2,10 @@
 
 [ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
 [ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="Texture2D" uid="uid://dyfcjvj5aambm" path="res://Sprites/chonchon_attack.png" id="3_qyd0n"]
 [ext_resource type="Texture2D" uid="uid://ch3ac6vcy2e50" path="res://Sprites/chonchon_idle.png" id="3_wick7"]
+[ext_resource type="Texture2D" uid="uid://ksqaw574qgwa" path="res://Sprites/chonchon_die.png" id="4_yc8r1"]
+[ext_resource type="Texture2D" uid="uid://de4b6rnnbuvrx" path="res://Sprites/chonchon_hit.png" id="5_ekvov"]
 
 [sub_resource type="Resource" id="Drop_chonchon_0"]
 script = ExtResource("2_drop")
@@ -36,54 +39,183 @@ script = ExtResource("2_drop")
 item_id = &"chonchon_eye"
 chance = 8.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_qyd0n"]
-atlas = ExtResource("3_wick7")
-region = Rect2(0, 0, 842, 848)
+[sub_resource type="AtlasTexture" id="AtlasTexture_wd5yv"]
+atlas = ExtResource("3_qyd0n")
+region = Rect2(0, 0, 512, 512)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_5f7hx"]
-atlas = ExtResource("3_wick7")
-region = Rect2(842, 0, 842, 848)
+[sub_resource type="AtlasTexture" id="AtlasTexture_hjaa5"]
+atlas = ExtResource("3_qyd0n")
+region = Rect2(512, 0, 512, 512)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_yc8r1"]
-atlas = ExtResource("3_wick7")
-region = Rect2(1684, 0, 842, 848)
+[sub_resource type="AtlasTexture" id="AtlasTexture_y1xg8"]
+atlas = ExtResource("3_qyd0n")
+region = Rect2(1024, 0, 512, 512)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ekvov"]
-atlas = ExtResource("3_wick7")
-region = Rect2(0, 848, 842, 848)
+[sub_resource type="AtlasTexture" id="AtlasTexture_ree6f"]
+atlas = ExtResource("3_qyd0n")
+region = Rect2(0, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w2ify"]
+atlas = ExtResource("3_qyd0n")
+region = Rect2(512, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_42ea3"]
+atlas = ExtResource("3_qyd0n")
+region = Rect2(1024, 512, 512, 512)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fqpjk"]
-atlas = ExtResource("3_wick7")
-region = Rect2(842, 848, 842, 848)
+atlas = ExtResource("4_yc8r1")
+region = Rect2(0, 0, 512, 512)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rxfef"]
+atlas = ExtResource("4_yc8r1")
+region = Rect2(512, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o4183"]
+atlas = ExtResource("4_yc8r1")
+region = Rect2(1024, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xyojx"]
+atlas = ExtResource("4_yc8r1")
+region = Rect2(0, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cs10m"]
+atlas = ExtResource("5_ekvov")
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r2xwv"]
+atlas = ExtResource("5_ekvov")
+region = Rect2(512, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k0n6s"]
+atlas = ExtResource("5_ekvov")
+region = Rect2(1024, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bfwfv"]
 atlas = ExtResource("3_wick7")
-region = Rect2(1684, 848, 842, 848)
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dko6l"]
+atlas = ExtResource("3_wick7")
+region = Rect2(512, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eog12"]
+atlas = ExtResource("3_wick7")
+region = Rect2(1024, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_81vov"]
+atlas = ExtResource("3_wick7")
+region = Rect2(0, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_25j4w"]
+atlas = ExtResource("3_wick7")
+region = Rect2(512, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_euig3"]
+atlas = ExtResource("3_wick7")
+region = Rect2(1024, 512, 512, 512)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_h531i"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_qyd0n")
+"texture": SubResource("AtlasTexture_wd5yv")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_5f7hx")
+"texture": SubResource("AtlasTexture_hjaa5")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_yc8r1")
+"texture": SubResource("AtlasTexture_y1xg8")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ekvov")
+"texture": SubResource("AtlasTexture_ree6f")
 }, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w2ify")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_42ea3")
+}],
+"loop": 1,
+"name": &"Attack",
+"speed": 6.0
+}, {
+"frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fqpjk")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_rxfef")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o4183")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xyojx")
+}],
+"loop": 1,
+"name": &"Die",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cs10m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r2xwv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k0n6s")
+}],
+"loop": 1,
+"name": &"Hit",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bfwfv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dko6l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eog12")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_81vov")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_25j4w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_euig3")
 }],
 "loop": 1,
 "name": &"Idle",
-"speed": 5.0
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bfwfv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dko6l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eog12")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_81vov")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_25j4w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_euig3")
+}],
+"loop": 1,
+"name": &"Run",
+"speed": 6.0
 }]
 
 [resource]
@@ -93,8 +225,8 @@ display_name = "ชอนชอน"
 sprite_frames = SubResource("SpriteFrames_h531i")
 hitbox_size = Vector2(24, 22)
 hp_bar_offset_y = -42.0
-display_height = 72.0
-level = 7
+display_height = 150.0
+level = 9
 max_hp = 130
 atk_min = 20
 atk_max = 27
@@ -103,18 +235,24 @@ hit = 16
 flee = 20
 element = 4
 race = 4
-size = 0
 ai_type = 1
 move_speed = 150.0
 jump_force = -200.0
 detect_range = 320.0
-attack_range = 64.0
+attack_range = 84.0
 leash_range = 560.0
 wander_speed = 85.0
 wander_range = 340.0
+wander_pause_chance = 0.3
+wander_pause_min = 1.0
+wander_pause_max = 2.0
+wander_walk_min = 2.0
+wander_walk_max = 3.5
+wander_look_chance = 0.5
 jump_interval = 0.5
 attack_cooldown = 1.1
 exp_reward = 48
 zeny_min = 14
 zeny_max = 35
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_chonchon_0"), SubResource("Drop_chonchon_1"), SubResource("Drop_chonchon_2"), SubResource("Drop_chonchon_card"), SubResource("Drop_chonchon_junk_insect_wing"), SubResource("Drop_chonchon_junk_chonchon_eye")])
+projectile_height = 84.0

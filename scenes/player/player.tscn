@@ -16,9 +16,9 @@ script = ExtResource("1_player")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1373520025]
 position = Vector2(-1, 0)
 sprite_frames = ExtResource("2_frames")
-animation = &"Attack_falchion"
-frame = 13
-frame_progress = 0.7336408
+animation = &"Idle"
+autoplay = "Idle"
+frame_progress = 0.31061357
 speed_scale = 1.2
 offset = Vector2(-2.475, 0)
 

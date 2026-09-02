@@ -32,7 +32,7 @@ extends Node2D
 @export var max_spawn_distance: float = 1600.0
 ## ถ้าหาที่เกิดนอกจอไม่ได้นานเกินกี่วินาที ให้ผ่อนเงื่อนไขลง (กันแมพว่างเปล่า)
 ## แมพยิ่งแคบยิ่งต้องผ่อนบ่อย — ตั้งน้อยลงถ้าอยากให้มอนครบเร็ว
-@export var relax_after: float = 4.0
+@export var relax_after: float = 2.0
 ## ★ มอนที่อยู่ไกลเกินระยะนี้จะถูกเก็บกลับ ★ แล้วไปเกิดใหม่ข้างหน้าที่ผู้เล่นกำลังเดินไป
 ## (0 = ไม่เก็บ มอนจะค้างอยู่ที่เดิมตลอด) ควรมากกว่า Max Spawn Distance พอสมควร
 @export var despawn_distance: float = 2600.0
@@ -199,7 +199,10 @@ func _min_spawn_distance() -> float:
 func _find_ground() -> Vector2:
 	var t: float = clampf(_dry_time / maxf(0.1, relax_after), 0.0, 1.0)
 	var near: float = lerpf(_min_spawn_distance(), avoid_player_range, t)
-	var far: float = 0.0 if t >= 1.0 else max_spawn_distance
+	# ★ รอบ 40: ตอนผ่อนเงื่อนไข "ไกลสุด" ต้องไม่เกินโซนเก็บกลับ ★
+	# เดิมผ่อนเป็น "ไม่จำกัด" → ระบบเลือกจุดไกลสุดของแมพ → เกิดปุ๊บโดน despawn เก็บทันที
+	# วนลูปเกิด-หายไปเรื่อย ๆ มอนในแมพเลยไม่เพิ่มสักที (เจอในทุ่งวิหารหลังผู้ใช้ขยายแมพ)
+	var far: float = max_spawn_distance if t < 1.0 else _relaxed_far()
 
 	for relax in [1.0, 0.7, 0.45]:
 		var point := _try_find(min_spacing * relax, near, far)
@@ -221,6 +224,13 @@ func _find_ground() -> Vector2:
 	return Vector2.INF
 
 
+## เพดานระยะไกลสุดตอนผ่อนเงื่อนไข — ห้ามเกินโซนเก็บกลับ (despawn)
+func _relaxed_far() -> float:
+	if despawn_distance > 0.0:
+		return despawn_distance * 0.9
+	return 0.0
+
+
 ## สุ่มหาที่ยืนทั่วแมพ (ไม่สนระบบช่อง) — ใช้ตอนช่องที่เหลือไม่มีพื้นให้ยืน
 func _try_random(spacing: float, player_gap: float) -> Vector2:
 	var left := _bounds.position.x + edge_margin
@@ -228,7 +238,7 @@ func _try_random(spacing: float, player_gap: float) -> Vector2:
 	var best_point := Vector2.INF
 	var best_gap := -1.0
 	for i in range(24):
-		var point := _check_x(randf_range(left, right), spacing, player_gap, 0.0)
+		var point := _check_x(randf_range(left, right), spacing, player_gap, _relaxed_far())
 		if point == Vector2.INF:
 			continue
 		var gap := absf(point.x - _player_x())
@@ -300,7 +310,27 @@ func _check_x(x: float, spacing: float, player_gap: float, player_far: float) ->
 		if is_instance_valid(m) and absf(m.global_position.x - point.x) < spacing:
 			return Vector2.INF
 
+	# ★★ ห้ามเกิดหลังกำแพง (รอบ 35) ★★
+	# ยิงเส้นจากผู้เล่นมาที่จุดนี้ระดับอก ถ้ามีพื้น/กำแพงขวาง = เดินมาหากันไม่ได้
+	# ไม่งั้นมอนจะเกิดในโซนที่ปิดตายแล้วเดินชนกำแพงอยู่อย่างนั้น
+	if player != null and not _reachable_from(player.global_position, point):
+		return Vector2.INF
+
 	return point
+
+
+## เดินจากคอลัมน์ x ของผู้เล่น มาถึงจุดนี้ได้ไหม (เช็คแค่กำแพงขวางแนวนอน)
+## ★ ยิงที่ระดับ "เหนือพื้นตรงจุดเป้าหมาย" ★ ไม่ใช้ y ของผู้เล่น
+## เพราะผู้เล่นอาจกำลังกระโดด/ตกอยู่ ทำให้เส้นลอยผิดระดับแล้ววัดพลาด
+func _reachable_from(from: Vector2, to: Vector2) -> bool:
+	var space := get_world_2d().direct_space_state
+	# รอบ 40: ยกเส้นสูงขึ้น (110 px เหนือพื้นเป้าหมาย) — เนินเตี้ย ๆ ของ TileMap ในแมพจริง
+	# ไม่ควรถือว่า "เดินไปไม่ถึง" (เดิม 40 px ทำให้ทุ่งวิหารหาที่เกิดมอนแทบไม่ได้ มอนเลยโหรงเหรง)
+	# กำแพงจริง (สูง 700+) ยังขวางเส้นนี้อยู่ = ยังกันเกิดหลังกำแพงได้เหมือนเดิม
+	var y: float = to.y - 110.0
+	var query := PhysicsRayQueryParameters2D.create(Vector2(from.x, y), Vector2(to.x, y))
+	query.collision_mask = 1
+	return space.intersect_ray(query).is_empty()
 
 
 func _spawn_one(data: MonsterData) -> bool:

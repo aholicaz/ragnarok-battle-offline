@@ -41,6 +41,22 @@ extends Resource
 ## ★ ส่งเควสแล้วตั้งธงนี้ ★ ใช้ปลดล็อกเควสถัดไป / เปลี่ยนบทพูด NPC
 @export var set_flag_on_complete: StringName = &""
 
+@export_group("ตัวเลือกตอนส่งเควส")
+## ★ คำถามหลังส่งเควส (รอบ 38 — ใช้กับ M2 คำสาบานใต้ค้อน) ★
+## เว้นว่าง = ไม่มีตัวเลือก · ใส่แล้วผู้เล่นต้องเลือก 1 อย่าง แล้วธงตามช่องข้างล่างจะถูกตั้ง
+@export_multiline var choice_prompt: String = ""
+## ตัวเลือกที่ให้เลือก เช่น ["ข้าขอสาบาน", "...ยืนเงียบ"]
+@export var choice_options: Array[String] = []
+## ธงที่จะตั้งตามตัวเลือก (เรียงตรงกับตัวเลือก) เช่น [&"swore_oath", &"stayed_silent"]
+@export var choice_flags: Array[StringName] = []
+
+@export_group("ฉากพิเศษหลังส่งเควส")
+## ★ แพนกล้องไปหา NPC คนนี้หลังส่งเควส (รอบ 38 — ใช้กับ M6 พิธีฉลอง) ★
+## ใส่ "ชื่อ NPC ที่โชว์บนหัว" · เว้นว่าง = ไม่มีฉากพิเศษ
+@export var cutscene_pan_npc: String = ""
+## ข้อความที่ขึ้นตอนกล้องแพนไปถึง (เว้นบรรทัดว่าง = ขึ้นหน้าใหม่)
+@export_multiline var cutscene_text: String = ""
+
 @export_group("รางวัล")
 ## ไอเทมที่จะได้ (id ของไอเทม)
 @export var reward_item_id: StringName = &""

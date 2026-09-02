@@ -285,3 +285,50 @@ func _ask_turn_in(q: QuestData) -> void:
 	])
 	if pick == 0 and is_instance_valid(self):
 		PlayerState.turn_in_quest(q.id)
+		await _after_turn_in(q)
+
+
+## ★ เหตุการณ์หลังส่งเควส (รอบ 38) ★ ตัวเลือกเนื้อเรื่อง + ฉากแพนกล้อง
+func _after_turn_in(q: QuestData) -> void:
+	# ---------- ตัวเลือกที่เกมจะจำไว้ (เช่น M2 สาบาน/เงียบ) ----------
+	if q.choice_prompt != "" and not q.choice_options.is_empty():
+		var choice: int = await UI.talk([line(q.choice_prompt, "", q.choice_options)])
+		if not is_instance_valid(self):
+			return
+		if choice >= 0 and choice < q.choice_flags.size() and q.choice_flags[choice] != &"":
+			PlayerState.set_flag(q.choice_flags[choice])
+
+	# ---------- ฉากแพนกล้องไปหา NPC (เช่น M6 กล้องไปหยุดที่กุนนาร์) ----------
+	if q.cutscene_pan_npc == "":
+		return
+	var target: Node2D = null
+	for n in get_tree().get_nodes_in_group("npc"):
+		if n != self and "npc_name" in n and String(n.npc_name) == q.cutscene_pan_npc:
+			target = n
+			break
+	var pages: Array = []
+	for part in q.cutscene_text.split("\n\n", false):
+		var t := String(part).strip_edges()
+		if t != "":
+			pages.append({"name": q.cutscene_pan_npc, "side": 1, "text": t})
+	var player := get_tree().get_first_node_in_group("player")
+	var cam: Camera2D = player.get_node_or_null("Camera2D") if player != null else null
+	if target == null or cam == null:
+		# หา NPC ไม่เจอ (คนละแมพ) — โชว์แค่ข้อความ
+		if not pages.is_empty():
+			await UI.talk(pages)
+		return
+	# แพนกล้องไปหา → คุย → แพนกลับ
+	var off: Vector2 = target.global_position - (player as Node2D).global_position + Vector2(0, -40)
+	var tw := create_tween()
+	tw.tween_property(cam, "offset", off, 1.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await tw.finished
+	if not is_instance_valid(self):
+		return
+	if not pages.is_empty():
+		await UI.talk(pages)
+	if not is_instance_valid(self) or cam == null:
+		return
+	var back := create_tween()
+	back.tween_property(cam, "offset", Vector2.ZERO, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await back.finished

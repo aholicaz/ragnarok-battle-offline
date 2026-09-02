@@ -1,0 +1,109 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://cxfs627ufui2s"]
+
+[ext_resource type="Texture2D" uid="uid://b21o5u6avcowk" path="res://Sprites/effects/magnum_break.png" id="1_tex"]
+
+[sub_resource type="AtlasTexture" id="fx_0"]
+atlas = ExtResource("1_tex")
+region = Rect2(0, 0, 768, 384)
+
+[sub_resource type="AtlasTexture" id="fx_1"]
+atlas = ExtResource("1_tex")
+region = Rect2(768, 0, 768, 384)
+
+[sub_resource type="AtlasTexture" id="fx_2"]
+atlas = ExtResource("1_tex")
+region = Rect2(1536, 0, 768, 384)
+
+[sub_resource type="AtlasTexture" id="fx_3"]
+atlas = ExtResource("1_tex")
+region = Rect2(2304, 0, 768, 384)
+
+[sub_resource type="AtlasTexture" id="fx_4"]
+atlas = ExtResource("1_tex")
+region = Rect2(3072, 0, 768, 384)
+
+[sub_resource type="AtlasTexture" id="fx_5"]
+atlas = ExtResource("1_tex")
+region = Rect2(3840, 0, 768, 384)
+
+[sub_resource type="AtlasTexture" id="fx_6"]
+atlas = ExtResource("1_tex")
+region = Rect2(4608, 0, 768, 384)
+
+[sub_resource type="AtlasTexture" id="fx_7"]
+atlas = ExtResource("1_tex")
+region = Rect2(5376, 0, 768, 384)
+
+[sub_resource type="AtlasTexture" id="fx_8"]
+atlas = ExtResource("1_tex")
+region = Rect2(6144, 0, 768, 384)
+
+[sub_resource type="AtlasTexture" id="fx_9"]
+atlas = ExtResource("1_tex")
+region = Rect2(6912, 0, 768, 384)
+
+[sub_resource type="AtlasTexture" id="fx_10"]
+atlas = ExtResource("1_tex")
+region = Rect2(7680, 0, 768, 384)
+
+[sub_resource type="AtlasTexture" id="fx_11"]
+atlas = ExtResource("1_tex")
+region = Rect2(8448, 0, 768, 384)
+
+[sub_resource type="AtlasTexture" id="fx_12"]
+atlas = ExtResource("1_tex")
+region = Rect2(9216, 0, 768, 384)
+
+[sub_resource type="AtlasTexture" id="fx_13"]
+atlas = ExtResource("1_tex")
+region = Rect2(9984, 0, 768, 384)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("fx_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_7")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_8")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_9")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_10")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_11")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_12")
+}, {
+"duration": 1.0,
+"texture": SubResource("fx_13")
+}],
+"loop": 0,
+"name": &"burst",
+"speed": 24.0
+}]

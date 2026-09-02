@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="Obj_0"]
+script = ExtResource("2_obj")
+kind = 3
+target = &"dark_forest"
+count = 1
+text = "ไปที่ป่าเงาลึก"
+
+[sub_resource type="Resource" id="Obj_1"]
+script = ExtResource("2_obj")
+kind = 0
+target = &"wolf"
+count = 10
+
+[resource]
+script = ExtResource("1_quest")
+id = &"m9_missing_hunter"
+title = "M9 คนที่ไม่กลับมา"
+description = "พ่อของอิงกริดหายไปในป่าเงาลึก เคลียร์ฝูงหมาป่าเพื่อเปิดทางตามหา"
+giver_name = "อิงกริด"
+dialog_offer = "พ่อข้าเข้าป่าเงาลึกไปหลายวันแล้วยังไม่กลับ... แกไม่เคยหลงทางนะ ช่วยข้าที ฝูงหมาป่าแถวนั้นดุจนข้าเข้าไปเองไม่ได้"
+dialog_progress = "หมาป่าในป่าเงาลึกยังเยอะอยู่ ระวังตัวด้วยนะ"
+dialog_complete = "ยังไม่เจอตัวพ่อ... แต่ขอบคุณที่เปิดทางให้ ถ้าเจอข้าวของของพ่อ เอามาให้ข้าดูด้วยนะ"
+objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0"), SubResource("Obj_1")])
+kill_monster_id = &""
+required_level = 10
+required_quests = Array[StringName]([&"m8_burnt_bark"])
+reward_zeny = 600
+reward_exp = 2000

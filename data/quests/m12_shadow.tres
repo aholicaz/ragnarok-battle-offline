@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="Obj_0"]
+script = ExtResource("2_obj")
+kind = 1
+target = &"glow_shard"
+count = 1
+text = "มอบเศษแก้วเรืองแสงให้วาลเดอร์"
+
+[sub_resource type="Resource" id="Obj_1"]
+script = ExtResource("2_obj")
+kind = 0
+target = &"hornet"
+count = 15
+text = "กวาดล้างสิ่งที่ซุ่มในป่าเงาลึก"
+
+[resource]
+script = ExtResource("1_quest")
+id = &"m12_shadow"
+title = "M12 สิ่งที่หลบอยู่ในเงา"
+description = "วาลเดอร์ขอเศษแก้วเรืองแสงไปตรวจ และให้กวาดล้างสิ่งที่ซุ่มอยู่ในป่าเงาลึก"
+giver_name = "นักบวชสูงสุดวาลเดอร์"
+dialog_offer = "ข้าได้ยินเรื่อง «ของประหลาด» ที่เจ้าเก็บได้... เอามาให้ข้าตรวจเถอะ เพื่อความปลอดภัยของเจ้าเอง และระหว่างนั้น ช่วยกวาดล้างพวกที่ซุ่มในเงาของป่าเงาลึกด้วย"
+dialog_progress = "พวกฮอร์เน็ตซุ่มอยู่ตามเงาไม้ในป่าเงาลึก... และอย่าลืมเรื่องเศษแก้ว"
+dialog_complete = "เศษแก้วนี้ข้าจะเก็บรักษาไว้เอง ...อย่ามองข้าแบบนั้น ทุกอย่างเพื่อความปลอดภัยของเมือง จงขอบคุณธอร์ที่เจ้ายังหายใจอยู่"
+objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0"), SubResource("Obj_1")])
+kill_monster_id = &""
+required_level = 14
+required_quests = Array[StringName]([&"m11_king_poring"])
+set_flag_on_complete = &"thunder_scar_open"
+reward_zeny = 1000
+reward_exp = 5000

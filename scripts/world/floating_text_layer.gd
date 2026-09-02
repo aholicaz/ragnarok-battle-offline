@@ -58,6 +58,9 @@ func _ready() -> void:
 
 func _on_floating_text(world_position: Vector2, text: String, color: Color, size: int,
 		kind: int = Kind.INFO) -> void:
+	# ★★ ตัวเลขดาเมจ/โดนตี/ฮีล → รูปตัวเลขสไตล์ MapleStory ★★ (รอบ 34)
+	if _spawn_damage_number(world_position, text, size, kind):
+		return
 	var label := Label.new()
 	label.text = text
 	label.z_index = 500
@@ -101,6 +104,50 @@ func _on_floating_text(world_position: Vector2, text: String, color: Color, size
 		if is_instance_valid(label):
 			label.queue_free()
 	)
+
+
+# =========================================================
+# ★★ ตัวเลขดาเมจแบบ MapleStory ★★ (รอบ 34)
+# =========================================================
+## ขนาดฟอนต์เดิม 32 = ตัวเลขสูง 72px · ใหญ่กว่านั้นขยายตาม (คริ 40 → 1.25 เท่า)
+const DIGIT_BASE_SIZE := 32.0
+## ลอยขึ้นกี่พิกเซล / อยู่กี่วินาที
+const DIGIT_RISE := Vector2(0, -78)
+const DIGIT_LIFE := 1.05
+
+## คืน true ถ้าจัดการเองแล้ว (เป็นตัวเลขล้วน) · false = ให้ไปใช้ Label ตามเดิม
+func _spawn_damage_number(world_position: Vector2, text: String, size: int, kind: int) -> bool:
+	var style := -1
+	var raw := text
+	if kind == Kind.DAMAGE:
+		style = DamageNumber.Style.CRIT if raw.ends_with("!") else DamageNumber.Style.NORMAL
+		raw = raw.trim_suffix("!")
+	elif kind == Kind.HURT:
+		style = DamageNumber.Style.HURT
+	elif kind == Kind.INFO and raw.begins_with("+") and raw.substr(1).is_valid_int():
+		style = DamageNumber.Style.HEAL     # "+120" จากยา/ฮีล
+		raw = raw.substr(1)
+	if style < 0 or not raw.is_valid_int():
+		return false
+
+	var k: float = maxf(0.6, float(size) / DIGIT_BASE_SIZE)
+	if style == DamageNumber.Style.CRIT:
+		k *= 1.12
+	var num := DamageNumber.new()
+	num.z_index = 500
+	add_child(num)
+	var box: Vector2 = num.setup(int(raw), style, k)
+
+	# กล่องอ้างอิงมุมซ้ายบน (เหมือน Label) เพื่อใช้ระบบกันทับเดิม
+	var start: Vector2 = world_position + START_OFFSET.get(kind, Vector2(0, -6)) \
+		- Vector2(box.x * 0.5, box.y)
+	start = _find_free_spot(start, box)
+	num.global_position = start + box * 0.5      # ตัวเลขวาดจากจุดกึ่งกลาง
+
+	var entry := {"rect": Rect2(start - PAD, box + PAD * 2.0), "node": num}
+	_live.append(entry)
+	num.play(DIGIT_RISE + Vector2(randf_range(-5, 5), 0), DIGIT_LIFE, func(): _live.erase(entry))
+	return true
 
 
 ## หาที่ว่างให้ข้อความใหม่ — ชนของเดิมก็ดันขึ้นไปอีกชั้น

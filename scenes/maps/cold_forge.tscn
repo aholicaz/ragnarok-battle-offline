@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/map_base.gd" id="map_base"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="player"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://scenes/npc/npc.tscn" id="npc"]
 [ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore"]
 [ext_resource type="Resource" path="res://data/monsters/forge_guardian.tres" id="md_forge_guardian"]
+[ext_resource type="Texture2D" path="res://Sprites/map/generated/cold_forge_bg.png" id="bg38"]
 
 [sub_resource type="RectangleShape2D" id="Rect_ground"]
 size = Vector2(3400, 240)
@@ -28,10 +29,13 @@ player_scene = ExtResource("player")
 [node name="Sky" type="Polygon2D" parent="Background"]
 z_index = -100
 position = Vector2(-100, -200)
-color = Color(0.06, 0.05, 0.06, 1)
+color = Color(1, 1, 1, 1)
+texture = ExtResource("bg38")
 polygon = PackedVector2Array(0, 0, 3200, 0, 3200, 1300, 0, 1300)
+uv = PackedVector2Array(0, 0, 1600, 0, 1600, 650, 0, 650)
 
 [node name="FarLayer" type="Polygon2D" parent="Background"]
+visible = false
 z_index = -90
 position = Vector2(-100, 520)
 color = Color(0.16, 0.1, 0.08, 1)
@@ -52,6 +56,7 @@ collision_mask = 0
 shape = SubResource("Rect_ground")
 
 [node name="Visual" type="Polygon2D" parent="Terrain/Ground"]
+visible = false
 color = Color(0.24, 0.18, 0.15, 1)
 polygon = PackedVector2Array(-1700, -120, 1700, -120, 1700, 120, -1700, 120)
 

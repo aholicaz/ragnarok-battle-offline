@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="Obj_0"]
+script = ExtResource("2_obj")
+kind = 2
+target = &"นายหน้าเฮลกา"
+count = 1
+text = "ถามเฮลกาเรื่องซินดริ"
+
+[sub_resource type="Resource" id="Obj_1"]
+script = ExtResource("2_obj")
+kind = 2
+target = &"ช่างเอกดวาลิน"
+count = 1
+text = "ถามดวาลินเรื่องซินดริ"
+
+[sub_resource type="Resource" id="Obj_2"]
+script = ExtResource("2_obj")
+kind = 2
+target = &"บรอกก์"
+count = 1
+text = "ถามบรอกก์เรื่องซินดริ"
+
+[sub_resource type="Resource" id="Obj_3"]
+script = ExtResource("2_obj")
+kind = 2
+target = &"หมอคนแคระเฮดิน"
+count = 1
+text = "ถามหมอเฮดินเรื่องซินดริ"
+
+[resource]
+script = ExtResource("1_quest")
+id = &"c2_3_forbidden_name"
+title = "C2-3 ชื่อที่ห้ามเอ่ย"
+description = "ฮันส์อยากรู้ข่าวอาจารย์เก่า «ซินดริ» แต่ไม่มีคนแคระคนไหนยอมพูดถึง"
+giver_name = "ช่างตีเหล็กฮันส์"
+dialog_offer = "ข้าตามเจ้ามาที่นี่เพราะอยากรู้ข่าวอาจารย์ซินดริ... แต่ข้าถามทีไร ทุกคนเปลี่ยนเรื่องทันที เจ้าเป็นคนนอก ลองถามแทนข้าที"
+dialog_progress = "ลองถามเฮลกา ดวาลิน บรอกก์ กับหมอเฮดินดู... สังเกตสีหน้าพวกเขาด้วยล่ะ"
+dialog_complete = "เห็นไหม... ไม่มีใครยอมเอ่ยชื่ออาจารย์เลยสักคน ทั้งที่เคยเป็นช่างเอกของเมืองนี้แท้ ๆ ...ความเงียบก็เป็นคำตอบชนิดหนึ่งนะเจ้าว่าไหม"
+objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0"), SubResource("Obj_1"), SubResource("Obj_2"), SubResource("Obj_3")])
+kill_monster_id = &""
+required_level = 20
+required_quests = Array[StringName]([&"c2_2_toll"])
+set_flag_on_complete = &"asked_about_sindri"
+reward_zeny = 0
+reward_exp = 4000

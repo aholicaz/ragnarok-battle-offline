@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="Obj_0"]
+script = ExtResource("2_obj")
+kind = 4
+target = &"sindri_grave"
+count = 1
+text = "ตรวจดูหลุมศพท้ายเมือง"
+
+[resource]
+script = ExtResource("1_quest")
+id = &"c2_4_nameless_grave"
+title = "C2-4 หลุมศพที่ไม่มีชื่อ"
+description = "มีหลุมศพเก่าท้ายเมืองที่ชื่อบนป้ายถูกสกัดออก ไปดูให้เห็นกับตา"
+giver_name = "ช่างตีเหล็กฮันส์"
+dialog_offer = "บรอกก์เผลอพูดถึง «หลุมท้ายเมือง» แล้วก็หุบปากทันที... ไปดูหลุมศพนั้นให้ข้าที ข้าไม่กล้าไปเอง"
+dialog_progress = "หลุมศพอยู่ท้ายเมืองนิดาเวลลิร์"
+dialog_complete = "ชื่อบนป้ายถูกสกัดออก... เหมือนศิลาสลักที่บ้านเราเลย ใครกัน... ใครกันที่ไล่ลบชื่อคนตายไปทั่วทุกโลกแบบนี้"
+objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0")])
+kill_monster_id = &""
+required_level = 21
+required_quests = Array[StringName]([&"c2_3_forbidden_name"])
+reward_zeny = 0
+reward_exp = 4500

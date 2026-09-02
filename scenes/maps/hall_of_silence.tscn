@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/map_base.gd" id="map_base"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="player"]
@@ -12,6 +12,7 @@
 [ext_resource type="Resource" path="res://data/monsters/forge_golem.tres" id="md_forge_golem"]
 [ext_resource type="Resource" path="res://data/monsters/silent_wraith.tres" id="md_silent_wraith"]
 [ext_resource type="Resource" path="res://data/monsters/rune_watcher.tres" id="md_rune_watcher"]
+[ext_resource type="Texture2D" path="res://Sprites/map/generated/hall_of_silence_bg.png" id="bg38"]
 
 [sub_resource type="RectangleShape2D" id="Rect_ground"]
 size = Vector2(5000, 240)
@@ -39,10 +40,13 @@ player_scene = ExtResource("player")
 [node name="Sky" type="Polygon2D" parent="Background"]
 z_index = -100
 position = Vector2(-100, -200)
-color = Color(0.07, 0.08, 0.12, 1)
+color = Color(1, 1, 1, 1)
+texture = ExtResource("bg38")
 polygon = PackedVector2Array(0, 0, 4800, 0, 4800, 1400, 0, 1400)
+uv = PackedVector2Array(0, 0, 2400, 0, 2400, 650, 0, 650)
 
 [node name="FarLayer" type="Polygon2D" parent="Background"]
+visible = false
 z_index = -90
 position = Vector2(-100, 540)
 color = Color(0.12, 0.14, 0.2, 1)
@@ -63,6 +67,7 @@ collision_mask = 0
 shape = SubResource("Rect_ground")
 
 [node name="Visual" type="Polygon2D" parent="Terrain/Ground"]
+visible = false
 color = Color(0.2, 0.22, 0.28, 1)
 polygon = PackedVector2Array(-2500, -120, 2500, -120, 2500, 120, -2500, 120)
 

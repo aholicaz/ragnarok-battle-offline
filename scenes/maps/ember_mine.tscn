@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/map_base.gd" id="map_base"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="player"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore"]
 [ext_resource type="Resource" path="res://data/monsters/ember_bat.tres" id="md_ember_bat"]
 [ext_resource type="Resource" path="res://data/monsters/magma_slug.tres" id="md_magma_slug"]
+[ext_resource type="Texture2D" path="res://Sprites/map/generated/ember_mine_bg.png" id="bg38"]
 
 [sub_resource type="RectangleShape2D" id="Rect_ground"]
 size = Vector2(5400, 240)
@@ -44,10 +45,13 @@ player_scene = ExtResource("player")
 [node name="Sky" type="Polygon2D" parent="Background"]
 z_index = -100
 position = Vector2(-100, -200)
-color = Color(0.12, 0.06, 0.05, 1)
+color = Color(1, 1, 1, 1)
+texture = ExtResource("bg38")
 polygon = PackedVector2Array(0, 0, 5200, 0, 5200, 1400, 0, 1400)
+uv = PackedVector2Array(0, 0, 2600, 0, 2600, 650, 0, 650)
 
 [node name="FarLayer" type="Polygon2D" parent="Background"]
+visible = false
 z_index = -90
 position = Vector2(-100, 540)
 color = Color(0.3, 0.1, 0.06, 1)
@@ -68,6 +72,7 @@ collision_mask = 0
 shape = SubResource("Rect_ground")
 
 [node name="Visual" type="Polygon2D" parent="Terrain/Ground"]
+visible = false
 color = Color(0.28, 0.2, 0.16, 1)
 polygon = PackedVector2Array(-2700, -120, 2700, -120, 2700, 120, -2700, 120)
 

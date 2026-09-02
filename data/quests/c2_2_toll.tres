@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="Obj_0"]
+script = ExtResource("2_obj")
+kind = 1
+target = &"steel_shell"
+count = 5
+
+[sub_resource type="Resource" id="Obj_1"]
+script = ExtResource("2_obj")
+kind = 1
+target = &"dirt_clump"
+count = 5
+
+[resource]
+script = ExtResource("1_quest")
+id = &"c2_2_toll"
+title = "C2-2 ค่าผ่านทาง"
+description = "เฮลกาขอ «ค่าผ่านทาง» เป็นวัสดุจากทางเหล็ก ก่อนจะยอมขายของให้ราคาปกติ"
+giver_name = "นายหน้าเฮลกา"
+dialog_offer = "ในเมืองนี้ไม่มีอะไรฟรี อยากให้ข้าขายของราคาคนใน ก็เอาของจากทางเหล็กมาแลกสิ — เปลือกด้วงเหล็กกับก้อนดินอัดของพวกพิตแมน"
+dialog_progress = "เปลือกเหล็กห้าชิ้น ดินอัดห้าก้อน จากพวกมอนบนทางเหล็กนั่นแหละ"
+dialog_complete = "ฮึ... ใช้ได้นี่ ตกลงตามนั้น เจ้าซื้อของข้าราคาคนในได้แล้ว"
+objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0"), SubResource("Obj_1")])
+kill_monster_id = &""
+required_level = 19
+required_quests = Array[StringName]([&"c2_1_unwelcome_gate"])
+reward_item_id = &"miner_helmet"
+reward_item_count = 1
+reward_zeny = 0
+reward_exp = 3500

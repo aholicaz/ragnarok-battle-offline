@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="Obj_0"]
+script = ExtResource("2_obj")
+kind = 3
+target = &"hall_of_silence"
+count = 1
+text = "ไปที่ห้องโถงเงียบ"
+
+[sub_resource type="Resource" id="Obj_1"]
+script = ExtResource("2_obj")
+kind = 0
+target = &"silent_wraith"
+count = 10
+
+[sub_resource type="Resource" id="Obj_2"]
+script = ExtResource("2_obj")
+kind = 0
+target = &"rune_watcher"
+count = 1
+
+[resource]
+script = ExtResource("1_quest")
+id = &"c2_5_hall_of_silence"
+title = "C2-5 ห้องโถงเงียบ"
+description = "เคลียร์ห้องโถงเงียบ — โรงหลอมเก่าที่ตอนนี้เหลือแต่ภูตกับผู้เฝ้ารูน"
+giver_name = "ช่างเอกดวาลิน"
+dialog_offer = "ห้องโถงเงียบเคยเป็นโรงหลอมใหญ่ที่สุดใต้ภูเขา ตอนนี้เหลือแต่ภูตไร้เสียงกับ «ผู้เฝ้ารูน» ...เคลียร์ทางให้ข้าที ข้าอยากกลับไปเอาเครื่องมือของตระกูล"
+dialog_progress = "ภูตไร้เสียงไม่มีเสียงฝีเท้า ฟังไม่ได้ ต้องใช้ตาดู... ส่วนผู้เฝ้ารูนอยู่ในสุด"
+dialog_complete = "เจ้าล้มผู้เฝ้ารูนได้จริง ๆ รึ... งั้นที่เหลือในความมืดข้างล่างก็มีแค่ «มัน» แล้วสินะ"
+objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0"), SubResource("Obj_1"), SubResource("Obj_2")])
+kill_monster_id = &""
+required_level = 28
+required_quests = Array[StringName]([&"c2_4_nameless_grave"])
+reward_zeny = 3000
+reward_exp = 8000

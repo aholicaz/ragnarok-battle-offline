@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="Obj_0"]
+script = ExtResource("2_obj")
+kind = 4
+target = &"hunter_camp"
+count = 1
+text = "ตรวจดูแคมป์ร้างของนักล่า"
+
+[sub_resource type="Resource" id="Obj_1"]
+script = ExtResource("2_obj")
+kind = 1
+target = &"hunter_journal"
+count = 1
+text = "นำสมุดของนักล่าไปให้อิงกริด"
+consume = false
+
+[resource]
+script = ExtResource("1_quest")
+id = &"m10_hunter_journal"
+title = "M10 สมุดของนักล่า"
+description = "ตามหาแคมป์ของนักล่าในป่าเงาลึก แล้วนำสิ่งที่พบกลับมาให้อิงกริด"
+giver_name = "อิงกริด"
+dialog_offer = "พ่อชอบตั้งแคมป์ลึกเข้าไปทางตะวันออกของป่าเงาลึก... ลองไปดูตรงนั้นที ขอร้องล่ะ"
+dialog_progress = "แคมป์อยู่ลึกเข้าไปทางตะวันออกของป่าเงาลึก"
+dialog_complete = "ลายมือพ่อจริง ๆ ด้วย... «พวกมันไม่ได้ล่า พวกมันหนี» ...หนีจากอะไรกัน? สมุดเล่มนี้เจ้าเก็บไว้เถอะ ข้าอ่านแล้วใจไม่ดีเลย"
+objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0"), SubResource("Obj_1")])
+kill_monster_id = &""
+required_level = 11
+required_quests = Array[StringName]([&"m9_missing_hunter"])
+set_flag_on_complete = &"read_hunter_journal"
+reward_zeny = 0
+reward_exp = 2500

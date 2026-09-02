@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/map_base.gd" id="map_base"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="player"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/world/portal.tscn" id="portal"]
 [ext_resource type="PackedScene" path="res://scenes/npc/npc.tscn" id="npc"]
 [ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore"]
+[ext_resource type="Texture2D" path="res://Sprites/map/generated/nidavellir_town_bg.png" id="bg38"]
 
 [sub_resource type="RectangleShape2D" id="Rect_ground"]
 size = Vector2(3800, 240)
@@ -27,10 +28,13 @@ player_scene = ExtResource("player")
 [node name="Sky" type="Polygon2D" parent="Background"]
 z_index = -100
 position = Vector2(-100, -200)
-color = Color(0.14, 0.1, 0.09, 1)
+color = Color(1, 1, 1, 1)
+texture = ExtResource("bg38")
 polygon = PackedVector2Array(0, 0, 3600, 0, 3600, 1200, 0, 1200)
+uv = PackedVector2Array(0, 0, 1800, 0, 1800, 650, 0, 650)
 
 [node name="FarLayer" type="Polygon2D" parent="Background"]
+visible = false
 z_index = -90
 position = Vector2(-100, 520)
 color = Color(0.26, 0.17, 0.12, 1)
@@ -51,6 +55,7 @@ collision_mask = 0
 shape = SubResource("Rect_ground")
 
 [node name="Visual" type="Polygon2D" parent="Terrain/Ground"]
+visible = false
 color = Color(0.34, 0.26, 0.2, 1)
 polygon = PackedVector2Array(-1900, -120, 1900, -120, 1900, 120, -1900, 120)
 
@@ -88,6 +93,7 @@ destination_name = "เหมืองถ่านไฟ"
 [node name="Helga" parent="NPCs" instance=ExtResource("npc")]
 position = Vector2(350, 820)
 npc_name = "นายหน้าเฮลกา"
+quest_ids = Array[StringName]([&"c2_1_unwelcome_gate", &"c2_2_toll"])
 type = 1
 dialog = "คนบนดินสินะ ของที่นี่แพงหน่อยนะ แต่ของดีทุกชิ้น\n\nอย่าถามว่าใครตี... ที่นี่ไม่ถามกัน"
 shop_items = Array[StringName]([&"red_potion", &"orange_potion", &"white_potion", &"blue_potion", &"iron_ore", &"phracon", &"emveretarcon", &"bastard_sword", &"iron_blade", &"forge_saber", &"iron_shield", &"iron_helm", &"miner_helmet", &"chain_mail", &"scale_mail", &"iron_greaves", &"miner_boots", &"rosary", &"belt"])
@@ -95,12 +101,14 @@ shop_items = Array[StringName]([&"red_potion", &"orange_potion", &"white_potion"
 [node name="Dvalin" parent="NPCs" instance=ExtResource("npc")]
 position = Vector2(900, 820)
 npc_name = "ช่างเอกดวาลิน"
+quest_ids = Array[StringName]([&"c2_5_hall_of_silence", &"c2_6_to_cold_forge", &"c2_7_forge_guardian"])
 type = 2
 dialog = "เอาของมาตีบวกก็วางตรงนี้\n\n...เจ้ามากับฮันส์ใช่ไหม บอกมันว่าข้ายังไม่ให้อภัย"
 
 [node name="Brokk" parent="NPCs" instance=ExtResource("npc")]
 position = Vector2(1450, 820)
 npc_name = "บรอกก์"
+quest_ids = Array[StringName]([&"c2_8_hammer_truth"])
 type = 0
 dialog = "ข้าไม่พูดเรื่องเก่าแล้ว ไปเถอะ\n\n...ค้อนน่ะ? ค้อนอะไร"
 dialog_by_flag = {
@@ -122,6 +130,7 @@ dialog = "เจ็บตรงไหน ให้ข้าดู\n\nที่�
 [node name="Hans" parent="NPCs" instance=ExtResource("npc")]
 position = Vector2(2850, 820)
 npc_name = "ช่างตีเหล็กฮันส์"
+quest_ids = Array[StringName]([&"c2_3_forbidden_name", &"c2_4_nameless_grave"])
 type = 0
 dialog = "ข้าตามเจ้ามาถึงนี่แล้ว...\n\nสิบปีที่ไม่ได้กลับบ้าน ทุกคนยังจำหน้าข้าได้ แต่ไม่มีใครทัก"
 

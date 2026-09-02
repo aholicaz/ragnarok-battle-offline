@@ -9,9 +9,13 @@ class_name TitleScreen
 extends Control
 
 const KEY_ART := "res://Sprites/ui/title_key_art.jpg"
+## ★ วิดีโอเปิดเกม (รอบ 39) ★ เล่นวนเป็นพื้นหลังแทนภาพนิ่ง — ไม่มีไฟล์นี้ = ใช้ภาพนิ่งเหมือนเดิม
+## ★ เปลี่ยนวิดีโอ ★ ต้องเป็น .ogv (Ogg Theora) — แปลงจาก mp4: ffmpeg -i in.mp4 -c:v libtheora -q:v 7 -c:a libvorbis out.ogv
+const OPENING_VIDEO := "res://Sprites/opening_game.ogv"
 const VERSION := "v0.31"
 
 var _art: TextureRect
+var _video: VideoStreamPlayer
 var _menu: VBoxContainer
 var _buttons: Array[Button] = []
 var _slot_labels: Array[Label] = []
@@ -48,6 +52,21 @@ func _build_art() -> void:
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(bg)
 
+	# ---------- วิดีโอเปิดเกม (ถ้ามี) ----------
+	if ResourceLoader.exists(OPENING_VIDEO):
+		_video = VideoStreamPlayer.new()
+		_video.name = "OpeningVideo"
+		_video.stream = load(OPENING_VIDEO)
+		_video.autoplay = true
+		_video.expand = true
+		_video.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		_video.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		# วนซ้ำเอง (VideoStreamPlayer ไม่มีช่อง loop)
+		_video.finished.connect(func():
+			if is_instance_valid(_video):
+				_video.play())
+		add_child(_video)
+
 	_art = TextureRect.new()
 	_art.name = "KeyArt"
 	if ResourceLoader.exists(KEY_ART):
@@ -58,6 +77,8 @@ func _build_art() -> void:
 	_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	# ซูมรอบจุดกลาง
 	_art.pivot_offset = get_viewport_rect().size * 0.5
+	# มีวิดีโอแล้ว ภาพนิ่งเป็นแค่ตัวสำรอง (ซ่อนไว้)
+	_art.visible = _video == null
 	add_child(_art)
 
 	# ไล่เงาด้านล่างให้เมนูอ่านง่าย
@@ -83,7 +104,7 @@ func _build_art() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
-	if _art != null:
+	if _art != null and _art.visible:
 		# ซูม 1.00 → 1.06 ไป-กลับช้า ๆ (60 วิ ต่อรอบ)
 		var k := 1.03 + 0.03 * sin(_t * TAU / 60.0)
 		_art.pivot_offset = size * 0.5

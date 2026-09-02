@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="Obj_0"]
+script = ExtResource("2_obj")
+kind = 2
+target = &"นักบวชหญิงมาเรีย"
+count = 1
+text = "แจ้งมาเรียเรื่องพิธี"
+
+[sub_resource type="Resource" id="Obj_1"]
+script = ExtResource("2_obj")
+kind = 2
+target = &"ทหารยามเอริค"
+count = 1
+text = "แจ้งเอริคเรื่องพิธี"
+
+[resource]
+script = ExtResource("1_quest")
+id = &"m6_ceremony"
+title = "M6 พิธีฉลองชัยชนะ"
+description = "ช่วยวาลเดอร์เตรียมพิธีขอบคุณธอร์ครั้งใหญ่ แจ้งมาเรียกับเอริคให้พร้อม"
+giver_name = "นักบวชสูงสุดวาลเดอร์"
+dialog_offer = "ค่ำนี้จะมีพิธีขอบคุณธอร์ครั้งใหญ่ ไปแจ้งมาเรียให้เตรียมบทสวด และแจ้งเอริคให้จัดแถวยาม"
+dialog_progress = "แจ้งมาเรียกับเอริคให้ครบก่อนนะ พิธีรอไม่ได้"
+dialog_complete = "สมบูรณ์แบบ... ฟังสิ ทั้งเมืองกำลังสวดพร้อมกัน จงขอบคุณธอร์!"
+objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0"), SubResource("Obj_1")])
+kill_monster_id = &""
+required_level = 6
+required_quests = Array[StringName]([&"m5_old_mine_iron"])
+set_flag_on_complete = &"saw_ceremony"
+cutscene_pan_npc = "ตาแก่กุนนาร์"
+cutscene_text = "ทั้งเมืองก้มหัว ยกมือขึ้นสวดพร้อมกัน
+
+...ยกเว้นชายชราคนหนึ่ง
+
+ตาแก่กุนนาร์ยืนนิ่ง มองท้องฟ้าเงียบ ๆ
+มือทั้งสองข้างไม่ได้ยกขึ้นเลย"
+reward_zeny = 300
+reward_exp = 800

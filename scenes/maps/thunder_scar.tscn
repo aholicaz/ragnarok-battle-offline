@@ -1,0 +1,131 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/map_base.gd" id="map_base"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="player"]
+[ext_resource type="PackedScene" path="res://scenes/monsters/monster.tscn" id="monster_scene"]
+[ext_resource type="Script" path="res://scripts/world/map_spawner.gd" id="map_spawner"]
+[ext_resource type="Script" path="res://scripts/world/monster_spawner.gd" id="spawner"]
+[ext_resource type="Script" path="res://scripts/resources/monster_data.gd" id="monster_data"]
+[ext_resource type="PackedScene" path="res://scenes/world/portal.tscn" id="portal"]
+[ext_resource type="PackedScene" path="res://scenes/npc/npc.tscn" id="npc"]
+[ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore"]
+[ext_resource type="Resource" path="res://data/monsters/stormscar.tres" id="md_stormscar"]
+[ext_resource type="Texture2D" path="res://Sprites/map/generated/thunder_scar_bg.png" id="bg38"]
+
+[sub_resource type="RectangleShape2D" id="Rect_ground"]
+size = Vector2(3200, 240)
+
+[sub_resource type="RectangleShape2D" id="Rect_p0"]
+size = Vector2(320, 32)
+
+[sub_resource type="RectangleShape2D" id="Rect_p1"]
+size = Vector2(300, 32)
+
+[node name="Map" type="Node2D"]
+script = ExtResource("map_base")
+map_id = &"thunder_scar"
+display_name = "รอยสายฟ้า"
+chapter = 1
+region = "มิดการ์ด"
+map_bounds = Rect2(-100, -200, 3000, 1300)
+player_scene = ExtResource("player")
+
+[node name="Background" type="Node2D" parent="."]
+
+[node name="Sky" type="Polygon2D" parent="Background"]
+z_index = -100
+position = Vector2(-100, -200)
+color = Color(1, 1, 1, 1)
+texture = ExtResource("bg38")
+polygon = PackedVector2Array(0, 0, 3000, 0, 3000, 1300, 0, 1300)
+uv = PackedVector2Array(0, 0, 1500, 0, 1500, 650, 0, 650)
+
+[node name="FarLayer" type="Polygon2D" parent="Background"]
+visible = false
+z_index = -90
+position = Vector2(-100, 520)
+color = Color(0.14, 0.14, 0.22, 1)
+polygon = PackedVector2Array(0, 0, 3000, 0, 3000, 360, 0, 360)
+
+[node name="Art" type="Sprite2D" parent="Background"]
+z_index = -80
+position = Vector2(1400, 550)
+
+[node name="Terrain" type="Node2D" parent="."]
+
+[node name="Ground" type="StaticBody2D" parent="Terrain"]
+position = Vector2(1400, 1000)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Ground"]
+shape = SubResource("Rect_ground")
+
+[node name="Visual" type="Polygon2D" parent="Terrain/Ground"]
+visible = false
+color = Color(0.2, 0.19, 0.23, 1)
+polygon = PackedVector2Array(-1600, -120, 1600, -120, 1600, 120, -1600, 120)
+
+[node name="Plat0" type="StaticBody2D" parent="Terrain"]
+position = Vector2(1100, 700)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat0"]
+shape = SubResource("Rect_p0")
+
+[node name="Visual" type="Polygon2D" parent="Terrain/Plat0"]
+color = Color(0.2, 0.19, 0.23, 1)
+polygon = PackedVector2Array(-160, -16, 160, -16, 160, 16, -160, 16)
+
+[node name="Plat1" type="StaticBody2D" parent="Terrain"]
+position = Vector2(1750, 620)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat1"]
+shape = SubResource("Rect_p1")
+
+[node name="Visual" type="Polygon2D" parent="Terrain/Plat1"]
+color = Color(0.2, 0.19, 0.23, 1)
+polygon = PackedVector2Array(-150, -16, 150, -16, 150, 16, -150, 16)
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(200, 820)
+
+[node name="from_dark_forest" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(200, 820)
+
+[node name="Spawners" type="Node2D" parent="."]
+
+[node name="Boss_stormscar" type="Node2D" parent="Spawners"]
+position = Vector2(2300, 850)
+script = ExtResource("spawner")
+monster_types = Array[ExtResource("monster_data")]([ExtResource("md_stormscar")])
+monster_scene = ExtResource("monster_scene")
+max_alive = 1
+spawn_width = 160
+
+[node name="Portals" type="Node2D" parent="."]
+
+[node name="ToDarkForest" parent="Portals" instance=ExtResource("portal")]
+position = Vector2(70, 880)
+target_map = &"dark_forest"
+target_spawn_point = &"from_thunder_scar"
+label_text = "← ป่าเงาลึก"
+destination_name = "ป่าเงาลึก"
+
+[node name="Lore" type="Node2D" parent="."]
+
+[node name="ScarCenter" parent="Lore" instance=ExtResource("lore")]
+position = Vector2(2300, 790)
+lore_id = &"thunder_scar_center"
+title = "รอยแผลบนผืนดิน"
+text = "ดินตรงนี้ไหม้เป็นแนวยาว เหมือนโดนสายฟ้าฟาดซ้ำ ๆ นับร้อยครั้ง
+
+ตรงกลางรอยไหม้มีร่องเล็ก ๆ ...เหมือนมีบางอย่างไหลลงดินไปทางเหนือ"
+label_text = "รอยไหม้ประหลาด"
+required_flag = &"killed_stormscar"
+locked_text = "เสียงฟ้าคำรามดังจนเข้าใกล้ไม่ได้"

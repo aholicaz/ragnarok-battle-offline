@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/map_base.gd" id="map_base"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="player"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore"]
 [ext_resource type="Resource" path="res://data/monsters/pitman.tres" id="md_pitman"]
 [ext_resource type="Resource" path="res://data/monsters/steel_beetle.tres" id="md_steel_beetle"]
+[ext_resource type="Texture2D" path="res://Sprites/map/generated/iron_road_bg.png" id="bg38"]
 
 [sub_resource type="RectangleShape2D" id="Rect_ground"]
 size = Vector2(5200, 240)
@@ -41,10 +42,13 @@ player_scene = ExtResource("player")
 [node name="Sky" type="Polygon2D" parent="Background"]
 z_index = -100
 position = Vector2(-100, -200)
-color = Color(0.16, 0.15, 0.17, 1)
+color = Color(1, 1, 1, 1)
+texture = ExtResource("bg38")
 polygon = PackedVector2Array(0, 0, 5000, 0, 5000, 1300, 0, 1300)
+uv = PackedVector2Array(0, 0, 2500, 0, 2500, 650, 0, 650)
 
 [node name="FarLayer" type="Polygon2D" parent="Background"]
+visible = false
 z_index = -90
 position = Vector2(-100, 520)
 color = Color(0.22, 0.2, 0.2, 1)
@@ -65,6 +69,7 @@ collision_mask = 0
 shape = SubResource("Rect_ground")
 
 [node name="Visual" type="Polygon2D" parent="Terrain/Ground"]
+visible = false
 color = Color(0.3, 0.27, 0.25, 1)
 polygon = PackedVector2Array(-2600, -120, 2600, -120, 2600, 120, -2600, 120)
 

@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="Obj_0"]
+script = ExtResource("2_obj")
+kind = 2
+target = &"หัวหน้ากิลด์บียอร์น"
+count = 1
+
+[sub_resource type="Resource" id="Obj_1"]
+script = ExtResource("2_obj")
+kind = 2
+target = &"พ่อค้าโทนี่"
+count = 1
+
+[sub_resource type="Resource" id="Obj_2"]
+script = ExtResource("2_obj")
+kind = 2
+target = &"นักบวชหญิงมาเรีย"
+count = 1
+
+[resource]
+script = ExtResource("1_quest")
+id = &"m1_adventurer_badge"
+title = "M1 ตราประจำตัวนักผจญภัย"
+description = "ทำความรู้จักผู้คนสำคัญของพรอนเทรา แล้วรับตราประจำตัวนักผจญภัยจากเอริค"
+giver_name = "ทหารยามเอริค"
+dialog_offer = "นักผจญภัยหน้าใหม่สินะ ก่อนออกนอกเมือง ไปทำความรู้จักผู้คนก่อน — หัวหน้ากิลด์ พ่อค้า แล้วก็ท่านนักบวช เสร็จแล้วข้าจะออกตราประจำตัวให้"
+dialog_progress = "ยังทักทายไม่ครบเลยนะ กิลด์อยู่ทางขวาสุดของเมือง ร้านโทนี่อยู่กลางเมือง"
+dialog_complete = "เรียบร้อย! นี่ตราประจำตัวของเจ้า ยินดีต้อนรับสู่พรอนเทรา นครแห่งสายฟ้า จงขอบคุณธอร์ที่นำเจ้ามาถึงที่นี่"
+objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0"), SubResource("Obj_1"), SubResource("Obj_2")])
+kill_monster_id = &""
+required_level = 1
+reward_item_id = &"adventurer_badge"
+reward_item_count = 1
+reward_zeny = 200
+reward_exp = 120

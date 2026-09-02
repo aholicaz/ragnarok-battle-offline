@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+
+[sub_resource type="Resource" id="Obj_0"]
+script = ExtResource("2_obj")
+kind = 1
+target = &"iron_ore"
+count = 5
+
+[resource]
+script = ExtResource("1_quest")
+id = &"m5_old_mine_iron"
+title = "M5 เหล็กจากเหมืองเก่า"
+description = "หาแร่เหล็กจากมอนสเตอร์แถวป่าสนธยามาให้ฮันส์ (ชอนชอนชอบกลืนแร่เข้าไป)"
+giver_name = "ช่างตีเหล็กฮันส์"
+dialog_offer = "ของจากทางเหนือขาดมาสามเดือน เหล็กข้าใกล้หมดแล้ว... พวกชอนชอนในป่าสนธยาชอบกลืนแร่เหล็ก ช่วยหามาให้ข้าห้าก้อนที"
+dialog_progress = "แร่เหล็กห้าก้อน ลองล่าพวกชอนชอนในป่าสนธยาดู"
+dialog_complete = "พอถูไถไปได้อีกพัก... เจ้ารู้ไหม สมัยก่อนคนแคระใต้ภูเขาเหนือตีเหล็กให้ทั้งเก้าโลก ข้าเคยเป็นลูกศิษย์พวกเขา แต่สามเดือนมานี้... เงียบไปทั้งภูเขา"
+objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0")])
+kill_monster_id = &""
+required_level = 5
+required_quests = Array[StringName]([&"tony_fabre"])
+set_flag_on_complete = &"heard_mountain_story"
+reward_item_id = &"phracon"
+reward_item_count = 3
+reward_zeny = 500
+reward_exp = 900

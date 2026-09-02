@@ -284,3 +284,75 @@ func _on_shop_opened(item_ids: Array) -> void:
 
 func _on_refine_opened() -> void:
 	open(&"refine")
+
+
+# =========================================================
+# ★ เล่นวิดีโอเต็มจอ (รอบ 41) ★ ใช้กับฉากเปิดตัวบอส / คัทซีน
+# เกมหยุดชั่วคราวระหว่างเล่น · กด Enter / Esc / คลิก เพื่อข้ามได้
+# =========================================================
+var video_playing := false
+
+func play_video(path: String) -> void:
+	if video_playing or path == "" or not ResourceLoader.exists(path):
+		return
+	video_playing = true
+	var was_paused := get_tree().paused
+	get_tree().paused = true
+
+	var vlayer := CanvasLayer.new()
+	vlayer.layer = 150
+	vlayer.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(vlayer)
+
+	# ★ CanvasLayer ไม่มี modulate — ห่อทุกอย่างใน Control แล้วเฟดที่ตัวนี้แทน ★
+	var wrap := Control.new()
+	wrap.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	wrap.mouse_filter = Control.MOUSE_FILTER_STOP
+	vlayer.add_child(wrap)
+
+	var black := ColorRect.new()
+	black.color = Color.BLACK
+	black.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	wrap.add_child(black)
+
+	var vid := VideoStreamPlayer.new()
+	vid.stream = load(path)
+	vid.expand = true
+	vid.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	wrap.add_child(vid)
+	vid.play()
+
+	var hint := Label.new()
+	hint.text = "Enter / คลิก = ข้าม"
+	hint.add_theme_font_size_override("font_size", 16)
+	hint.add_theme_color_override("font_color", Color(1, 1, 1, 0.55))
+	hint.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	hint.offset_left = -240
+	hint.offset_top = -46
+	hint.offset_right = -20
+	hint.offset_bottom = -16
+	wrap.add_child(hint)
+
+	# จางเข้า
+	wrap.modulate = Color(1, 1, 1, 0)
+	var tw := create_tween()
+	tw.tween_property(wrap, "modulate:a", 1.0, 0.25)
+
+	# รอจนวิดีโอจบ หรือผู้เล่นกดข้าม (กันกดพลาด: เริ่มรับปุ่มหลัง 0.4 วิ)
+	var t := 0.0
+	while is_instance_valid(vid) and vid.is_playing():
+		await get_tree().process_frame
+		t += get_process_delta_time()
+		# ★ ใช้ is_action_pressed (ค้าง) ไม่ใช่ just_pressed — ตอนเกม pause เฟรม input
+		# กับเฟรม await ไม่ตรงกัน just_pressed จะหลุดมือ (กับดักข้อ 15) ★
+		if t > 0.4 and (Input.is_action_pressed("ui_accept")
+				or Input.is_action_pressed("ui_cancel")
+				or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)):
+			break
+
+	var out := create_tween()
+	out.tween_property(wrap, "modulate:a", 0.0, 0.25)
+	await out.finished
+	vlayer.queue_free()
+	get_tree().paused = was_paused
+	video_playing = false

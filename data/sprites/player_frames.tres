@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://ckqy17a72cs3h" path="res://Sprites/spritesheet Attack blade_bash v2.png" id="3_v1u58"]
 [ext_resource type="Texture2D" uid="uid://clp4swdg6qd8h" path="res://Sprites/Attack falchion.png" id="4_0ie5y"]
 [ext_resource type="Texture2D" uid="uid://bik88w2jlfx74" path="res://Sprites/hero magnum break.png" id="4_iyar8"]
+[ext_resource type="Texture2D" uid="uid://5h3extlwvjkx" path="res://Sprites/skill/blade_slash.png" id="5_rsfcu"]
 [ext_resource type="Texture2D" uid="uid://f5nyrayddyhh" path="res://Sprites/spritesheet Attack falchion bash.png" id="5_v1u58"]
 [ext_resource type="Texture2D" uid="uid://chee5hold1k27" path="res://Sprites/sprite-original-Die.png" id="8_ljvea"]
 [ext_resource type="Texture2D" uid="uid://duj4lx6wlrkl" path="res://Sprites/hit1.png" id="8_oe01s"]
@@ -240,6 +241,38 @@ region = Rect2(512, 512, 512, 512)
 [sub_resource type="AtlasTexture" id="AtlasTexture_a5dk2"]
 atlas = ExtResource("4_iyar8")
 region = Rect2(1024, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_avhvt"]
+atlas = ExtResource("5_rsfcu")
+region = Rect2(0, 0, 558, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2nbdp"]
+atlas = ExtResource("5_rsfcu")
+region = Rect2(558, 0, 558, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wrj8d"]
+atlas = ExtResource("5_rsfcu")
+region = Rect2(1116, 0, 558, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7inm6"]
+atlas = ExtResource("5_rsfcu")
+region = Rect2(1674, 0, 558, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5taty"]
+atlas = ExtResource("5_rsfcu")
+region = Rect2(2232, 0, 558, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bs4mm"]
+atlas = ExtResource("5_rsfcu")
+region = Rect2(2790, 0, 558, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uoest"]
+atlas = ExtResource("5_rsfcu")
+region = Rect2(3348, 0, 558, 768)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jmxml"]
+atlas = ExtResource("5_rsfcu")
+region = Rect2(3906, 0, 558, 768)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kat_katana_00"]
 atlas = ExtResource("kat_katana")
@@ -728,6 +761,35 @@ animations = [{
 "loop": 0,
 "name": &"Attack_Blade_magnum_break",
 "speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_avhvt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2nbdp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wrj8d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7inm6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5taty")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bs4mm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uoest")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jmxml")
+}],
+"loop": 1,
+"name": &"Attack_Blade_slash",
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,

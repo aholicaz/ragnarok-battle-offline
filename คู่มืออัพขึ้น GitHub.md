@@ -55,7 +55,7 @@
 2. ช่อง **Summary** ล่างซ้าย พิมพ์อะไรก็ได้ เช่น `เริ่มโปรเจกต์`
 3. กด **Commit to main** → รอสักครู่ (ไฟล์เยอะ)
 4. กดปุ่ม **Publish repository** (มุมบนขวา)
-2. ตั้งชื่อ repo เช่น `ragnarok-battle-offline`
+2. ตั้งชื่อ repo เช่น `shadows-of-fate`
 3. **เอาเครื่องหมายถูกออกจาก "Keep this code private"** ถ้าอยากให้เว็บเปิดได้ฟรี
    (GitHub Pages ของบัญชีฟรีใช้กับ repo แบบ public เท่านั้น)
 4. กด **Publish repository** แล้วรอ — ครั้งแรกจะนานหน่อย (ไฟล์ภาพประมาณ 140 MB)

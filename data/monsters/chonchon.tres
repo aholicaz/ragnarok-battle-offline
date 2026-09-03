@@ -33,6 +33,12 @@ script = ExtResource("2_drop")
 item_id = &"chonchon_eye"
 chance = 8.0
 
+[sub_resource type="Resource" id="Resource_rsfcu"]
+script = ExtResource("2_drop")
+item_id = &"meat"
+chance = 3.0
+metadata/_custom_type_script = "uid://lfvvfifv5f84"
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_wd5yv"]
 atlas = ExtResource("3_qyd0n")
 region = Rect2(0, 0, 512, 512)
@@ -221,7 +227,7 @@ hitbox_size = Vector2(24, 22)
 hp_bar_offset_y = -42.0
 display_height = 150.0
 level = 9
-max_hp = 130
+max_hp = 230
 atk_min = 20
 atk_max = 27
 def = 3
@@ -245,8 +251,8 @@ wander_walk_max = 3.5
 wander_look_chance = 0.5
 jump_interval = 0.5
 attack_cooldown = 1.1
-exp_reward = 48
+exp_reward = 58
 zeny_min = 14
 zeny_max = 35
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_chonchon_1"), SubResource("Drop_chonchon_2"), SubResource("Drop_chonchon_card"), SubResource("Drop_chonchon_junk_insect_wing"), SubResource("Drop_chonchon_junk_chonchon_eye")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_chonchon_1"), SubResource("Drop_chonchon_2"), SubResource("Drop_chonchon_card"), SubResource("Drop_chonchon_junk_insect_wing"), SubResource("Drop_chonchon_junk_chonchon_eye"), SubResource("Resource_rsfcu")])
 projectile_height = 84.0

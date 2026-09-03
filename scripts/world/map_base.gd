@@ -33,6 +33,19 @@ extends Node2D
 ## เผื่อขอบซ้าย-ขวา / เผื่อที่ว่างเหนือหัว (พิกเซล)
 @export var bounds_padding: Vector2 = Vector2(0, 300)
 
+@export_group("กำแพงล่องหนขอบแมพ")
+## ★★ รอบ 47 — กันผู้เล่นและมอนเดินหลุดออกนอกแมพ ★★
+## สร้างกำแพงล่องหนที่ขอบซ้าย-ขวาของ Map Bounds ให้อัตโนมัติทุกแมพ ไม่ต้องวางเอง
+## อยู่ "นอก" ขอบเขตแมพพอดี (ไม่กินพื้นที่เดิน) และสูงเลยขอบบนไปมาก กระโดด/พุ่งหลบก็ข้ามไม่ได้
+@export var edge_walls: bool = true
+## ความหนากำแพง — หนาไว้กันตัวที่เคลื่อนเร็ว (พุ่งหลบ 1100 px/s) ทะลุผ่านในเฟรมเดียว
+@export var edge_wall_thickness: float = 120.0
+## สูงเลยขอบบนของแมพขึ้นไปเท่าไหร่
+@export var edge_wall_extra_top: float = 2000.0
+## ลึกเลยขอบล่างลงไปเท่าไหร่ (กันช่องว่างระหว่างกำแพงกับพื้น)
+@export var edge_wall_extra_bottom: float = 600.0
+
+@export_group("")
 @export var player_scene: PackedScene
 @export var camera_zoom: Vector2 = Vector2.ONE
 ## กล้องตามแบบนุ่มนวล (0 = ติดตัวเป๊ะ)
@@ -51,6 +64,7 @@ func _ready() -> void:
 		map_bounds = _measure_bounds()
 		print("[Map] %s ขนาดแมพที่วัดได้: %s" % [map_id, str(map_bounds)])
 	_ensure_floating_text_layer()
+	_build_edge_walls()
 	_spawn_player()
 	_setup_camera()
 	_warm_sprite_fit()
@@ -112,6 +126,44 @@ func _all_descendants(root: Node) -> Array[Node]:
 		out.append(child)
 		out.append_array(_all_descendants(child))
 	return out
+
+
+# =========================================================
+# ★ รอบ 47 — กำแพงล่องหนขอบซ้าย-ขวาของแมพ ★
+#
+# ทำไมใช้กำแพงจริง ไม่ clamp ตำแหน่ง: กำแพงเป็น StaticBody2D ชั้นเดียวกับพื้น
+# ผู้เล่น (mask 1) และมอน (mask 1) จึงชนด้วย move_and_slide เหมือนชนกำแพงปกติ —
+# ท่าเดิน/พุ่งหลบ/AI ไล่ตาม ไม่ต้องแก้อะไรเลย และ is_on_wall() ก็ทำงานถูก
+# (พุ่งหลบมี dodge_stop_on_wall จึงหยุดที่ขอบพอดี ไม่ทะลุ)
+#
+# กำแพงอยู่นอก Map Bounds พอดี — ประตูกับจุดเกิดทุกแมพห่างจากขอบ ≥ 40 px จึงไม่โดนบัง
+# =========================================================
+func _build_edge_walls() -> void:
+	if not edge_walls or get_node_or_null("EdgeWalls") != null:
+		return
+
+	var body := StaticBody2D.new()
+	body.name = "EdgeWalls"
+	body.collision_layer = 1    # ชั้นเดียวกับพื้น = ทั้งผู้เล่นและมอนชน
+	body.collision_mask = 0     # กำแพงไม่ต้องตรวจว่าชนอะไร
+	add_child(body)
+
+	var t: float = maxf(8.0, edge_wall_thickness)
+	var top: float = map_bounds.position.y - edge_wall_extra_top
+	var bottom: float = map_bounds.position.y + map_bounds.size.y + edge_wall_extra_bottom
+	var h: float = bottom - top
+	var cy: float = (top + bottom) * 0.5
+	var left_x: float = map_bounds.position.x - t * 0.5
+	var right_x: float = map_bounds.position.x + map_bounds.size.x + t * 0.5
+
+	for entry in [["Left", left_x], ["Right", right_x]]:
+		var shape := RectangleShape2D.new()
+		shape.size = Vector2(t, h)
+		var col := CollisionShape2D.new()
+		col.name = String(entry[0])
+		col.shape = shape
+		col.position = Vector2(float(entry[1]), cy)
+		body.add_child(col)
 
 
 func _ensure_floating_text_layer() -> void:

@@ -20,18 +20,23 @@ const LAYOUT_PATH := "user://ui_layout.cfg"
 ## ---------- ขนาดปุ่ม (แก้ตรงนี้ถ้าอยากให้ใหญ่/เล็กลง) — รอบ 45 ใหญ่ขึ้น + ยกสูงจากขอบล่าง ----------
 const PAD_BIG := 128.0        # ปุ่มเดินซ้าย-ขวา
 const PAD_ATTACK := 150.0     # ★ ปุ่มโจมตี (ใหญ่สุด อยู่กลางวงสกิล) ★
-const PAD_MID := 100.0        # คุย/เก็บของ
+const PAD_MID := 100.0        # คุย/เก็บของ · ★ รอบ 47 — ยา/มานา/พุ่งหลบ ใช้ขนาดนี้ด้วย ★
 const PAD_SMALL := 86.0       # สกิล 1-4 (ล้อมรอบปุ่มโจมตี)
-const PAD_TINY := 70.0        # ยา Q/R · เมนู
+const PAD_TINY := 70.0        # (สำรองไว้ — รอบ 47 เลิกใช้กับแถวยาแล้ว)
 const EDGE := 26.0            # ห่างจากขอบซ้าย-ขวา
 const EDGE_BOTTOM := 64.0     # ★ ห่างจากขอบล่าง (เดิม 22 — นิ้วโป้งจะได้ไม่ชนขอบเครื่อง) ★
 const GAP := 12.0             # ห่างระหว่างปุ่ม
 ## ★ วงสกิลรอบปุ่มโจมตี: เริ่มที่ 8 นาฬิกา ไปจบที่ 1 นาฬิกา (ตามเข็ม) ★  (มุมนาฬิกา: 12 = บน · 3 = ขวา)
 const SKILL_CLOCK_START := 8.0
 const SKILL_CLOCK_END := 13.0
-## ความจางตอนไม่ได้กด / ตอนกด
-const IDLE_ALPHA := 0.55
-const HOLD_ALPHA := 1.0
+
+## ★★ รอบ 47 — ความจางอยู่ที่ "แผ่นปุ่ม" ไม่ใช่ทั้งปุ่ม ★★
+## เดิมตั้ง node.modulate.a = 0.55 ซึ่งจางลงไปถึงไอคอนข้างในด้วย → ไอคอนสกิลดูซีดเป็นสีเทา
+## ตอนนี้ใส่ alpha ลงในสีของ StyleBox เอง (พื้น+ขอบ) ไอคอน/ตัวหนังสือจึงเป็นสีปกติเต็มที่
+const PLATE_ALPHA := 0.55     # ความจางของแผ่นปุ่มตอนไม่ได้กด
+const PLATE_ALPHA_HOLD := 0.9 # ตอนกด
+## ไอคอนสกิลตอนคูลดาวน์: เทาเท่าไหร่ (0 = ดำ · 1 = สีปกติ) แล้วไล่กลับมา 1.0 เมื่อคูลดาวน์ครบ
+const CD_GRAY := 0.34
 
 var mode: Mode = Mode.AUTO
 
@@ -69,7 +74,6 @@ func _define_zones() -> void:
 		{"id": "down",    "action": "move_down",  "arrow": "down",  "size": PAD_MID},
 
 		{"id": "attack",  "action": "attack",   "label": "โจมตี",  "size": PAD_ATTACK},
-		# (รอบ 45: เอาปุ่มพุ่งหลบออกตามที่สั่ง — ปัดนิ้วบนปุ่มเดินยังใช้ได้ตามปกติ)
 		{"id": "interact","action": "interact", "label": "คุย/เก็บ", "size": PAD_MID},
 
 		{"id": "skill_1", "action": "skill_1", "label": "1", "size": PAD_SMALL, "skill": 0},
@@ -77,10 +81,11 @@ func _define_zones() -> void:
 		{"id": "skill_3", "action": "skill_3", "label": "3", "size": PAD_SMALL, "skill": 2},
 		{"id": "skill_4", "action": "skill_4", "label": "4", "size": PAD_SMALL, "skill": 3},
 
-		{"id": "potion",  "action": "quick_potion",    "label": "ยา", "size": PAD_TINY},
-		{"id": "sp",      "action": "quick_sp_potion", "label": "มานา", "size": PAD_TINY},
-		{"id": "menu",    "action": "",  "label": "เมนู", "size": PAD_TINY,
-			"tap": func(): Events.toggle_window.emit(&"system")},
+		# ★ รอบ 47 — แถวนี้ใหญ่เท่าปุ่มคุย (100) · ยา/มานาโชว์ไอคอนยาที่จะถูกใช้ + จำนวนที่เหลือ ★
+		{"id": "potion",  "action": "quick_potion",    "label": "ยา", "size": PAD_MID, "item": 0},
+		{"id": "sp",      "action": "quick_sp_potion", "label": "มานา", "size": PAD_MID, "item": 1},
+		# ★ รอบ 47 — คืนปุ่มพุ่งหลบ (แทนปุ่มเมนูเดิม · เมนูระบบยังกดได้จากแถบไอคอนมุมขวาบน) ★
+		{"id": "dash",    "action": "jump", "label": "พุ่งหลบ", "size": PAD_MID},
 	]
 
 
@@ -90,7 +95,6 @@ func _build() -> void:
 		panel.name = "Btn_%s" % z.id
 		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		panel.add_theme_stylebox_override("panel", _pad_style(false))
-		panel.modulate.a = IDLE_ALPHA
 		add_child(panel)
 		z["node"] = panel
 
@@ -108,7 +112,8 @@ func _build() -> void:
 				panel.add_child(cap)
 		else:
 			# ★ รอบ 45 — ปุ่มสกิลมีไอคอนสกิลข้างใน (ถ้าช่องลัดนั้นตั้งสกิลไว้) ★
-			if z.has("skill"):
+			# ★ รอบ 47 — ปุ่มยา/มานาก็มีไอคอนไอเทมแบบเดียวกัน ★
+			if z.has("skill") or z.has("item"):
 				var art := TextureRect.new()
 				art.name = "SkillIcon"
 				art.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -123,6 +128,13 @@ func _build() -> void:
 				art.offset_bottom = -m
 				panel.add_child(art)
 				z["icon"] = art
+				# ★ รอบ 47 — ม่านคูลดาวน์ (วาดทับไอคอน) เหลือเท่าไหร่ก็บังเท่านั้น แล้วเปิดออกจนหมด ★
+				if z.has("skill"):
+					var veil := _CooldownVeil.new()
+					veil.name = "Cooldown"
+					veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
+					panel.add_child(veil)
+					z["veil"] = veil
 			var lbl := UITheme.make_label(String(z.get("label", "")),
 				20 if float(z.size) >= PAD_MID else 15, Color.WHITE)
 			lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -132,17 +144,21 @@ func _build() -> void:
 			lbl.add_theme_constant_override("outline_size", 5)
 			panel.add_child(lbl)
 			z["label_node"] = lbl
-			if z.has("skill"):
-				# เลขช่องเล็ก ๆ มุมขวาล่าง เมื่อมีไอคอนแล้ว
+			if z.has("skill") or z.has("item"):
+				# เลขช่อง / จำนวนยา เล็ก ๆ มุมขวาล่าง เมื่อมีไอคอนแล้ว
 				lbl.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
-				lbl.offset_left = -26
-				lbl.offset_top = -24
+				lbl.offset_left = -30
+				lbl.offset_top = -26
 				lbl.offset_right = -8
 				lbl.offset_bottom = -6
-				lbl.add_theme_font_size_override("font_size", 13)
+				lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+				lbl.add_theme_font_size_override("font_size", 15)
 	if Events.has_signal("skills_changed"):
 		Events.skills_changed.connect(refresh_skill_icons)
+	if Events.has_signal("inventory_changed"):
+		Events.inventory_changed.connect(refresh_item_icons)
 	refresh_skill_icons()
+	refresh_item_icons()
 
 
 ## ★ รอบ 45 — อัพเดตไอคอนสกิลบนปุ่มตามช่องลัด 1-4 ★
@@ -167,10 +183,68 @@ func refresh_skill_icons() -> void:
 				lbl.text = str(int(z.skill) + 1)
 
 
+## ★ รอบ 47 — ไอคอนยา/มานาบนปุ่ม + จำนวนที่เหลือในกระเป๋า ★
+## ยาที่โชว์ = ยาที่กดปุ่มนี้แล้วจะถูกใช้จริง (ช่องด่วน PlayerState.item_hotkeys — เปลี่ยนได้ในกระเป๋า)
+func refresh_item_icons() -> void:
+	if PlayerState == null:
+		return
+	for z in _zones:
+		if not z.has("item") or not z.has("icon"):
+			continue
+		var iid: StringName = PlayerState.item_hotkey_at(int(z.item))
+		var data := GameData.get_item(iid) if iid != &"" else null
+		var art: TextureRect = z.icon
+		art.texture = data.icon if data != null else null
+		var n := 0
+		if PlayerState.inventory != null and iid != &"":
+			n = PlayerState.inventory.count_of(iid)
+		# ยาหมด = ไอคอนหมองลง ให้รู้ตั้งแต่ยังไม่กด
+		art.modulate = Color.WHITE if n > 0 else Color(CD_GRAY, CD_GRAY, CD_GRAY)
+		var lbl: Label = z.get("label_node", null)
+		if lbl == null:
+			continue
+		if art.texture != null:
+			lbl.text = str(n)                        # มีไอคอนแล้ว = โชว์แค่จำนวน
+			lbl.add_theme_color_override("font_color",
+				Color.WHITE if n > 0 else Color("#ff9c9c"))
+		else:
+			lbl.text = String(z.get("label", ""))    # ยังไม่มีไอคอน = ข้อความเดิม
+
+
+## ★ รอบ 47 — ไอคอนสกิลเทาตอนเพิ่งใช้ แล้วค่อย ๆ กลับมาสีสดจนคูลดาวน์ครบ ★
+func _tick_cooldowns() -> void:
+	if PlayerState == null or PlayerState.skills == null:
+		return
+	for z in _zones:
+		if not z.has("skill") or not z.has("icon"):
+			continue
+		var art: TextureRect = z.icon
+		var veil = z.get("veil", null)
+		var sid: StringName = PlayerState.skills.hotkey_at(int(z.skill))
+		var t := 1.0                    # 0 = เพิ่งใช้ · 1 = พร้อมใช้
+		if sid != &"":
+			var left: float = PlayerState.skill_cooldown_left(sid)
+			if left > 0.0:
+				var sk := GameData.get_skill(sid)
+				var total: float = maxf(0.0, float(sk.cooldown)) if sk != null else 0.0
+				t = clampf(1.0 - left / total, 0.0, 1.0) if total > 0.0 else 0.0
+		var g: float = lerpf(CD_GRAY, 1.0, t)
+		art.modulate = Color(g, g, g)
+		if veil != null:
+			veil.set_progress(1.0 - t)
+
+
 static func _pad_style(pressed: bool) -> StyleBoxFlat:
+	# ★ รอบ 47 — ใส่ alpha ที่ "สีของแผ่นปุ่ม" เอง ไม่ใช่ modulate ของทั้งปุ่ม ★
+	# เดิมตั้ง node.modulate.a = 0.55 ซึ่งจางลงไปถึงไอคอนข้างในด้วย ไอคอนสกิลจึงดูซีดเป็นสีเทา
 	var st := StyleBoxFlat.new()
-	st.bg_color = Color("#4a5c86") if pressed else Color("#1b2333")
-	st.border_color = UITheme.ACCENT if pressed else Color("#8ea0c4")
+	var a: float = PLATE_ALPHA_HOLD if pressed else PLATE_ALPHA
+	var bg := Color("#4a5c86") if pressed else Color("#1b2333")
+	var line: Color = UITheme.ACCENT if pressed else Color("#8ea0c4")
+	bg.a = a
+	line.a = minf(1.0, a + 0.3)
+	st.bg_color = bg
+	st.border_color = line
 	st.set_border_width_all(3)
 	st.set_corner_radius_all(999)   # กลม
 	return st
@@ -212,12 +286,13 @@ func _layout() -> void:
 	var ix: float = ring_left - GAP - PAD_MID
 	_set_rect("interact", Vector2(ix, bottom - PAD_MID))
 
-	# ---------- ยา / มานา / เมนู: แถวเหนือปุ่มคุย ----------
-	var row3 := bottom - PAD_MID - GAP - PAD_TINY
-	var tx: float = ix + PAD_MID - PAD_TINY
-	for id in ["menu", "sp", "potion"]:
+	# ---------- ยา / มานา / พุ่งหลบ: แถวเหนือปุ่มคุย (รอบ 47 — ใหญ่เท่าปุ่มคุย) ----------
+	# ไล่จากขวาไปซ้าย: พุ่งหลบอยู่ขวาสุด (ชิดวงสกิล) → มานา → ยา
+	var row3: float = bottom - PAD_MID - GAP - PAD_MID
+	var tx: float = ix
+	for id in ["dash", "sp", "potion"]:
 		_set_rect(id, Vector2(tx, row3))
-		tx -= GAP + PAD_TINY
+		tx -= GAP + PAD_MID
 
 
 func _set_rect(id: String, pos: Vector2) -> void:
@@ -279,6 +354,8 @@ func _refresh_visible() -> void:
 
 func _process(_delta: float) -> void:
 	_refresh_visible()
+	if visible:
+		_tick_cooldowns()
 
 
 # =========================================================
@@ -355,7 +432,6 @@ func _release_all() -> void:
 func _set_pressed(z: Dictionary, on: bool) -> void:
 	var node: Control = z.node
 	node.add_theme_stylebox_override("panel", _pad_style(on))
-	node.modulate.a = HOLD_ALPHA if on else IDLE_ALPHA
 
 
 ## ปุ่มไหนอยู่ตรงจุดนี้ (เผื่อระยะนิ้วอ้วนไว้นิดหน่อย)
@@ -420,6 +496,43 @@ class _Arrow extends Control:
 				pts = PackedVector2Array([c + Vector2(-r, r * 0.6), c + Vector2(r, r * 0.6),
 					c + Vector2(0, -r * 0.8)])
 		draw_colored_polygon(pts, Color(1, 1, 1, 0.92))
+
+	func _notification(what: int) -> void:
+		if what == NOTIFICATION_RESIZED:
+			queue_redraw()
+
+
+# =========================================================
+# ★ รอบ 47 — ม่านคูลดาวน์บนปุ่มสกิล ★
+# วาดเป็น "พัด" สีเข้มทับไอคอน กินพื้นที่เท่าสัดส่วนคูลดาวน์ที่เหลือ
+# เริ่มจากบน (12 นาฬิกา) กวาดตามเข็ม แล้วหุบหายไปตอนพร้อมใช้
+# =========================================================
+class _CooldownVeil extends Control:
+	var progress := 0.0      # 1 = เพิ่งใช้ (บังทั้งวง) · 0 = พร้อมใช้ (ไม่บังเลย)
+
+	func _ready() -> void:
+		set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func set_progress(v: float) -> void:
+		var nv: float = clampf(v, 0.0, 1.0)
+		if absf(nv - progress) < 0.004:
+			return
+		progress = nv
+		visible = progress > 0.0
+		queue_redraw()
+
+	func _draw() -> void:
+		if progress <= 0.0:
+			return
+		var c := size * 0.5
+		var r: float = minf(size.x, size.y) * 0.5 - 3.0
+		var steps: int = maxi(3, int(ceilf(progress * 48.0)))
+		var pts := PackedVector2Array([c])
+		for i in range(steps + 1):
+			var ang: float = deg_to_rad(-90.0 + 360.0 * progress * (float(i) / float(steps)))
+			pts.append(c + Vector2(cos(ang), sin(ang)) * r)
+		draw_colored_polygon(pts, Color(0.03, 0.05, 0.09, 0.62))
 
 	func _notification(what: int) -> void:
 		if what == NOTIFICATION_RESIZED:

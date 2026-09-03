@@ -14,7 +14,6 @@ required_skills = {
 "bash": 5
 }
 required_level = 15
-sp_cost_base = 16
 sp_cost_per_level = 2.0
 cooldown = 4.0
 cast_windup = 0.18

@@ -261,7 +261,7 @@ animations = [{
 }],
 "loop": 1,
 "name": &"default",
-"speed": 6.0
+"speed": 5.0
 }]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ias4n"]
@@ -495,7 +495,7 @@ sprite_frames = SubResource("SpriteFrames_3gngh")
 autoplay = "default"
 
 [node name="Blacksmith" parent="NPCs" unique_id=1359939436 instance=ExtResource("npc")]
-position = Vector2(478, 590)
+position = Vector2(453, 575)
 npc_name = "ช่างตีเหล็กฮันส์"
 type = 2
 dialog = "อยากให้อาวุธแกร่งขึ้นไหม
@@ -506,7 +506,7 @@ portrait_file = "res://Sprites/portraits/hans.png"
 quest_ids = Array[StringName]([&"hans_poring", &"m5_old_mine_iron"])
 
 [node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="NPCs/Blacksmith" unique_id=1862143772]
-position = Vector2(-3.5516856, -24.674873)
+position = Vector2(-7, 1.9999924)
 scale = Vector2(0.35302803, 0.35302806)
 sprite_frames = SubResource("SpriteFrames_yf5fn")
 animation = &"Idle"
@@ -561,7 +561,8 @@ position = Vector2(-2, -16.000013)
 scale = Vector2(0.3825536, 0.3825536)
 sprite_frames = SubResource("SpriteFrames_7numd")
 autoplay = "default"
-frame_progress = 0.90163827
+frame = 4
+frame_progress = 0.0011229648
 
 [node name="HighPriest" parent="NPCs" unique_id=1318346366 instance=ExtResource("npc")]
 position = Vector2(1380, 590)

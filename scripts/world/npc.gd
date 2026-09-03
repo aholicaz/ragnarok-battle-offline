@@ -54,9 +54,21 @@ enum NPCType { DIALOG, SHOP, REFINER, HEALER, SAVE_POINT, QUEST }
 ## ใส่ได้กับ NPC ทุกแบบ ไม่ใช่แค่แบบ QUEST — คุยแล้วจะถามเรื่องเควสก่อน แล้วค่อยเปิดร้าน
 @export var quest_ids: Array[StringName] = []
 
+## ★★ รอบ 47 — เครื่องหมายเควสเหนือหัว ! ? ★★
+## ใหญ่ขึ้น มีวงป้ายรองให้เห็นชัดบนฉากหลังทุกสี และลอยอยู่ "เหนือป้ายชื่อ" ไม่ทับตัวละคร
+const MARK_SIZE := 74.0        # ขนาดวงป้าย (พิกเซล)
+const MARK_FONT := 50          # ขนาดตัวอักษร ! ?
+const MARK_GAP := 16.0         # ห่างจากขอบบนของป้ายชื่อขึ้นไป
+const MARK_FALLBACK_TOP := -174.0   # NPC ที่ไม่มีป้ายชื่อ ใช้ระดับเดียวกับป้ายชื่อในแม่แบบ
+const MARK_BOB := 7.0          # ลอยขึ้น-ลงกี่พิกเซล
+const MARK_BOB_SPEED := 2.4
+
 var _player_inside := false
 var _prompt: Label
-var _mark: Label
+var _mark: Control
+var _mark_glyph: Label
+var _mark_disc: _MarkDisc
+var _mark_base_y := 0.0
 
 
 func _ready() -> void:
@@ -79,18 +91,49 @@ func _ready() -> void:
 	_prompt.hide()
 	add_child(_prompt)
 
-	_mark = Label.new()
-	_mark.text = "!"
-	_mark.position = Vector2(-6, -116)
-	_mark.add_theme_font_size_override("font_size", 30)
-	_mark.add_theme_color_override("font_color", Color("#ffe14a"))
-	_mark.add_theme_color_override("font_outline_color", Color.BLACK)
-	_mark.add_theme_constant_override("outline_size", 6)
-	_mark.hide()
-	add_child(_mark)
+	_build_mark(label)
 
 	Events.quest_changed.connect(_refresh_mark)
 	_refresh_mark()
+
+
+## ★ รอบ 47 — สร้างป้าย ! ? เหนือหัว (วงรอง + ตัวอักษรใหญ่) ★
+func _build_mark(name_label: Label) -> void:
+	# วางให้ "ขอบล่างของวง" อยู่เหนือขอบบนของป้ายชื่อ — NPC ตัวสูง/เตี้ยก็ไม่ทับชื่อ
+	var name_top: float = name_label.offset_top if name_label != null else MARK_FALLBACK_TOP
+	_mark_base_y = name_top - MARK_GAP - MARK_SIZE
+
+	_mark = Control.new()
+	_mark.name = "QuestMark"
+	_mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_mark.size = Vector2(MARK_SIZE, MARK_SIZE)
+	_mark.position = Vector2(-MARK_SIZE * 0.5, _mark_base_y)
+	_mark.hide()
+	add_child(_mark)
+
+	_mark_disc = _MarkDisc.new()
+	_mark_disc.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_mark.add_child(_mark_disc)
+
+	_mark_glyph = Label.new()
+	_mark_glyph.text = "!"
+	_mark_glyph.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_mark_glyph.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_mark_glyph.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_mark_glyph.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_mark_glyph.add_theme_font_size_override("font_size", MARK_FONT)
+	_mark_glyph.add_theme_color_override("font_color", Color("#ffe14a"))
+	_mark_glyph.add_theme_color_override("font_outline_color", Color.BLACK)
+	_mark_glyph.add_theme_constant_override("outline_size", 8)
+	_mark.add_child(_mark_glyph)
+
+
+## ป้ายลอยขึ้นลงเบา ๆ ให้สะดุดตา (ทำงานเฉพาะตอนป้ายโชว์อยู่)
+func _process(_delta: float) -> void:
+	if _mark == null or not _mark.visible:
+		return
+	var t: float = float(Time.get_ticks_msec()) * 0.001 * MARK_BOB_SPEED
+	_mark.position.y = _mark_base_y + sin(t) * MARK_BOB
 
 
 ## เครื่องหมายเหนือหัว: ! = มีเควสให้รับ · ? = เอาไปส่งได้แล้ว
@@ -105,17 +148,23 @@ func _refresh_mark() -> void:
 
 	for qid in quest_ids:
 		if log.is_ready(qid):
-			_mark.text = "?"
-			_mark.add_theme_color_override("font_color", Color("#7dffa8"))
-			_mark.show()
+			_show_mark("?", Color("#7dffa8"))   # เอาไปส่งได้แล้ว = เขียว
 			return
 	for qid in quest_ids:
 		if log.can_accept(qid, lv):
-			_mark.text = "!"
-			_mark.add_theme_color_override("font_color", Color("#ffe14a"))
-			_mark.show()
+			_show_mark("!", Color("#ffe14a"))   # มีเควสให้รับ = เหลือง
 			return
 	_mark.hide()
+
+
+func _show_mark(glyph: String, tint: Color) -> void:
+	_mark_glyph.text = glyph
+	_mark_glyph.add_theme_color_override("font_color", tint)
+	if _mark_disc != null:
+		_mark_disc.tint = tint
+		_mark_disc.queue_redraw()
+	_mark.position.y = _mark_base_y
+	_mark.show()
 
 
 ## รูปที่จะโชว์ในกล่องสนทนา (ไม่มีก็คืน null — กล่องจะไม่โชว์ช่องรูป)
@@ -362,3 +411,30 @@ func _after_turn_in(q: QuestData) -> void:
 	var back := create_tween()
 	back.tween_property(cam, "offset", Vector2.ZERO, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await back.finished
+
+
+# =========================================================
+# ★ รอบ 47 — วงป้ายรองหลังเครื่องหมาย ! ? ★
+# วาดเอง (ไม่ต้องมีไฟล์ภาพ) — วงเข้มทึบ + ขอบสีตามชนิดเครื่องหมาย + เงาจาง ๆ
+# ทำให้ ! ? อ่านออกทั้งบนฉากหลังสว่างและมืด
+# =========================================================
+class _MarkDisc extends Control:
+	var tint := Color("#ffe14a")
+
+	func _ready() -> void:
+		set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _draw() -> void:
+		var c := size * 0.5
+		var r: float = minf(size.x, size.y) * 0.5
+		# แสงเรืองจาง ๆ รอบนอก
+		draw_circle(c, r, Color(tint.r, tint.g, tint.b, 0.16))
+		# วงพื้นเข้ม
+		draw_circle(c, r * 0.78, Color(0.05, 0.06, 0.1, 0.82))
+		# ขอบสี
+		draw_arc(c, r * 0.78, 0.0, TAU, 40, tint, 4.0, true)
+
+	func _notification(what: int) -> void:
+		if what == NOTIFICATION_RESIZED:
+			queue_redraw()

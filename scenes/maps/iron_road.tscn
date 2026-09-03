@@ -145,10 +145,10 @@ max_spawn_distance = 1700.0
 
 [node name="ToForest" parent="Portals" instance=ExtResource("portal")]
 position = Vector2(60, 880)
-target_map = &"dark_forest"
+target_map = &"dark_forest_2"
 target_spawn_point = &"from_iron_road"
-label_text = "← ป่าเงาลึก"
-destination_name = "ป่าเงาลึก"
+label_text = "← ป่าเงาลึกชั้นใน"
+destination_name = "ป่าเงาลึกชั้นใน"
 
 [node name="ToTown" parent="Portals" instance=ExtResource("portal")]
 position = Vector2(4740, 880)

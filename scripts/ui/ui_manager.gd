@@ -51,9 +51,10 @@ func _ready() -> void:
 	root.add_child(menu_bar)
 
 	# ---------- หน้าต่างต่าง ๆ ----------
-	_add_window(&"status", StatusWindow.new(), Vector2(60, 90))
-	_add_window(&"inventory", InventoryWindow.new(), Vector2(420, 90))
-	_add_window(&"equipment", EquipmentWindow.new(), Vector2(800, 80))
+	# ★ รอบ 45 — หน้าสวมใส่ + สเตตัส รวมเป็นหน้าเดียว ★ id "status" กับ "equipment" ชี้หน้าต่างเดียวกัน (C หรือ E เปิดได้ทั้งคู่)
+	_add_window(&"equipment", EquipmentWindow.new(), Vector2(30, 60))
+	windows[&"status"] = windows[&"equipment"]
+	_add_window(&"inventory", InventoryWindow.new(), Vector2(830, 60))
 	# ★ ผังสกิลวางชิดซ้าย ★ เผื่อที่ให้กล่องรายละเอียดเด้งอยู่ข้างขวาได้ ไม่ต้องมาทับผัง
 	_add_window(&"skills", SkillWindow.new(), Vector2(60, 110))
 	_add_window(&"shop", ShopWindow.new(), Vector2(500, 70))

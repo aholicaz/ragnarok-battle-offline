@@ -1,6 +1,12 @@
-## EquipmentWindow — หน้าสวมใส่ชุดและอาวุธ (กด E)
-## หน้าตาแบบ Ragnarok: แท็บด้านบน · ช่องอุปกรณ์ซ้าย-ขวา · ตัวละครอยู่ตรงกลาง
-## คลิกช่องที่มีของ = ดูรายละเอียด · คลิกซ้ำ = ถอดออก
+## EquipmentWindow — ★ หน้าตัวละคร: ของสวมใส่ + สเตตัส ในหน้าเดียว (รอบ 45) ★  (กด E หรือ C)
+##
+## ซ้าย  = ช่องอุปกรณ์แบบ RO (ชื่อไอเทมซ้าย · ไอคอนขวา · ป้ายชื่อช่องใต้กล่อง) + ตัวละครตรงกลาง
+## ขวา   = สเตตัส 6 ค่า (ปุ่ม +) + ค่าที่คำนวณได้ทั้งหมด — เห็นทันทีว่าใส่ของแล้วอะไรเปลี่ยน (ตัวเลขที่ขึ้นจากของสวมใส่เป็นสีเขียว)
+## โทนสีครีมเหมือนหน้ากระเป๋า (InventoryWindow.C_XXX)
+##
+## ★ ลาก-วางได้ ★ (DragSlot)
+##   ลากของจากกระเป๋ามาปล่อยที่ช่องอุปกรณ์ / ที่รูปตัวละคร = สวมใส่
+##   ลากของจากช่องอุปกรณ์ไปปล่อยในกระเป๋า = ถอด · คลิกช่อง = ดูรายละเอียด · คลิกซ้ำ = ถอด
 class_name EquipmentWindow
 extends GameWindow
 
@@ -9,9 +15,8 @@ const SLOT_SIZE := Vector2(152, 44)
 ## ความกว้างสูงสุดของไอคอนในช่องสวมใส่ (พิกเซล)
 const ICON_MAX := 32
 ## ขนาดกรอบตัวละครตรงกลาง
-const PREVIEW_SIZE := Vector2(146, 240)
+const PREVIEW_SIZE := Vector2(140, 236)
 
-## ชื่อช่องแบบสั้น (ป้ายเล็ก ๆ ใต้กล่อง เหมือนหน้าต่างของ RO)
 const SLOT_CAPTION := {
 	Equipment.EquipSlot.HEAD: "ศีรษะ · head",
 	Equipment.EquipSlot.WEAPON: "อาวุธ · R-hand",
@@ -22,15 +27,12 @@ const SLOT_CAPTION := {
 	Equipment.EquipSlot.SHOES: "รองเท้า · shoes",
 	Equipment.EquipSlot.ACCESSORY_2: "ประดับ · acc 2",
 }
-
-## ช่องคอลัมน์ซ้าย (บน -> ล่าง)
 const LEFT_SLOTS := [
 	Equipment.EquipSlot.HEAD,
 	Equipment.EquipSlot.WEAPON,
 	Equipment.EquipSlot.ARMOR,
 	Equipment.EquipSlot.ACCESSORY_1,
 ]
-## ช่องคอลัมน์ขวา (บน -> ล่าง)
 const RIGHT_SLOTS := [
 	Equipment.EquipSlot.GARMENT,
 	Equipment.EquipSlot.OFFHAND,
@@ -38,10 +40,40 @@ const RIGHT_SLOTS := [
 	Equipment.EquipSlot.ACCESSORY_2,
 ]
 
-var _slot_buttons: Dictionary = {}   # EquipSlot -> Button
+const STAT_LABELS := {
+	&"str": "STR พลัง",
+	&"agi": "AGI คล่อง",
+	&"vit": "VIT อึด",
+	&"int": "INT ปัญญา",
+	&"dex": "DEX แม่น",
+	&"luk": "LUK โชค",
+}
+## คำอธิบายสั้น ๆ ว่าแต่ละสเตตัสให้อะไร (tooltip ที่ชื่อ/ปุ่ม +) — ตัวเลขจริงอยู่ที่ PlayerStats (ตารางผลของสเตตัส)
+const STAT_TIPS := {
+	&"str": "ATK +1 ต่อแต้ม (+โบนัสทุก 10 แต้ม)",
+	&"agi": "FLEE +1 · ความเร็วโจมตี +1.2%",
+	&"vit": "DEF +0.5 · HP +6 และ +1.2% · ฟื้น HP",
+	&"int": "MATK +1 · MDEF +0.5 · SP +4 และ +1% · ฟื้น SP +0.12/วิ",
+	&"dex": "HIT +1.5 · ATK +0.2 · ความเร็วโจมตี +0.4%",
+	&"luk": "CRIT +0.3% · ATK +0.33",
+}
+
+# ---- โทนสีครีม (ใช้ชุดเดียวกับกระเป๋า) ----
+const C_BG := InventoryWindow.C_BG
+const C_BORDER := InventoryWindow.C_BORDER
+const C_BAR := InventoryWindow.C_BAR
+const C_SLOT := InventoryWindow.C_SLOT
+const C_SLOT_EDGE := InventoryWindow.C_SLOT_EDGE
+const C_SLOT_SEL := InventoryWindow.C_SLOT_SEL
+const C_TEXT := InventoryWindow.C_TEXT
+const C_TEXT_DIM := InventoryWindow.C_TEXT_DIM
+const C_GOOD := Color("#2f8f3a")
+const C_ACCENT := Color("#b8860b")
+
+var _slot_buttons: Dictionary = {}   # EquipSlot -> DragSlot
 var _slot_icons: Dictionary = {}     # EquipSlot -> TextureRect
-var _slot_names: Dictionary = {}     # EquipSlot -> Label (ชื่อไอเทม)
-var _slot_captions: Dictionary = {}  # EquipSlot -> Label (ป้ายชื่อช่องใต้กล่อง)
+var _slot_names: Dictionary = {}     # EquipSlot -> Label
+var _slot_captions: Dictionary = {}  # EquipSlot -> Label
 
 var _tab_equip: Button
 var _tab_shadow: Button
@@ -50,99 +82,215 @@ var _page_shadow: Control
 var _tab_index := 0
 
 var _preview: TextureRect
+var _preview_drop: DragSlot           # พื้นที่รับของ (ลากของมาวางที่ตัวละคร = สวมใส่)
 var _preview_hint: Label
 var _preview_caption: Label
 
 var _summary: Label
 var _info_slot: int = -1
 
+# ---- สเตตัส ----
+var _header: Label
+var _point_label: Label
+var _stat_rows: Dictionary = {}      # stat -> {"value": Label, "button": Button, "cost": Label}
+var _derived: Dictionary = {}        # key -> Label
+var _equip_bonus_label: Label
+
 
 func _ready() -> void:
-	window_title = "ไอเท็มที่สวมใส่"
+	window_title = "ตัวละคร — สวมใส่ + สเตตัส"
 	super._ready()
-	custom_minimum_size = Vector2(452, 0)
+	# ---- โทนครีมแบบกระเป๋า ----
+	add_theme_stylebox_override("panel", InventoryWindow._style(C_BG, C_BORDER, 12))
+	var root := get_child(0)
+	var bar := root.get_child(0) as PanelContainer
+	bar.add_theme_stylebox_override("panel", InventoryWindow._style(C_BAR, C_BORDER, 8))
+	title_label.add_theme_color_override("font_color", Color("#5a4a33"))
+	custom_minimum_size = Vector2(0, 0)
 	Events.equipment_changed.connect(refresh)
 	Events.stats_changed.connect(refresh)
+	Events.level_up.connect(func(_lv): refresh())
+	Events.job_level_up.connect(func(_lv): refresh())
+	Events.exp_changed.connect(func(_c, _n): refresh())
+	Events.job_exp_changed.connect(func(_c, _n): refresh())
+
+
+func _cream_button(text: String, min_width: float = 0.0) -> Button:
+	var b := Button.new()
+	b.text = text
+	b.focus_mode = Control.FOCUS_NONE
+	if min_width > 0:
+		b.custom_minimum_size.x = min_width
+	b.add_theme_font_size_override("font_size", 13)
+	b.add_theme_color_override("font_color", C_TEXT)
+	b.add_theme_color_override("font_hover_color", C_TEXT)
+	b.add_theme_color_override("font_pressed_color", C_TEXT)
+	b.add_theme_stylebox_override("normal", InventoryWindow._style(Color("#efdfbc"), C_SLOT_EDGE, 8, 4))
+	b.add_theme_stylebox_override("hover", InventoryWindow._style(Color("#f8ecd0"), C_BORDER, 8, 4))
+	b.add_theme_stylebox_override("pressed", InventoryWindow._style(C_SLOT_SEL, Color("#d19a2f"), 8, 4))
+	b.add_theme_stylebox_override("disabled", InventoryWindow._style(Color("#e6dcc6"), C_SLOT_EDGE, 8, 4))
+	b.add_theme_color_override("font_disabled_color", Color("#b0a488"))
+	return b
+
+
+func _label(text: String, size: int = 13, color: Color = C_TEXT) -> Label:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_size_override("font_size", size)
+	l.add_theme_color_override("font_color", color)
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return l
+
+
+func _slot_box(selected: bool = false) -> StyleBoxFlat:
+	var s := StyleBoxFlat.new()
+	s.bg_color = C_SLOT_SEL if selected else C_SLOT
+	s.border_color = Color("#d19a2f") if selected else C_SLOT_EDGE
+	s.set_border_width_all(2 if selected else 1)
+	s.set_corner_radius_all(6)
+	return s
 
 
 # =========================================================
 # สร้างหน้าตา
 # =========================================================
 func _build_content() -> void:
-	# ---------- แถบแท็บ ----------
-	var tabs := HBoxContainer.new()
-	tabs.add_theme_constant_override("separation", 3)
-	content.add_child(tabs)
+	var columns := HBoxContainer.new()
+	columns.add_theme_constant_override("separation", 10)
+	content.add_child(columns)
 
-	_tab_equip = _make_tab("อุปกรณ์  (equipment)")
+	# ================= ซ้าย: ของสวมใส่ =================
+	var left := VBoxContainer.new()
+	left.add_theme_constant_override("separation", 6)
+	columns.add_child(left)
+
+	var tabs := HBoxContainer.new()
+	tabs.add_theme_constant_override("separation", 4)
+	left.add_child(tabs)
+	_tab_equip = _cream_button("อุปกรณ์  (equipment)")
 	_tab_equip.pressed.connect(func(): _set_tab(0))
 	tabs.add_child(_tab_equip)
-
-	_tab_shadow = _make_tab("เงา  (Shadow)")
+	_tab_shadow = _cream_button("เงา  (Shadow)")
 	_tab_shadow.pressed.connect(func(): _set_tab(1))
 	tabs.add_child(_tab_shadow)
 
-	var spacer := Control.new()
-	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	tabs.add_child(spacer)
-
-	# ---------- หน้าอุปกรณ์ ----------
 	_page_equip = VBoxContainer.new()
 	_page_equip.add_theme_constant_override("separation", 6)
-	content.add_child(_page_equip)
+	left.add_child(_page_equip)
 
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 5)
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	_page_equip.add_child(row)
-
-	# คอลัมน์ซ้าย
 	row.add_child(_make_column(LEFT_SLOTS))
-	# ตัวละครตรงกลาง
 	row.add_child(_make_preview())
-	# คอลัมน์ขวา
 	row.add_child(_make_column(RIGHT_SLOTS))
 
-	var hint := UITheme.make_label(
-		"คลิกช่อง = ดูรายละเอียด  ·  คลิกซ้ำที่ช่องเดิม = ถอดออก", 11, UITheme.TEXT_DIM)
+	var hint := _label("คลิกช่อง = รายละเอียด · คลิกซ้ำ = ถอด · ★ ลากของจากกระเป๋ามาวางที่นี่ = สวมใส่ ★", 10, C_TEXT_DIM)
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hint.custom_minimum_size.x = 380
 	_page_equip.add_child(hint)
 
-	# ---------- หน้าเงา (ยังไม่เปิดใช้งาน) ----------
 	_page_shadow = VBoxContainer.new()
 	_page_shadow.add_theme_constant_override("separation", 8)
-	_page_shadow.custom_minimum_size.y = PREVIEW_SIZE.y
-	content.add_child(_page_shadow)
-
+	_page_shadow.custom_minimum_size = Vector2(380, PREVIEW_SIZE.y)
+	left.add_child(_page_shadow)
 	var sh_box := CenterContainer.new()
 	sh_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_page_shadow.add_child(sh_box)
-
-	var sh_text := UITheme.make_label(
-		"ช่องอุปกรณ์เงา (Shadow Gear)\nยังไม่เปิดใช้งานในเวอร์ชันนี้", 13, UITheme.TEXT_DIM)
+	var sh_text := _label("ช่องอุปกรณ์เงา (Shadow Gear)\nยังไม่เปิดใช้งานในเวอร์ชันนี้", 13, C_TEXT_DIM)
 	sh_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	sh_box.add_child(sh_text)
 
-	# ---------- สรุปค่าพลัง ----------
-	content.add_child(UITheme.separator())
-	_summary = UITheme.make_label("", 13, UITheme.TEXT)
+	# สรุปโบนัสจากของสวมใส่
+	var sum_panel := PanelContainer.new()
+	sum_panel.add_theme_stylebox_override("panel", InventoryWindow._style(Color(0.925, 0.875, 0.753, 0.55), C_SLOT_EDGE, 8, 5))
+	left.add_child(sum_panel)
+	var sum_box := VBoxContainer.new()
+	sum_box.add_theme_constant_override("separation", 2)
+	sum_panel.add_child(sum_box)
+	sum_box.add_child(_label("จากของสวมใส่ + การ์ด", 11, C_TEXT_DIM))
+	_summary = _label("", 12, C_GOOD)
 	_summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	content.add_child(_summary)
+	_summary.custom_minimum_size.x = 370
+	sum_box.add_child(_summary)
+
+	# ================= ขวา: สเตตัส =================
+	var vsep := VSeparator.new()
+	columns.add_child(vsep)
+
+	var right := VBoxContainer.new()
+	right.add_theme_constant_override("separation", 4)
+	right.custom_minimum_size.x = 300
+	columns.add_child(right)
+
+	_header = _label("", 15, C_ACCENT)
+	right.add_child(_header)
+	_point_label = _label("", 12, C_TEXT)
+	right.add_child(_point_label)
+
+	var stat_panel := PanelContainer.new()
+	stat_panel.add_theme_stylebox_override("panel", InventoryWindow._style(Color(0.925, 0.875, 0.753, 0.55), C_SLOT_EDGE, 8, 5))
+	right.add_child(stat_panel)
+	var stat_box := VBoxContainer.new()
+	stat_box.add_theme_constant_override("separation", 2)
+	stat_panel.add_child(stat_box)
+
+	for stat in PlayerStats.STAT_NAMES:
+		var r := HBoxContainer.new()
+		r.add_theme_constant_override("separation", 6)
+		var name_label := _label(STAT_LABELS[stat], 13, C_TEXT)
+		name_label.custom_minimum_size.x = 96
+		name_label.tooltip_text = STAT_TIPS.get(stat, "")
+		name_label.mouse_filter = Control.MOUSE_FILTER_STOP
+		r.add_child(name_label)
+		var value_label := _label("1", 14, C_TEXT)
+		value_label.custom_minimum_size.x = 78
+		value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		r.add_child(value_label)
+		var btn := _cream_button("+", 30)
+		btn.tooltip_text = STAT_TIPS.get(stat, "")
+		var s: StringName = stat
+		btn.pressed.connect(func(): _raise(s))
+		r.add_child(btn)
+		var cost_label := _label("", 11, C_TEXT_DIM)
+		cost_label.custom_minimum_size.x = 26
+		r.add_child(cost_label)
+		stat_box.add_child(r)
+		_stat_rows[stat] = {"value": value_label, "button": btn, "cost": cost_label}
+
+	# ค่าที่คำนวณได้
+	var grid := GridContainer.new()
+	grid.columns = 4
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 2)
+	right.add_child(grid)
+	var fields := [
+		[&"atk", "ATK"], [&"def", "DEF"],
+		[&"matk", "MATK"], [&"mdef", "MDEF"],
+		[&"hit", "HIT"], [&"flee", "FLEE"],
+		[&"crit", "CRIT"], [&"aspd", "ASPD"],
+		[&"max_hp", "MaxHP"], [&"max_sp", "MaxSP"],
+		[&"regen", "ฟื้น HP"], [&"sp_regen", "ฟื้น SP"],
+		[&"speed", "SPEED"], [&"damage_percent", "ดาเมจ%"],
+		[&"hp_drain", "ดูดเลือด"], [&"sp_drain", "ดูดมานา"],
+	]
+	for f in fields:
+		var key: StringName = f[0]
+		grid.add_child(_label(f[1], 11, C_TEXT_DIM))
+		var v := _label("-", 12, C_TEXT)
+		v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		v.custom_minimum_size.x = 56
+		grid.add_child(v)
+		_derived[key] = v
+
+	_equip_bonus_label = _label("", 10, C_TEXT_DIM)
+	right.add_child(_equip_bonus_label)
 
 	_set_tab(0)
 
 
-func _make_tab(text: String) -> Button:
-	var b := Button.new()
-	b.text = text
-	b.focus_mode = Control.FOCUS_NONE
-	b.custom_minimum_size = Vector2(0, 26)
-	b.add_theme_font_size_override("font_size", 12)
-	return b
-
-
-## คอลัมน์ช่องอุปกรณ์ (โครงเดียวกันทั้งสองฝั่ง: ชื่อไอเทมซ้าย · ไอคอนขวา)
 func _make_column(slot_list: Array, _unused := false) -> VBoxContainer:
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 4)
@@ -152,24 +300,33 @@ func _make_column(slot_list: Array, _unused := false) -> VBoxContainer:
 	return col
 
 
-## หนึ่งช่อง = กล่องชื่อไอเทม + ไอคอนขวา  แล้วมีป้ายชื่อช่องเล็ก ๆ อยู่ใต้กล่อง
+## หนึ่งช่อง = กล่องชื่อไอเทม + ไอคอนขวา แล้วมีป้ายชื่อช่องเล็ก ๆ อยู่ใต้กล่อง
 func _make_slot(slot: int) -> VBoxContainer:
 	var cell := VBoxContainer.new()
 	cell.add_theme_constant_override("separation", 0)
 
-	var btn := Button.new()
+	var btn := DragSlot.new()
+	btn.kind = "equip"
+	btn.slot_index = slot
 	btn.text = ""
 	btn.custom_minimum_size = SLOT_SIZE
-	btn.focus_mode = Control.FOCUS_NONE
 	btn.clip_contents = true
-	btn.add_theme_stylebox_override("normal", UITheme.slot_style())
-	btn.add_theme_stylebox_override("hover", UITheme.slot_style(true))
-	btn.add_theme_stylebox_override("pressed", UITheme.slot_style(true))
+	btn.add_theme_stylebox_override("normal", _slot_box())
+	btn.add_theme_stylebox_override("hover", _slot_box(true))
+	btn.add_theme_stylebox_override("pressed", _slot_box(true))
 	btn.pressed.connect(func(): _on_slot_pressed(slot))
+	btn.drag_icon_func = func() -> Texture2D:
+		var inst := PlayerState.equipment.get_item(slot)
+		if inst == null or inst.data() == null:
+			return null
+		return inst.data().icon
+	btn.can_drop_func = func(data: Dictionary, _t: DragSlot) -> bool:
+		return String(data.get("kind", "")) == "inventory"
+	btn.drop_func = func(data: Dictionary, _t: DragSlot) -> bool:
+		return _drop_inventory_item(int(data.get("slot", -1)), slot)
 	_slot_buttons[slot] = btn
 	cell.add_child(btn)
 
-	# กล่องจัดวางภายในปุ่ม (ปุ่มไม่จัดวางลูกให้เอง ต้องกางเต็มปุ่มเอง)
 	var box := HBoxContainer.new()
 	box.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	box.offset_left = 5
@@ -180,8 +337,7 @@ func _make_slot(slot: int) -> VBoxContainer:
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	btn.add_child(box)
 
-	# ★ ชื่อไอเทม — ชิดซ้าย ตัดได้ 2 บรรทัด ★
-	var name_label := UITheme.make_label("", 11, UITheme.TEXT)
+	var name_label := _label("", 11, C_TEXT)
 	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -189,15 +345,12 @@ func _make_slot(slot: int) -> VBoxContainer:
 	name_label.max_lines_visible = 2
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_slot_names[slot] = name_label
 	box.add_child(name_label)
 
-	# ★ รูปอุปกรณ์ — อยู่ขอบขวาของกล่อง มีกรอบสี่เหลี่ยมเล็ก ๆ ครอบ (เหมือน RO) ★
 	var art_frame := PanelContainer.new()
 	art_frame.custom_minimum_size = Vector2(ICON_MAX + 4, ICON_MAX + 4)
-	art_frame.add_theme_stylebox_override("panel",
-		UITheme.panel_style(Color("#0d1119"), UITheme.BORDER, 3))
+	art_frame.add_theme_stylebox_override("panel", InventoryWindow._style(Color("#fff8e8"), C_SLOT_EDGE, 4, 2))
 	art_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	art_frame.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	box.add_child(art_frame)
@@ -213,28 +366,36 @@ func _make_slot(slot: int) -> VBoxContainer:
 	_slot_icons[slot] = art
 	art_frame.add_child(art)
 
-	# ★ ป้ายชื่อช่อง (เล็ก จาง) อยู่ใต้กล่อง เหมือน head / L-hand ของ RO ★
-	var caption := UITheme.make_label(SLOT_CAPTION.get(slot, Equipment.SLOT_NAMES[slot]),
-		9, UITheme.TEXT_DIM)
+	var caption := _label(SLOT_CAPTION.get(slot, Equipment.SLOT_NAMES[slot]), 9, C_TEXT_DIM)
 	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_slot_captions[slot] = caption
 	cell.add_child(caption)
-
 	return cell
 
 
 func _make_preview() -> Control:
-	var frame := PanelContainer.new()
-	frame.custom_minimum_size = PREVIEW_SIZE
-	frame.add_theme_stylebox_override("panel",
-		UITheme.panel_style(Color("#10141f"), UITheme.BORDER, 4))
-	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# กรอบตัวละคร = DragSlot แบบ "any" (รับของที่ลากมาวาง = สวมใส่ช่องที่เหมาะ)
+	_preview_drop = DragSlot.new()
+	_preview_drop.kind = "any"
+	_preview_drop.text = ""
+	_preview_drop.custom_minimum_size = PREVIEW_SIZE
+	_preview_drop.add_theme_stylebox_override("normal", InventoryWindow._style(Color("#efe4c8"), C_SLOT_EDGE, 8, 2))
+	_preview_drop.add_theme_stylebox_override("hover", InventoryWindow._style(Color("#f6ecd4"), C_BORDER, 8, 2))
+	_preview_drop.add_theme_stylebox_override("pressed", InventoryWindow._style(Color("#efe4c8"), C_SLOT_EDGE, 8, 2))
+	_preview_drop.can_drop_func = func(data: Dictionary, _t: DragSlot) -> bool:
+		return String(data.get("kind", "")) == "inventory"
+	_preview_drop.drop_func = func(data: Dictionary, _t: DragSlot) -> bool:
+		return _drop_inventory_item(int(data.get("slot", -1)), -1)
 
 	var box := VBoxContainer.new()
+	box.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	box.offset_left = 3
+	box.offset_top = 3
+	box.offset_right = -3
+	box.offset_bottom = -3
 	box.add_theme_constant_override("separation", 2)
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	frame.add_child(box)
+	_preview_drop.add_child(box)
 
 	_preview = TextureRect.new()
 	_preview.name = "CharacterPreview"
@@ -245,19 +406,16 @@ func _make_preview() -> Control:
 	_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(_preview)
 
-	_preview_hint = UITheme.make_label("(ยังไม่มีตัวละครในฉาก)", 11, UITheme.TEXT_DIM)
+	_preview_hint = _label("(ยังไม่มีตัวละครในฉาก)", 11, C_TEXT_DIM)
 	_preview_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_preview_hint.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_preview_hint.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_preview_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(_preview_hint)
 
-	_preview_caption = UITheme.make_label("", 11, UITheme.ACCENT)
+	_preview_caption = _label("", 11, C_ACCENT)
 	_preview_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_preview_caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(_preview_caption)
-
-	return frame
+	return _preview_drop
 
 
 # =========================================================
@@ -271,89 +429,189 @@ func _set_tab(index: int) -> void:
 		_page_shadow.visible = index == 1
 	_style_tab(_tab_equip, index == 0)
 	_style_tab(_tab_shadow, index == 1)
-	# หน้าต่างจะได้หดตามหน้าที่เปิดอยู่
-	# ★ ต้องรอ 1 เฟรมก่อน ★ ไม่งั้นได้ขนาดเดิมของหน้าที่เพิ่งซ่อนไป
-	# (Control ไม่หดเองอยู่แล้ว ถ้าตั้งค่าผิดรอบ หน้าต่างจะค้างใหญ่ตลอด)
 	fit_to_content()
 
 
 func _style_tab(b: Button, active: bool) -> void:
 	if b == null:
 		return
-	var box := UITheme.panel_style(
-		UITheme.PANEL_LIGHT if active else Color("#141a28"),
-		UITheme.ACCENT if active else UITheme.BORDER, 4)
-	box.content_margin_left = 10
-	box.content_margin_right = 10
-	box.content_margin_top = 3
-	box.content_margin_bottom = 3
-	b.add_theme_stylebox_override("normal", box)
-	b.add_theme_stylebox_override("hover", box)
-	b.add_theme_stylebox_override("pressed", box)
-	b.add_theme_color_override("font_color", UITheme.ACCENT if active else UITheme.TEXT_DIM)
-	b.add_theme_color_override("font_hover_color", UITheme.TEXT)
+	b.add_theme_stylebox_override("normal",
+		InventoryWindow._style(C_SLOT_SEL if active else Color("#efdfbc"),
+			Color("#d19a2f") if active else C_SLOT_EDGE, 8, 4))
 
 
 # =========================================================
-# กดช่อง
+# กดช่อง / ลากวาง
 # =========================================================
 func _on_slot_pressed(slot: int) -> void:
 	var inst := PlayerState.equipment.get_item(slot)
 	if inst == null:
-		Events.say("ช่องนี้ว่างอยู่ — เปิดกระเป๋า (I) แล้วกดสวมใส่")
+		Events.say("ช่องนี้ว่างอยู่ — ลากของจากกระเป๋า (I) มาวางได้เลย")
 		UI.hide_item_popup()
 		return
-	# กดครั้งแรก = ดูรายละเอียด / กดซ้ำที่ช่องเดิม = ถอดออก
 	if _info_slot != slot or not UI.item_popup.is_open():
 		_info_slot = slot
-		UI.show_item(inst, self, "กดช่องนี้อีกครั้งเพื่อถอดออก")
+		UI.show_item(inst, self, "กดช่องนี้อีกครั้งเพื่อถอดออก · หรือลากไปวางในกระเป๋า")
 		return
 	_info_slot = -1
 	UI.hide_item_popup()
 	PlayerState.unequip(slot)
 
 
+## ★ ของจากกระเป๋าถูกลากมาวาง ★ target_slot = ช่องที่วาง (-1 = วางที่ตัวละคร ให้ระบบเลือกช่องเอง)
+func _drop_inventory_item(inv_slot: int, target_slot: int) -> bool:
+	var inst := PlayerState.inventory.get_slot(inv_slot)
+	if inst == null:
+		return false
+	var d := inst.data()
+	if d == null or not d.is_equipment():
+		Events.say("ไอเทมนี้สวมใส่ไม่ได้")
+		return false
+	if target_slot >= 0:
+		# วางลงช่องเฉพาะ: ต้องเป็นช่องที่ของชิ้นนี้ใส่ได้
+		var want := Equipment.slot_for(d, target_slot == Equipment.EquipSlot.ACCESSORY_2)
+		if want != target_slot:
+			Events.say("%s ใส่ช่อง%sไม่ได้" % [d.display_name, Equipment.SLOT_NAMES[target_slot]])
+			return false
+		if d.slot == ItemData.Slot.ACCESSORY:
+			return _equip_accessory_to(inv_slot, target_slot)
+	var ok := PlayerState.equip_from_inventory(inv_slot)
+	if ok:
+		UI.hide_item_popup()
+	return ok
+
+
+## เครื่องประดับเลือกช่องเองได้ (ลากไปวางช่อง 1 หรือ 2)
+func _equip_accessory_to(inv_slot: int, target_slot: int) -> bool:
+	var inst := PlayerState.inventory.get_slot(inv_slot)
+	var d := inst.data()
+	if PlayerState.stats.level < d.required_level:
+		Events.say("ต้องเลเวล %d ขึ้นไปถึงจะใส่ %s ได้" % [d.required_level, d.display_name])
+		return false
+	PlayerState.inventory.set_slot(inv_slot, null)
+	var old := PlayerState.equipment.equip(target_slot, inst)
+	if old != null:
+		PlayerState.inventory.set_slot(inv_slot, old)
+	PlayerState.refresh()
+	UI.hide_item_popup()
+	return true
+
+
 # =========================================================
 # อัพเดตข้อมูล
 # =========================================================
+func _raise(stat: StringName) -> void:
+	if PlayerState.raise_stat(stat):
+		refresh()
+	else:
+		Events.say("Stat Point ไม่พอ")
+
+
+const FLAT_NAMES := {"atk": "ATK", "def": "DEF", "matk": "MATK", "mdef": "MDEF", "hit": "HIT", "flee": "FLEE",
+	"crit": "CRIT", "max_hp": "MaxHP", "max_sp": "MaxSP", "aspd_percent": "ASPD%",
+	"str": "STR", "agi": "AGI", "vit": "VIT", "int": "INT", "dex": "DEX", "luk": "LUK"}
+const PCT_NAMES := {"damage_percent": "ดาเมจ", "def_percent": "DEF", "max_hp_percent": "HP", "max_sp_percent": "SP",
+	"hp_drain_percent": "ดูดเลือด", "sp_drain_percent": "ดูดมานา", "atk_percent": "ATK", "matk_percent": "MATK",
+	"aspd_percent": "ASPD", "move_speed_percent": "SPEED", "crit_damage_percent": "ดาเมจคริ"}
+
+
 func refresh() -> void:
 	if _summary == null:
 		return
 
+	# ---------- ช่องอุปกรณ์ ----------
 	for slot in _slot_buttons.keys():
 		var btn: Button = _slot_buttons[slot]
 		var art: TextureRect = _slot_icons.get(slot, null)
 		var name_label: Label = _slot_names.get(slot, null)
 		var inst: ItemInstance = PlayerState.equipment.get_item(slot)
 		btn.icon = null
-
 		if inst == null:
 			if art != null:
 				art.texture = null
 			if name_label != null:
-				# ช่องว่าง = ปล่อยกล่องโล่ง (ชื่อช่องอยู่ป้ายเล็กใต้กล่องแล้ว)
 				name_label.text = ""
-				name_label.add_theme_color_override("font_color", UITheme.TEXT_DIM)
-			btn.tooltip_text = Equipment.SLOT_NAMES[slot] + " — ว่าง"
+			btn.tooltip_text = Equipment.SLOT_NAMES[slot] + " — ว่าง (ลากของมาวางได้)"
 		else:
 			var d := inst.data()
 			if art != null:
 				art.texture = d.icon if d != null and d.icon != null else null
 			if name_label != null:
 				name_label.text = inst.display_name()
-				name_label.add_theme_color_override("font_color",
-					UITheme.ACCENT if inst.refine > 0 else UITheme.TEXT)
+				name_label.add_theme_color_override("font_color", C_ACCENT if inst.refine > 0 else C_TEXT)
 			btn.tooltip_text = "%s\nATK %d  DEF %d" % [inst.display_name(), inst.total_atk(), inst.total_def()]
-
 	_update_preview()
 
+	# ---------- โบนัสจากของสวมใส่ ----------
+	var eqp := PlayerState.equipment
+	var flat := eqp.collect_bonus()
+	var pct := eqp.collect_percent_bonus()
+	var watk := eqp.weapon_atk()
+	var parts: Array[String] = []
+	if watk != 0:
+		parts.append("ATK อาวุธ %d" % watk)
+	for key in FLAT_NAMES.keys():
+		var v := float(flat.get(StringName(key), 0.0))
+		if not is_zero_approx(v):
+			parts.append("%s %+d" % [FLAT_NAMES[key], int(v)])
+	for key in PCT_NAMES.keys():
+		var v := float(pct.get(StringName(key), 0.0))
+		if not is_zero_approx(v):
+			parts.append("%s %+.1f%%" % [PCT_NAMES[key], v])
+	_summary.text = "  ".join(parts) if not parts.is_empty() else "— ยังไม่มีโบนัส —"
+
+	# ---------- สเตตัส ----------
 	var s := PlayerState.stats
-	_summary.text = "ATK %d   DEF %d   MATK %d   MDEF %d\nHIT %d   FLEE %d   CRIT %.1f%%   ASPD %.2f/s\nMaxHP %d   MaxSP %d" % [
-		s.atk, s.def, s.matk, s.mdef, s.hit, s.flee, s.crit, s.aspd, s.max_hp, s.max_sp
-	]
+	_header.text = "%s   Base Lv.%d   Job Lv.%d" % [s.job().display_name, s.level, s.job_level]
+	var base_need := s.exp_to_next()
+	var job_need := s.job_exp_to_next()
+	var base_txt: String = "MAX" if base_need <= 0 else "%.1f%%" % (float(s.exp_current) / base_need * 100.0)
+	var job_txt: String = "MAX" if job_need <= 0 else "%.1f%%" % (float(s.job_exp_current) / job_need * 100.0)
+	_point_label.text = "EXP %s · Job EXP %s\nStat Point เหลือ %d · Skill Point %d" % [base_txt, job_txt, s.stat_points, s.skill_points]
+
+	for stat in PlayerStats.STAT_NAMES:
+		var r: Dictionary = _stat_rows[stat]
+		var base := s.get_base_stat(stat)
+		var total := s.get_total_stat(stat)
+		var bonus := total - base
+		if bonus != 0:
+			(r.value as Label).text = "%d %+d" % [base, bonus]
+			(r.value as Label).add_theme_color_override("font_color", C_GOOD)
+		else:
+			(r.value as Label).text = str(base)
+			(r.value as Label).add_theme_color_override("font_color", C_TEXT)
+		var cost := s.stat_cost(stat)
+		(r.cost as Label).text = str(cost) if cost > 0 else "MAX"
+		(r.button as Button).disabled = not s.can_raise_stat(stat)
+
+	# ค่าที่คำนวณ — สีเขียวถ้าของสวมใส่/การ์ดมีส่วน
+	_set_derived(&"atk", str(s.atk), watk != 0 or flat.has(&"atk") or pct.has(&"atk_percent"))
+	_set_derived(&"def", str(s.def), flat.has(&"def") or pct.has(&"def_percent"))
+	_set_derived(&"matk", str(s.matk), flat.has(&"matk"))
+	_set_derived(&"mdef", str(s.mdef), flat.has(&"mdef"))
+	_set_derived(&"hit", str(s.hit), flat.has(&"hit"))
+	_set_derived(&"flee", str(s.flee), flat.has(&"flee"))
+	_set_derived(&"crit", "%.1f%%" % s.crit, flat.has(&"crit"))
+	_set_derived(&"aspd", "%.2f/s" % s.aspd, flat.has(&"aspd_percent") or pct.has(&"aspd_percent"))
+	_set_derived(&"max_hp", str(s.max_hp), flat.has(&"max_hp") or pct.has(&"max_hp_percent"))
+	_set_derived(&"max_sp", str(s.max_sp), flat.has(&"max_sp") or pct.has(&"max_sp_percent"))
+	_set_derived(&"regen", "%.1f/s" % s.hp_regen, false)
+	_set_derived(&"sp_regen", "%.2f/s" % s.sp_regen, false)
+	_set_derived(&"speed", str(int(s.move_speed)), pct.has(&"move_speed_percent"))
+	_set_derived(&"damage_percent", "%+.0f%%" % s.damage_percent, s.damage_percent != 0.0)
+	_set_derived(&"hp_drain", "%.0f%%" % s.hp_drain_percent, s.hp_drain_percent != 0.0)
+	_set_derived(&"sp_drain", "%.0f%%" % s.sp_drain_percent, s.sp_drain_percent != 0.0)
+	_equip_bonus_label.text = "สีเขียว = มีผลจากของสวมใส่/การ์ด"
 
 
-## รูปตัวละครตรงกลาง — ดึงเฟรมท่ายืนของผู้เล่นในฉากมาโชว์
+func _set_derived(key: StringName, text: String, boosted: bool) -> void:
+	var l: Label = _derived.get(key, null)
+	if l == null:
+		return
+	l.text = text
+	l.add_theme_color_override("font_color", C_GOOD if boosted else C_TEXT)
+
+
 func _update_preview() -> void:
 	if _preview == null:
 		return
@@ -362,7 +620,6 @@ func _update_preview() -> void:
 	_preview.visible = tex != null
 	if _preview_hint != null:
 		_preview_hint.visible = tex == null
-
 	if _preview_caption != null:
 		var s := PlayerState.stats
 		var job := GameData.get_job(s.job_id)
@@ -380,13 +637,9 @@ func _player_frame() -> Texture2D:
 	var frames: SpriteFrames = spr.sprite_frames
 	if frames == null:
 		return null
-
-	# หันหน้าไปทางเดียวกันทุกครั้ง ไม่ต้องสนว่าตอนนั้นตัวละครหันไปทางไหน
 	var faces_left = p.get("sprite_faces_left")
 	if faces_left != null:
 		_preview.flip_h = bool(faces_left)
-
-	# ท่ายืนของอาวุธที่ถืออยู่ก่อน แล้วค่อยถอยไปท่ายืนธรรมดา
 	var wanted: Array[String] = []
 	if p.has_method("weapon_suffix"):
 		var suffix: String = p.weapon_suffix()
@@ -394,7 +647,6 @@ func _player_frame() -> Texture2D:
 			wanted.append("Idle_" + suffix)
 	wanted.append("Idle")
 	wanted.append(String(spr.animation))
-
 	for want in wanted:
 		var real := want
 		if p.has_method("_real_anim"):

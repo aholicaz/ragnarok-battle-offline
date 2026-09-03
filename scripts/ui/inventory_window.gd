@@ -169,10 +169,20 @@ func _build_content() -> void:
 	grid_panel.add_child(_grid)
 
 	for i in range(PlayerState.INVENTORY_SIZE):
-		var btn := Button.new()
+		# ★ รอบ 45 — ช่องเป็น DragSlot: กดค้างแล้วลากไปวางที่ช่องสวมใส่ = ใส่ · ลากของสวมใส่มาวาง = ถอด · ลากไปช่องอื่น = ย้าย ★
+		var btn := DragSlot.new()
+		btn.kind = "inventory"
 		btn.custom_minimum_size = SLOT_SIZE
 		btn.focus_mode = Control.FOCUS_NONE
 		btn.clip_text = true
+		var display_index := i
+		btn.drag_icon_func = func() -> Texture2D:
+			return _drag_icon_of(display_index)
+		btn.can_drop_func = func(data: Dictionary, _t: DragSlot) -> bool:
+			var k := String(data.get("kind", ""))
+			return k == "equip" or (k == "inventory" and not sell_mode)
+		btn.drop_func = func(data: Dictionary, _t: DragSlot) -> bool:
+			return _on_drop(data, display_index)
 		btn.add_theme_font_size_override("font_size", 10)
 		btn.add_theme_color_override("font_color", C_TEXT)
 		btn.add_theme_stylebox_override("normal", _slot_box())
@@ -277,6 +287,61 @@ func _on_slot_pressed(display_index: int) -> void:
 		UI.hide_item_popup()
 
 
+## ★ รอบ 45 — ลาก-วาง ★
+func _drag_icon_of(display_index: int) -> Texture2D:
+	if display_index < 0 or display_index >= _display_to_slot.size():
+		return null
+	var slot: int = _display_to_slot[display_index]
+	if slot < 0 or sell_mode:
+		return null
+	var inst := PlayerState.inventory.get_slot(slot)
+	if inst == null or inst.data() == null:
+		return null
+	var d := inst.data()
+	if d.icon != null:
+		return d.icon
+	if d.is_card():
+		return CardView.card_texture(d as CardData)
+	return null
+
+
+## ของถูกวางลงช่อง (display_index) — จากช่องสวมใส่ = ถอดมาไว้ช่องนี้ · จากช่องกระเป๋าอื่น = สลับที่
+func _on_drop(data: Dictionary, display_index: int) -> bool:
+	var kind := String(data.get("kind", ""))
+	var target_slot: int = _display_to_slot[display_index] if display_index < _display_to_slot.size() else -1
+	if kind == "equip":
+		var eq_slot := int(data.get("slot", -1))
+		var inst := PlayerState.equipment.get_item(eq_slot)
+		if inst == null:
+			return false
+		if target_slot < 0:
+			# ช่องโชว์ว่าง → หาช่องจริงที่ว่างในกระเป๋า
+			target_slot = PlayerState.inventory.first_empty()
+		if target_slot < 0 or PlayerState.inventory.get_slot(target_slot) != null:
+			# ช่องนั้นมีของ → ถอดแบบปกติ (ไปช่องว่างช่องแรก)
+			return PlayerState.unequip(eq_slot)
+		PlayerState.equipment.unequip(eq_slot)
+		PlayerState.inventory.set_slot(target_slot, inst)
+		PlayerState.refresh()
+		UI.hide_item_popup()
+		refresh()
+		return true
+	if kind == "inventory":
+		var from_slot := int(data.get("slot", -1))
+		if from_slot < 0 or from_slot == target_slot:
+			return false
+		if target_slot < 0:
+			# วางบนช่องว่างของแท็บนี้ → ย้ายไปช่องจริงที่ว่าง (ถ้ามี)
+			target_slot = PlayerState.inventory.first_empty()
+			if target_slot < 0:
+				return false
+		PlayerState.inventory.swap(from_slot, target_slot)
+		_selected = target_slot
+		refresh()
+		return true
+	return false
+
+
 func _assign_potion(slot: int) -> void:
 	if _selected < 0:
 		return
@@ -369,6 +434,8 @@ func refresh() -> void:
 		var cnt: Label = _slot_counts[i]
 		var slot: int = shown[i] if i < shown.size() else -1
 		_display_to_slot[i] = slot
+		if btn is DragSlot:
+			(btn as DragSlot).slot_index = slot
 		var inst := inv.get_slot(slot) if slot >= 0 else null
 
 		if inst == null:

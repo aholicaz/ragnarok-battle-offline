@@ -22283,13 +22283,13 @@ monster_types = Array[ExtResource("monster_data")]([ExtResource("md_poring"), Ex
 position = Vector2(214, 21)
 
 [node name="ToTown2" parent="Portals" unique_id=1254094876 instance=ExtResource("portal")]
-position = Vector2(4598, 402)
+position = Vector2(4603, 378)
 target_map = &"asgard_forest_2"
 target_spawn_point = &"from_forest_1"
 label_text = "→ ป่าสนธยา"
 destination_name = "ป่าสนธยา"
 
 [node name="ToTown" parent="Portals" unique_id=1788592486 instance=ExtResource("portal")]
-position = Vector2(1102, 417)
+position = Vector2(1112, 358)
 target_spawn_point = &"from_field"
 label_text = "→ พรอนเทรา"

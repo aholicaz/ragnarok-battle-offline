@@ -1,0 +1,694 @@
+<title>Shadows of Fate Codex</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#e6e6ec; --surface:#f5f5f8; --surface-2:#ececed; --line:#c9c9d4; --line-soft:#dcdce4;
+  --ink:#1a1c22; --ink-2:#4c5060; --ink-3:#767a8c;
+  --ember:#c8510a; --ember-soft:#f0d8c6; --rune:#2f6ea8; --rune-soft:#d5e3f0;
+  --blood:#ab2f2f; --moss:#4a7d3f; --gold:#8a6410;
+  --shadow:0 1px 0 rgba(20,22,28,.05), 0 6px 18px -12px rgba(20,22,28,.4);
+  --r:4px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#111319; --surface:#191c23; --surface-2:#20242d; --line:#333846; --line-soft:#272b35;
+    --ink:#e5e6ec; --ink-2:#a3a8ba; --ink-3:#767c90;
+    --ember:#f07a26; --ember-soft:#3a2415; --rune:#6aa8e0; --rune-soft:#16242f;
+    --blood:#e05a5a; --moss:#7cbb6b; --gold:#d0a03c;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 8px 22px -14px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#111319; --surface:#191c23; --surface-2:#20242d; --line:#333846; --line-soft:#272b35;
+  --ink:#e5e6ec; --ink-2:#a3a8ba; --ink-3:#767c90;
+  --ember:#f07a26; --ember-soft:#3a2415; --rune:#6aa8e0; --rune-soft:#16242f;
+  --blood:#e05a5a; --moss:#7cbb6b; --gold:#d0a03c;
+  --shadow:0 1px 0 rgba(0,0,0,.3), 0 8px 22px -14px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans Thai","Noto Sans Thai",system-ui,sans-serif;
+  font-size:15px; line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:"Chakra Petch",system-ui,sans-serif; text-wrap:balance; margin:0; line-height:1.2}
+code,.mono,.num{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
+a{color:var(--rune)}
+
+/* ---------- แถบหัว ---------- */
+.top{position:sticky; top:0; z-index:20; background:var(--surface); border-bottom:1px solid var(--line)}
+.top-in{max-width:1180px; margin:0 auto; padding:14px 20px 0}
+.brand{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap}
+.brand h1{font-size:23px; font-weight:700; letter-spacing:.01em}
+.brand .sub{font-size:12.5px; color:var(--ink-3); letter-spacing:.08em; text-transform:uppercase; font-family:"IBM Plex Mono",monospace}
+.searchrow{display:flex; gap:10px; margin:12px 0 0; align-items:center; flex-wrap:wrap}
+.search{
+  flex:1 1 260px; display:flex; align-items:center; gap:8px; background:var(--ground);
+  border:1px solid var(--line); border-radius:var(--r); padding:0 10px;
+}
+.search input{
+  flex:1; background:none; border:0; outline:none; color:var(--ink); padding:9px 0;
+  font-family:inherit; font-size:14.5px;
+}
+.search .k{font-size:11px; color:var(--ink-3); font-family:"IBM Plex Mono",monospace; border:1px solid var(--line); border-radius:3px; padding:1px 5px}
+.search:focus-within{border-color:var(--ember); box-shadow:0 0 0 3px var(--ember-soft)}
+.count{font-size:12.5px; color:var(--ink-3); font-family:"IBM Plex Mono",monospace; white-space:nowrap}
+.tabs{display:flex; gap:2px; margin-top:12px; overflow-x:auto; scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  appearance:none; background:none; border:0; border-bottom:2px solid transparent; color:var(--ink-2);
+  font-family:"Chakra Petch",sans-serif; font-size:15px; font-weight:600; padding:8px 14px 10px;
+  cursor:pointer; white-space:nowrap; letter-spacing:.01em;
+}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ember); border-bottom-color:var(--ember)}
+.tab:focus-visible{outline:2px solid var(--rune); outline-offset:-2px}
+.tab .n{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); margin-left:6px}
+
+main{max-width:1180px; margin:0 auto; padding:24px 20px 80px}
+.pane[hidden]{display:none!important}
+.lead{color:var(--ink-2); font-size:14px; max-width:68ch; margin:0 0 18px}
+.sec{margin:34px 0 14px; display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
+.sec h2{font-size:17px; font-weight:600; letter-spacing:.02em}
+.sec .rule{flex:1; height:1px; background:var(--line-soft); min-width:20px}
+.sec .meta{font-size:12px; color:var(--ink-3); font-family:"IBM Plex Mono",monospace}
+
+/* ---------- ตาราง ---------- */
+.tw{overflow-x:auto; border:1px solid var(--line-soft); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:13.5px}
+th,td{text-align:left; padding:7px 11px; border-bottom:1px solid var(--line-soft); vertical-align:top}
+th{
+  position:sticky; top:0; background:var(--surface-2); font-family:"Chakra Petch",sans-serif;
+  font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-2);
+  white-space:nowrap; z-index:1; border-bottom:1px solid var(--line);
+}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--surface-2)}
+td.id{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-2); white-space:nowrap}
+td.n{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap}
+td.nm{font-weight:500; white-space:nowrap}
+td.src{color:var(--ink-2); font-size:12.5px; min-width:190px}
+.dim{color:var(--ink-3)}
+
+/* ---------- ชิป ---------- */
+.chip{
+  display:inline-block; font-size:11px; font-family:"IBM Plex Mono",monospace; letter-spacing:.03em;
+  padding:1px 6px; border-radius:3px; border:1px solid var(--line); color:var(--ink-2); white-space:nowrap;
+}
+.chip.ember{color:var(--ember); border-color:var(--ember); background:var(--ember-soft)}
+.chip.rune{color:var(--rune); border-color:var(--rune); background:var(--rune-soft)}
+.chip.boss{color:var(--blood); border-color:var(--blood); font-weight:600}
+.chip.ok{color:var(--moss); border-color:var(--moss)}
+
+/* ---------- การ์ดมอนสเตอร์ ---------- */
+.beast{display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:14px}
+.mon{
+  background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--r);
+  padding:14px 15px 12px; display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow);
+}
+.mon.is-boss{border-left:3px solid var(--blood)}
+.mon-head{display:flex; align-items:flex-start; gap:11px}
+.lv{
+  font-family:"Chakra Petch",sans-serif; font-weight:700; font-size:19px; line-height:1;
+  color:var(--ember); min-width:44px; padding-top:2px;
+}
+.lv small{display:block; font-size:9.5px; letter-spacing:.14em; color:var(--ink-3); font-weight:500; font-family:"IBM Plex Mono",monospace}
+.mon-head h3{font-size:16.5px; font-weight:600}
+.mon-head .mid{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3)}
+.tags{display:flex; flex-wrap:wrap; gap:4px; margin-top:5px}
+.stats{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line-soft); border:1px solid var(--line-soft); border-radius:3px; overflow:hidden}
+.stats div{background:var(--surface); padding:5px 7px}
+.stats b{display:block; font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:600; font-variant-numeric:tabular-nums}
+.stats span{font-size:9.5px; letter-spacing:.09em; color:var(--ink-3); font-family:"IBM Plex Mono",monospace}
+.mon .row{font-size:12.5px; color:var(--ink-2)}
+.mon .row b{color:var(--ink); font-weight:600}
+.skillbox{background:var(--surface-2); border-left:2px solid var(--ember); padding:7px 10px; font-size:12.5px; border-radius:0 3px 3px 0}
+.skillbox b{font-family:"Chakra Petch",sans-serif; font-size:13.5px; color:var(--ember)}
+.drops{font-size:12px; display:flex; flex-direction:column; gap:2px}
+.drops .d{display:flex; justify-content:space-between; gap:10px; border-bottom:1px dotted var(--line-soft); padding-bottom:2px}
+.drops .d:last-child{border-bottom:0}
+.drops .pct{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; color:var(--ink-2)}
+.drops .pct.hi{color:var(--moss); font-weight:600}
+.drops .pct.rare{color:var(--gold); font-weight:600}
+
+/* ---------- ไม้บรรทัดแมพ ---------- */
+.map{background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--r); padding:16px 18px 14px; margin-bottom:16px; box-shadow:var(--shadow)}
+.map-head{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:3px}
+.map-head h3{font-size:17px; font-weight:600}
+.map-head .mid{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-3)}
+.dims{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-2); margin-bottom:14px}
+.dims b{color:var(--ink); font-weight:600}
+.ruler{position:relative; margin:0 0 6px; padding-top:4px}
+.track{position:relative; height:8px; background:var(--surface-2); border:1px solid var(--line-soft); border-radius:2px}
+.track .fill{position:absolute; inset:0; background:linear-gradient(90deg,var(--line-soft),transparent)}
+.ticks{position:relative; height:15px; margin-top:2px}
+.ticks span{position:absolute; transform:translateX(-50%); font-family:"IBM Plex Mono",monospace; font-size:10px; color:var(--ink-3); white-space:nowrap}
+.lane{position:relative; margin-top:3px}
+.lane .lbl{position:absolute; left:0; top:4px; font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.09em; color:var(--ink-3); text-transform:uppercase}
+.pin{position:absolute; transform:translateX(-50%); font-size:10.5px; white-space:nowrap; padding:1px 5px; border-radius:3px; border:1px solid var(--line); background:var(--surface); cursor:default}
+.pin.at-start{transform:translateX(0)}
+.pin.at-end{transform:translateX(-100%)}
+.pin.portal{color:var(--rune); border-color:var(--rune); background:var(--rune-soft)}
+.pin.spawn{color:var(--moss); border-color:var(--moss)}
+.pin.npc{color:var(--ink-2)}
+.pin.mob{color:var(--ember); border-color:var(--ember); background:var(--ember-soft)}
+.pin.lore{color:var(--gold); border-color:var(--gold)}
+.map-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin-top:14px}
+.blk h4{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); font-weight:500; margin-bottom:5px}
+.blk ul{margin:0; padding-left:16px; font-size:12.5px; color:var(--ink-2)}
+.blk li{margin-bottom:2px}
+.blk li b{color:var(--ink); font-weight:600}
+
+/* ---------- แผงตรวจสุขภาพ ---------- */
+.health{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:12px; margin-bottom:22px}
+.hcard{background:var(--surface); border:1px solid var(--line-soft); border-left:3px solid var(--moss); border-radius:var(--r); padding:12px 14px}
+.hcard.warn{border-left-color:var(--gold)}
+.hcard h4{font-family:"Chakra Petch",sans-serif; font-size:14px; margin-bottom:4px}
+.hcard p{margin:0; font-size:12.5px; color:var(--ink-2)}
+.hcard .big{font-family:"Chakra Petch",sans-serif; font-size:26px; font-weight:700; line-height:1; color:var(--moss)}
+.hcard.warn .big{color:var(--gold)}
+
+/* ---------- NPC ---------- */
+.npcs{display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:14px}
+.npc{background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--r); padding:13px 15px 12px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow)}
+.npc.is-shop{border-left:3px solid var(--gold)}
+.npc.is-quest{border-left:3px solid var(--rune)}
+.npc-head h3{font-size:16px; font-weight:600}
+.npc-head .mid{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3)}
+.npc .row{font-size:12.5px; color:var(--ink-2)}
+.npc .row b{color:var(--ink); font-weight:600}
+.npc .say{background:var(--surface-2); border-left:2px solid var(--line); padding:6px 10px; font-size:12.5px; border-radius:0 3px 3px 0; color:var(--ink-2); white-space:pre-wrap}
+.npc .say.greet{border-left-color:var(--ember)}
+.npc .art{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line-soft); border:1px solid var(--line-soft); border-radius:3px; overflow:hidden}
+.npc .art div{background:var(--surface); padding:5px 7px}
+.npc .art b{display:block; font-family:"IBM Plex Mono",monospace; font-size:12.5px; font-weight:600}
+.npc .art b.ok{color:var(--moss)} .npc .art b.no{color:var(--blood)} .npc .art b.tmp{color:var(--gold)}
+.npc .art span{font-size:9.5px; letter-spacing:.09em; color:var(--ink-3); font-family:"IBM Plex Mono",monospace}
+
+/* ---------- งานภาพที่ยังไม่ทำ ---------- */
+.todo-sum{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-bottom:8px}
+.tcard{background:var(--surface); border:1px solid var(--line-soft); border-top:3px solid var(--ember); border-radius:var(--r); padding:10px 12px; cursor:pointer}
+.tcard.done{border-top-color:var(--moss)}
+.tcard .big{font-family:"Chakra Petch",sans-serif; font-size:24px; font-weight:700; line-height:1; color:var(--ember)}
+.tcard.done .big{color:var(--moss)}
+.tcard .big small{font-size:12px; color:var(--ink-3); font-weight:500; font-family:"IBM Plex Mono",monospace}
+.tcard h4{font-family:"Chakra Petch",sans-serif; font-size:13px; margin-top:3px}
+.tcard p{margin:0; font-size:11.5px; color:var(--ink-3)}
+.bar{height:5px; background:var(--surface-2); border-radius:3px; overflow:hidden; margin-top:6px}
+.bar i{display:block; height:100%; background:var(--moss)}
+.chip.no{color:var(--blood); border-color:var(--blood)}
+.chip.gold{color:var(--gold); border-color:var(--gold)}
+.spec{background:var(--surface-2); border-left:2px solid var(--rune); padding:7px 11px; font-size:12.5px; color:var(--ink-2); border-radius:0 3px 3px 0; margin:0 0 12px}
+.spec b{color:var(--ink)}
+
+pre.prompt{
+  background:var(--surface); border:1px solid var(--line-soft); border-left:3px solid var(--ember);
+  border-radius:var(--r); padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.65;
+  font-family:"IBM Plex Mono",monospace; color:var(--ink-2); white-space:pre-wrap;
+}
+.foot{margin-top:44px; padding-top:16px; border-top:1px solid var(--line-soft); font-size:12px; color:var(--ink-3); font-family:"IBM Plex Mono",monospace}
+.empty{padding:26px; text-align:center; color:var(--ink-3); font-size:13.5px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+@media (max-width:560px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .brand h1{font-size:19px}
+}
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <h1>Shadows of Fate — คลังข้อมูลเกม</h1>
+      <span class="sub" id="stamp"></span>
+    </div>
+    <div class="searchrow">
+      <label class="search">
+        <span class="k">ค้นหา</span>
+        <input id="q" type="search" placeholder="พิมพ์ชื่อไทย, id, ธาตุ, แมพ… (เช่น โพริง, forge, ไฟ)" autocomplete="off">
+      </label>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="tabs" role="tablist" id="tabs"></div>
+  </div>
+</header>
+
+<main>
+  <section class="pane" id="pane-items" role="tabpanel"></section>
+  <section class="pane" id="pane-monsters" role="tabpanel" hidden></section>
+  <section class="pane" id="pane-maps" role="tabpanel" hidden></section>
+  <section class="pane" id="pane-skills" role="tabpanel" hidden></section>
+  <section class="pane" id="pane-quests" role="tabpanel" hidden></section>
+  <section class="pane" id="pane-npcs" role="tabpanel" hidden></section>
+  <section class="pane" id="pane-assets" role="tabpanel" hidden></section>
+  <section class="pane" id="pane-health" role="tabpanel" hidden></section>
+  <div class="foot" id="foot"></div>
+</main>
+
+<script id="gamedata" type="application/json">__DATA__</script>
+<script>
+const D = JSON.parse(document.getElementById('gamedata').textContent);
+const $ = (s,r=document)=>r.querySelector(s);
+const esc = s => String(s??'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num = n => (n??0).toLocaleString('en-US');
+
+const TABS = [
+  {id:'items',    label:'ไอเทม',      n:D.items.length},
+  {id:'monsters', label:'มอนสเตอร์',  n:D.monsters.length},
+  {id:'maps',     label:'แมพ',        n:D.maps.length},
+  {id:'skills',   label:'สกิล',       n:D.skills.length},
+  {id:'quests',   label:'เควส',       n:D.quests.length},
+  {id:'npcs',     label:'NPC',        n:(D.npcs||[]).length},
+  {id:'assets',   label:'งานภาพที่ยังไม่ทำ', n:D.assets ? Object.values(D.assets.counts).reduce((a,b)=>a+b,0) : 0},
+  {id:'health',   label:'ตรวจข้อมูล', n:D.health.orphanItems.length + D.health.orphanMonsters.length},
+];
+let active = 'items', query = '';
+
+$('#tabs').innerHTML = TABS.map(t =>
+  `<button class="tab" role="tab" data-tab="${t.id}" aria-selected="${t.id===active}">${t.label}<span class="n">${t.n}</span></button>`
+).join('');
+$('#tabs').addEventListener('click', e => {
+  const b = e.target.closest('.tab'); if(!b) return;
+  active = b.dataset.tab;
+  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.tab===active));
+  document.querySelectorAll('.pane').forEach(p => p.hidden = (p.id !== 'pane-'+active));
+  render();
+});
+$('#q').addEventListener('input', e => { query = e.target.value.trim().toLowerCase(); render(); });
+document.addEventListener('keydown', e => {
+  if(e.key === '/' && document.activeElement !== $('#q')){ e.preventDefault(); $('#q').focus(); }
+});
+
+const hit = (...vals) => !query || vals.filter(Boolean).join(' ').toLowerCase().includes(query);
+
+// ---------------- ไอเทม ----------------
+const ITEM_GROUPS = [
+  {t:1, name:'อาวุธ', note:'ตีบวกได้ทุกชิ้น · ช่องการ์ดใช้ใส่การ์ดมอน'},
+  {t:2, name:'ของสวมใส่', note:'โล่ · หมวก · เกราะ · ผ้าคลุม · รองเท้า · เครื่องประดับ'},
+  {t:0, name:'ของกิน / ยา', note:''},
+  {t:3, name:'วัตถุดิบ + ของขยะจากมอน', note:'ใช้ตีบวก · วัตถุดิบเควส · ขายเอาซีนี'},
+  {t:4, name:'ของเควส', note:'ขายไม่ได้ ทิ้งไม่ได้'},
+  {t:5, name:'การ์ดมอนสเตอร์', note:'ดรอปจากมอนตัวนั้นโดยเฉพาะ'},
+];
+function renderItems(){
+  const out = [];
+  let shown = 0;
+  out.push(`<p class="lead">ค่าพลัง ราคา และ<b>ที่มาของทุกชิ้น</b> — ดรอปจากมอนตัวไหนกี่เปอร์เซ็นต์ ร้านไหนขาย หรือได้จากเควสอะไร ดึงจากไฟล์ <code>data/items/</code> และตารางดรอปของมอนจริง</p>`);
+  for(const g of ITEM_GROUPS){
+    const rows = D.items.filter(i => i.typeIdx === g.t &&
+      hit(i.id, i.name, i.stats, i.slot, i.src.join(' '), i.monster));
+    if(!rows.length) continue;
+    shown += rows.length;
+    out.push(`<div class="sec"><h2>${g.name}</h2><span class="rule"></span><span class="meta">${rows.length} ชิ้น</span></div>`);
+    if(g.note) out.push(`<p class="lead" style="margin-bottom:10px">${g.note}</p>`);
+    const gear = g.t===1 || g.t===2;
+    const card = g.t===5;
+    out.push('<div class="tw"><table><thead><tr>' +
+      (card
+        ? '<th>id</th><th>ชื่อ</th><th>มาจากมอน</th><th>ใส่ช่อง</th><th>ผลที่ได้</th><th style="text-align:right">ขาย</th>'
+        : gear
+          ? '<th>id</th><th>ชื่อ</th><th>ช่อง</th><th style="text-align:right">Lv</th><th>ค่าพลัง</th><th style="text-align:right">การ์ด</th><th style="text-align:right">ซื้อ</th><th style="text-align:right">ขาย</th><th>ได้จาก</th>'
+          : '<th>id</th><th>ชื่อ</th><th>ผล / คำอธิบาย</th><th style="text-align:right">ซื้อ</th><th style="text-align:right">ขาย</th><th>ได้จาก</th>') +
+      '</tr></thead><tbody>' +
+      rows.map(i => {
+        const src = i.src.length ? i.src.map(esc).join('<br>') : '<span class="dim">— ยังไม่มีที่มา —</span>';
+        if(card) return `<tr><td class="id">${esc(i.id)}</td><td class="nm">${esc(i.name)}</td>
+          <td class="id">${esc(i.monster)}</td><td>${esc(i.fits)}</td><td>${esc(i.stats)}</td>
+          <td class="n">${num(i.sell)}</td></tr>`;
+        if(gear) return `<tr><td class="id">${esc(i.id)}</td><td class="nm">${esc(i.name)}${i.refine?' <span class="chip">+</span>':''}</td>
+          <td>${esc(i.slot)}</td><td class="n">${i.lv}</td><td>${esc(i.stats)}</td>
+          <td class="n">${i.cards||'—'}</td><td class="n">${i.buy?num(i.buy):'—'}</td><td class="n">${num(i.sell)}</td>
+          <td class="src">${src}</td></tr>`;
+        return `<tr><td class="id">${esc(i.id)}</td><td class="nm">${esc(i.name)}</td>
+          <td>${esc(i.stats !== '—' ? i.stats : i.desc)}</td>
+          <td class="n">${i.buy?num(i.buy):'—'}</td><td class="n">${i.sell?num(i.sell):'—'}</td>
+          <td class="src">${src}</td></tr>`;
+      }).join('') + '</tbody></table></div>');
+  }
+  if(D.shops.length && !query){
+    out.push(`<div class="sec"><h2>รายการในร้านค้า</h2><span class="rule"></span></div>`);
+    out.push('<div class="map-grid">' + D.shops.map(s =>
+      `<div class="blk"><h4>${esc(s.npc)} · ${s.items.length} รายการ</h4>
+       <p style="margin:0;font-size:12.5px;color:var(--ink-2)">${s.items.map(x=>`<code>${esc(x)}</code>`).join(' · ')}</p></div>`
+    ).join('') + '</div>');
+  }
+  $('#pane-items').innerHTML = out.join('') || '<div class="empty">ไม่เจอไอเทมที่ตรงกับคำค้น</div>';
+  return shown;
+}
+
+// ---------------- มอนสเตอร์ ----------------
+function renderMonsters(){
+  const rows = D.monsters.filter(m => hit(m.id, m.name, m.element, m.race, m.ai, m.maps.join(' '),
+    m.skill && m.skill.name, m.drops.map(d=>d.name+' '+d.id).join(' ')));
+  $('#pane-monsters').innerHTML = rows.length ? (
+    `<p class="lead">สเตตัสเต็ม จังหวะโจมตี สกิล และตารางดรอปของมอนทุกตัว เรียงตามเลเวล — ดึงจาก <code>data/monsters/*.tres</code> ช่องที่ไม่ได้ตั้งค่าจะแสดงค่า default จริงของ <code>MonsterData</code></p>` +
+    '<div class="beast">' + rows.map(m => {
+      const d = m.drops.slice().sort((a,b)=>b.chance-a.chance);
+      return `<article class="mon${m.boss?' is-boss':''}">
+        <div class="mon-head">
+          <div class="lv">${m.lv}<small>LEVEL</small></div>
+          <div style="flex:1">
+            <h3>${esc(m.name)}</h3>
+            <div class="mid">${esc(m.id)}</div>
+            <div class="tags">
+              ${m.boss?'<span class="chip boss">บอส MVP</span>':''}
+              <span class="chip ember">ธาตุ${esc(m.element)}</span>
+              <span class="chip">${esc(m.race)}</span>
+              <span class="chip">ขนาด${esc(m.size)}</span>
+              <span class="chip ${m.ai==='AGGRESSIVE'?'rune':''}">${esc(m.ai)}</span>
+              ${m.ranged?'<span class="chip rune">ยิงไกล</span>':''}
+              ${m.lob?'<span class="chip rune">ขว้างระเบิด</span>':''}
+              ${m.intro?'<span class="chip ember">มีวิดีโอเปิดตัว</span>':''}
+            </div>
+          </div>
+        </div>
+        <div class="stats">
+          <div><b>${num(m.hp)}</b><span>HP</span></div>
+          <div><b>${m.atk[0]}–${m.atk[1]}</b><span>ATK</span></div>
+          <div><b>${m.def}/${m.mdef}</b><span>DEF/MDEF</span></div>
+          <div><b>${m.hit}/${m.flee}</b><span>HIT/FLEE</span></div>
+        </div>
+        <div class="row"><b>รางวัล</b> EXP ${num(m.exp)} · Job ${num(m.jobexp)}${m.jobauto?'<span class="dim"> (คิดให้ 70%)</span>':''} · ซีนี ${m.zeny[0]}–${m.zeny[1]}</div>
+        <div class="row"><b>การเคลื่อนไหว</b> ความเร็ว ${m.speed} · เห็นที่ ${m.detect} · ตีที่ ${m.range} · สูงบนจอ ${m.height||'—'} px · เกิดใหม่ ${m.respawn} วิ</div>
+        ${m.skill?`<div class="skillbox"><b>${esc(m.skill.name)}</b> — ระยะร่าย ${m.skill.range} · พื้นที่ ${m.skill.rx}×${m.skill.ry} · ดาเมจ ×${m.skill.mult} · คูลดาวน์ ${m.skill.cd} วิ · โอกาสใช้ ${Math.round(m.skill.chance*100)}%</div>`:''}
+        ${m.maps.length?`<div class="row"><b>พบที่</b> ${m.maps.map(esc).join(' · ')}</div>`
+                       :`<div class="row dim">ยังไม่ได้วางในแมพไหน</div>`}
+        ${d.length?`<div class="drops">${d.map(x=>{
+          const cls = x.chance>=50?'hi':(x.chance<=5?'rare':'');
+          const cnt = x.max>x.min?` ×${x.min}-${x.max}`:'';
+          return `<div class="d"><span>${esc(x.name)}${cnt}</span><span class="pct ${cls}">${x.chance}%</span></div>`;
+        }).join('')}</div>`:''}
+      </article>`;
+    }).join('') + '</div>'
+  ) : '<div class="empty">ไม่เจอมอนที่ตรงกับคำค้น</div>';
+  return rows.length;
+}
+
+// ---------------- แมพ ----------------
+function renderMaps(){
+  const rows = D.maps.filter(m => hit(m.id, m.name, m.region, 'บทที่'+m.chapter,
+    m.spawners.map(s=>s.mons.join(' ')).join(' '), m.npcs.map(n=>n.name).join(' '),
+    m.portals.map(p=>p.to).join(' ')));
+  $('#pane-maps').innerHTML = rows.length ? (
+    `<p class="lead">ขนาดจริงเป็นพิกเซล และตำแหน่ง x ของทุกอย่างในแมพ — ไม้บรรทัดด้านล่างวาดตามสเกลจริง ใช้เทียบว่าจะวางประตู มอน หรือ NPC ตัวใหม่ตรงไหน</p>` +
+    rows.map(m => {
+      const b = m.bounds || [0,0,1000,1000];
+      const [bx,by,bw,bh] = b;
+      const pos = x => Math.max(0, Math.min(100, (x - bx) / bw * 100));
+      const ticks = [];
+      const step = bw > 4000 ? 1000 : (bw > 2000 ? 500 : 250);
+      for(let x = Math.ceil(bx/step)*step; x <= bx+bw; x += step) ticks.push(x);
+      // ★ จัดหมุดไม่ให้ทับกัน ★ กะความกว้างจากจำนวนตัวอักษร แล้วดันลงแถวถัดไปถ้าชน
+      const ROW_H = 21;
+      const lane = (label, pins) => {
+        if(!pins.length) return '';
+        const sorted = pins.slice().sort((a,b) => a.pct - b.pct);
+        const rows = [];
+        const html = sorted.map(p => {
+          const wPct = Math.min(60, (p.text.length * 6.6 + 16) / 1000 * 100);
+          const edge = p.pct < 6 ? 'at-start' : (p.pct > 94 ? 'at-end' : '');
+          const start = edge === 'at-start' ? p.pct : (edge === 'at-end' ? p.pct - wPct : p.pct - wPct/2);
+          const end = start + wPct;
+          let r = 0;
+          while(rows[r] !== undefined && rows[r] > start - 0.6) r++;
+          rows[r] = end;
+          return `<span class="pin ${p.cls} ${edge}" style="left:${p.pct}%; top:${2 + r*ROW_H}px"${p.title?` title="${p.title}"`:''}>${p.text}</span>`;
+        }).join('');
+        return `<div class="lane" style="height:${rows.length * ROW_H + 4}px"><span class="lbl">${label}</span>${html}</div>`;
+      };
+      return `<article class="map">
+        <div class="map-head"><h3>${esc(m.name)}</h3><span class="mid">${esc(m.id)}</span>
+          <span class="chip ${m.chapter==2?'rune':'ember'}">บทที่ ${m.chapter}</span>
+          <span class="chip">${esc(m.region)}</span></div>
+        <div class="dims">กว้าง <b>${num(bw)} px</b> × สูง <b>${num(bh)} px</b> &nbsp;·&nbsp; x ${num(bx)} → ${num(bx+bw)} &nbsp;·&nbsp; y ${num(by)} → ${num(by+bh)} &nbsp;·&nbsp; <span class="dim">Rect2(${bx}, ${by}, ${bw}, ${bh})</span></div>
+        <div class="ruler">
+          <div class="track"><div class="fill"></div></div>
+          <div class="ticks">${ticks.map(x=>`<span style="left:${pos(x)}%">${num(x)}</span>`).join('')}</div>
+          ${lane('ประตู', m.portals.map(p=>({pct:pos(p.x), cls:'portal', text:`→ ${esc(p.to)}${p.flag?' [ล็อก]':''}`, title:esc((p.label||p.to)+' → '+p.to)})))}
+          ${lane('จุดเกิด', m.spawns.map(s=>({pct:pos(s.x), cls:'spawn', text:esc(s.name)})))}
+          ${lane('มอน', m.spawners.map(s=>({pct:pos(s.x||bx+bw/2), cls:'mob', text:esc(s.mons.join(', '))+(s.boss?' ★':'')})))}
+          ${lane('NPC', m.npcs.map(n=>({pct:pos(n.x), cls:'npc', text:esc(n.name)})))}
+          ${lane('จุดอ่าน', m.lore.map(l=>({pct:pos(l.x), cls:'lore', text:esc(l.title||l.id)})))}
+        </div>
+        <div class="map-grid">
+          ${m.portals.length?`<div class="blk"><h4>ประตู</h4><ul>${m.portals.map(p=>
+            `<li>x=${num(p.x)} → <b>${esc(p.to)}</b> @<code>${esc(p.spawn)}</code>${p.label?` «${esc(p.label)}»`:''}${p.flag?` <span class="chip ember">ล็อกธง ${esc(p.flag)}</span>`:''}</li>`).join('')}</ul></div>`:''}
+          ${m.spawners.length?`<div class="blk"><h4>การเกิดมอน</h4><ul>${m.spawners.map(s=>
+            `<li><b>${esc(s.mons.join(', '))}</b> — ${s.boss?'บอส 1 ตัว':`ชนิดละ ${s.count} ตัว (รวม ${s.mons.length*s.count})`}</li>`).join('')}</ul></div>`:''}
+          ${m.npcs.length?`<div class="blk"><h4>NPC (${m.npcs.length})</h4><ul>${m.npcs.map(n=>
+            `<li><b>${esc(n.name)}</b> <span class="dim">${esc(n.type)}</span> x=${num(n.x)}${n.shop.length?` · ร้าน ${n.shop.length} รายการ`:''}${n.quests.length?` · เควส ${n.quests.map(q=>`<code>${esc(q)}</code>`).join(', ')}`:''}</li>`).join('')}</ul></div>`:''}
+          ${m.lore.length?`<div class="blk"><h4>จุดกด F อ่านเรื่องราว</h4><ul>${m.lore.map(l=>
+            `<li><code>${esc(l.id)}</code> «${esc(l.title)}» x=${num(l.x)}${l.give?` · ให้ <code>${esc(l.give)}</code>`:''}${l.flag?` · ล็อก <code>${esc(l.flag)}</code>`:''}</li>`).join('')}</ul></div>`:''}
+          ${m.bg.length?`<div class="blk"><h4>ฉากหลัง</h4><ul>${m.bg.map(x=>`<li><code>${esc(x)}</code></li>`).join('')}</ul></div>`:''}
+          <div class="blk"><h4>ไฟล์</h4><ul><li><code>${esc(m.file)}</code></li></ul></div>
+        </div>
+      </article>`;
+    }).join('')
+  ) : '<div class="empty">ไม่เจอแมพที่ตรงกับคำค้น</div>';
+  return rows.length;
+}
+
+// ---------------- สกิล ----------------
+function renderSkills(){
+  const rows = D.skills.filter(s => hit(s.id, s.name, s.type, s.desc));
+  $('#pane-skills').innerHTML = rows.length ? (
+    `<p class="lead">สกิลของอาชีพนักดาบทั้งหมด — ดาเมจและระยะแสดงเฉพาะสกิลโจมตี ส่วนบัฟ/พาสซีฟแสดงผลที่ได้จริง</p>
+     <div class="tw"><table><thead><tr><th>id</th><th>ชื่อ</th><th>ชนิด</th><th style="text-align:right">Lv</th><th style="text-align:right">Lv สูงสุด</th><th>ต้องมี</th><th style="text-align:right">SP</th><th style="text-align:right">คูลดาวน์</th><th>ดาเมจ</th><th>ระยะ X/Y</th><th>ผล</th></tr></thead><tbody>` +
+    rows.map(s => {
+      const atk = [0,1,5].includes(s.typeIdx);
+      const eff = s.effects.map(([k,v]) => `${k.replace('_percent','').toUpperCase()} ${v}${k.includes('percent')?'%':''}`).join(' · ');
+      return `<tr><td class="id">${esc(s.id)}</td><td class="nm">${esc(s.name)}</td><td>${esc(s.type)}</td>
+        <td class="n">${s.lv}</td><td class="n">${s.maxlv}</td>
+        <td class="id">${s.req.length?s.req.map(r=>`${r[0]} Lv${r[1]}`).join(', '):'—'}</td>
+        <td class="n">${s.sp}<span class="dim">+${s.spLv}</span></td><td class="n">${s.cd}</td>
+        <td>${atk?`×${s.mult} <span class="dim">+${s.multLv}/Lv</span>`:'—'}</td>
+        <td class="n">${atk?`${s.rx} / ${s.ry}`:'—'}</td>
+        <td>${eff || `<span class="dim">${esc(s.desc)}</span>`}</td></tr>`;
+    }).join('') + '</tbody></table></div>'
+  ) : '<div class="empty">ไม่เจอสกิลที่ตรงกับคำค้น</div>';
+  return rows.length;
+}
+
+// ---------------- เควส ----------------
+function renderQuests(){
+  const rows = D.quests.filter(q => hit(q.id, q.title, q.giver, q.flag,
+    q.objs.map(o=>o.kind+' '+o.target).join(' ')));
+  $('#pane-quests').innerHTML = rows.length ? (
+    `<p class="lead">สายเควสเนื้อเรื่องทั้งหมด เรียงตามลำดับที่เล่นจริง — คอลัมน์ "ต้องผ่าน" คือเควสที่ต้องจบก่อนถึงจะรับได้ ทำให้เครื่องหมาย ! เหนือหัว NPC โผล่ตามคิว</p>
+     <div class="tw"><table><thead><tr><th>id</th><th>ชื่อ</th><th>ผู้ให้</th><th style="text-align:right">Lv</th><th>ต้องผ่าน</th><th>เงื่อนไข</th><th>รางวัล</th><th>ตั้งธง</th></tr></thead><tbody>` +
+    rows.map(q => {
+      const rw = [];
+      if(q.reward.item) rw.push(`<code>${esc(q.reward.item)}</code>×${q.reward.count}`);
+      if(q.reward.zeny) rw.push(num(q.reward.zeny)+' z');
+      if(q.reward.exp) rw.push('EXP '+num(q.reward.exp));
+      return `<tr><td class="id">${esc(q.id)}</td><td class="nm">${esc(q.title)}</td><td>${esc(q.giver)}</td>
+        <td class="n">${q.lv}</td>
+        <td class="id">${q.req.length?q.req.map(esc).join('<br>'):(q.reqFlag?`ธง ${esc(q.reqFlag)}`:'—')}</td>
+        <td>${q.objs.map(o=>`${esc(o.kind)} <code>${esc(o.target)}</code>${o.count>1?` ×${o.count}`:''}`).join('<br>') || '<span class="dim">คุยอย่างเดียว</span>'}</td>
+        <td>${rw.join('<br>')||'—'}</td>
+        <td class="id">${q.flag?esc(q.flag):'—'}</td></tr>`;
+    }).join('') + '</tbody></table></div>'
+  ) : '<div class="empty">ไม่เจอเควสที่ตรงกับคำค้น</div>';
+  return rows.length;
+}
+
+// ---------------- ตรวจข้อมูล ----------------
+function renderHealth(){
+  const h = D.health;
+  const ok = (label, list) => `<div class="hcard${list.length?' warn':''}">
+      <div class="big">${list.length || '✓'}</div><h4>${label}</h4>
+      <p>${list.length ? list.map(esc).join(' · ') : 'ผ่านครบทุกตัว'}</p></div>`;
+  $('#pane-health').innerHTML =
+    `<p class="lead">ตรวจอัตโนมัติจากข้อมูลจริงทุกครั้งที่รันสคริปต์ — ใช้เลือกว่ารอบหน้าควรเติมอะไร</p>
+     <div class="health">
+       ${ok('มอนที่ยังไม่มีการ์ด', h.noCard)}
+       ${ok('มอนที่ยังไม่มีของขยะเฉพาะตัว', h.noJunk)}
+       ${ok('ประตูที่ชี้ผิด', h.badPortals)}
+       ${ok('ไอเทมที่ถูกอ้างแต่ไม่มีไฟล์', h.missingItems)}
+     </div>
+     <div class="sec"><h2>ไอเทมที่ผู้เล่นยังหาไม่ได้</h2><span class="rule"></span><span class="meta">${h.orphanItems.length} ชิ้น</span></div>
+     <p class="lead">ไม่มีมอนดรอป ไม่มีร้านขาย ไม่ใช่รางวัลเควส — มีไฟล์อยู่แต่ไม่มีทางได้มาในเกม</p>
+     <div class="tw"><table><thead><tr><th>id</th><th>ชื่อ</th><th>ประเภท</th><th style="text-align:right">Lv</th><th>ค่าพลัง</th></tr></thead><tbody>${
+       h.orphanItems.map(i=>`<tr><td class="id">${esc(i.id)}</td><td class="nm">${esc(i.name)}</td><td>${esc(i.type)}</td><td class="n">${i.lv}</td><td>${esc(i.stats)}</td></tr>`).join('')
+     }</tbody></table></div>
+     <div class="sec"><h2>มอนที่ยังไม่ได้วางในแมพ</h2><span class="rule"></span><span class="meta">${h.orphanMonsters.length} ตัว</span></div>
+     <div class="tw"><table><thead><tr><th>id</th><th>ชื่อ</th><th style="text-align:right">Lv</th><th style="text-align:right">HP</th></tr></thead><tbody>${
+       h.orphanMonsters.map(m=>`<tr><td class="id">${esc(m.id)}</td><td class="nm">${esc(m.name)}</td><td class="n">${m.lv}</td><td class="n">${num(m.hp)}</td></tr>`).join('')
+     }</tbody></table></div>
+     <div class="sec"><h2>เทมเพลตสำหรับสร้างของใหม่</h2><span class="rule"></span></div>
+     <p class="lead">คัดลอกไปใช้เป็นพรอมพ์ได้เลย ระบบจะตรวจกฎเหล่านี้ให้ตอนสร้าง</p>
+     <pre class="prompt">มอนใหม่
+  id (พิมพ์เล็ก_ขีดล่าง) · ชื่อไทย
+  Lv / HP / ATK min-max / DEF / MDEF / HIT / FLEE / CRIT
+  ธาตุ · เผ่า · ขนาด · AI (PASSIVE / AGGRESSIVE / STATIONARY)
+  move_speed · detect_range · attack_range · display_height
+  exp · job_exp (เว้นไว้ = คิดให้ 70%) · zeny min-max
+  สกิล (ถ้ามี): ชื่อ · range · radius x/y · damage_mult · cooldown · chance
+  ★ บังคับ ★ ของขยะเฉพาะตัว 1-2 ชิ้น + การ์ด card_&lt;id&gt; + แมพที่ให้เกิด
+  บาลานซ์ที่ใช้อยู่: HP ≈ Lv×40-60 (บอส ×200+) · ATK ≈ Lv×4-6 · EXP ≈ Lv×15-30
+
+ไอเทมใหม่
+  id · ชื่อไทย · คำอธิบาย 1 บรรทัด
+  ประเภท (ของกิน/อาวุธ/ของสวมใส่/วัตถุดิบ/ของเควส) · ช่องที่ใส่
+  required_level · ค่าพลัง · buy_price (≈ sell×2.5) · sell_price · card_slots · refinable
+  ★ บังคับ ★ ต้องบอกที่มา: มอนตัวไหนดรอปกี่ % / ร้านใครขาย / รางวัลเควสอะไร
+  เส้นอาวุธ ATK: 14 → 25 → 30 → 34 → 39 → 46 → 50 → 53 → 72 → 92 → 94 → 105
+
+แมพใหม่
+  map_id · ชื่อไทย · chapter · region
+  ขนาด กว้าง×สูง (ที่ใช้อยู่ 1600-5750 × 950-1400) · ระดับพื้น y
+  ฉากหลัง 1 ชั้น กว้างเท่าแมพ · จุดเกิด default + from_&lt;แมพก่อนหน้า&gt;
+  ประตู: ไปแมพไหน จุดเกิดชื่ออะไร ล็อกธงไหม
+  มอน 2-3 ชนิด ชนิดละ 4-5 ตัว
+  ★ บังคับ ★ ทุกประตูที่ชี้มาต้องมีจุดเกิดชื่อตรงกันในแมพปลายทาง</pre>`;
+  return h.orphanItems.length + h.orphanMonsters.length;
+}
+
+// ---------------- NPC ----------------
+const NPC_ITEM_NAME = Object.fromEntries((D.items||[]).map(i=>[i.id, i.name]));
+const unesc = s => String(s??'').replace(/\\n/g,'\n');
+const NPC_QUEST_NAME = Object.fromEntries((D.quests||[]).map(q=>[q.id, q.title]));
+function renderNpcs(){
+  const all = D.npcs || [];
+  const rows = all.filter(n => hit(n.node, n.name, n.map, n.mapName, n.type, n.greeting, n.dialog,
+    n.shop.map(s=>s+' '+(NPC_ITEM_NAME[s]||'')).join(' '), n.quests.map(q=>q+' '+(NPC_QUEST_NAME[q]||'')).join(' '),
+    n.sprites.join(' ')));
+  const byMap = {};
+  rows.forEach(n => { (byMap[n.map] = byMap[n.map] || {name:n.mapName, list:[]}).list.push(n); });
+  const artCell = (label, ok, txt, tmp) => `<div><b class="${tmp?'tmp':(ok?'ok':'no')}">${txt}</b><span>${label}</span></div>`;
+  $('#pane-npcs').innerHTML = rows.length ? (
+    `<p class="lead">NPC ทุกคนในทุกแมพ — ตำแหน่ง ชนิด ร้านค้า เควสที่ให้ บทพูด และสถานะงานภาพ (สไปรท์/ท่า/รูปคุย) ดึงจาก <code>scenes/maps/*.tscn</code> + <code>data/quests</code> · แดง = ยังไม่มีไฟล์ · เหลือง = ของชั่วคราว</p>` +
+    Object.keys(byMap).map(mid => {
+      const g = byMap[mid];
+      return `<div class="sec"><h2>${esc(g.name)}</h2><span class="rule"></span><span class="meta">${esc(mid)} · ${g.list.length} คน</span></div>
+      <div class="npcs">` + g.list.slice().sort((a,b)=>a.x-b.x).map(n => {
+        const cls = n.hasShop ? ' is-shop' : (n.quests.length ? ' is-quest' : '');
+        const anims = n.anims.map(a => `${a}${n.frames[a]?` <span class="dim">${n.frames[a]}f</span>`:''}`).join(', ');
+        return `<article class="npc${cls}">
+          <div class="npc-head"><h3>${esc(n.name)}</h3><div class="mid">${esc(n.node)} · x=${num(n.x)} y=${num(n.y)}</div>
+            <div class="tags"><span class="chip ${n.hasShop?'gold':''}">${esc(n.type)}</span>
+              ${n.hasShop?`<span class="chip gold">ร้าน ${n.shop.length} รายการ</span>`:''}
+              ${n.quests.length?`<span class="chip rune">เควส ${n.quests.length}</span>`:''}
+              ${n.healPrice!=null?`<span class="chip">รักษา ${num(n.healPrice)} z</span>`:''}
+              ${n.byFlag.length?`<span class="chip">บทพูดตามธง ${n.byFlag.length}</span>`:''}</div></div>
+          <div class="art">
+            ${artCell('สไปรท์', n.hasSprite, n.hasSprite ? (n.spritePlaceholder?'ชั่วคราว':'มี') : 'ไม่มี', n.spritePlaceholder)}
+            ${artCell('ท่า', n.anims.length>0, n.anims.length ? n.anims.length : '0')}
+            ${artCell('รูปคุย', n.portraitOk, n.portraitOk?'มี':'ไม่มี')}
+          </div>
+          ${n.greeting?`<div class="say greet">${esc(unesc(n.greeting))}</div>`:''}
+          ${n.dialog?`<div class="say">${esc(unesc(n.dialog))}${n.dialogPages>1?`<span class="dim"> … (${n.dialogPages} หน้า)</span>`:''}</div>`:''}
+          ${n.quests.length?`<div class="row"><b>เควส</b> ${n.quests.map(q=>`<code>${esc(q)}</code>${NPC_QUEST_NAME[q]?` ${esc(NPC_QUEST_NAME[q])}`:''}`).join(' · ')}</div>`:''}
+          ${n.shop.length?`<div class="row"><b>ขาย</b> ${n.shop.map(s=>esc(NPC_ITEM_NAME[s]||s)).join(' · ')}</div>`:''}
+          ${n.byFlag.length?`<div class="row"><b>บทพูดพิเศษเมื่อมีธง</b> ${n.byFlag.map(f=>`<code>${esc(f.flag||f)}</code>`).join(' ')}</div>`:''}
+          ${n.sprites.length?`<div class="row"><b>ไฟล์</b> ${n.sprites.map(s=>`<code>${esc(s.replace('res://',''))}</code>`).join(' ')}${anims?` · ท่า: ${anims}`:''}</div>`
+                            :`<div class="row dim">ยังไม่มีสไปรท์ — ใช้กล่องสี placeholder ในเกม</div>`}
+          ${n.portrait?`<div class="row"><b>รูปคุย</b> <code>${esc(n.portrait.replace('res://',''))}</code>${n.portraitOk?'':' <span class="chip no">ไม่พบไฟล์</span>'}</div>`:''}
+        </article>`;
+      }).join('') + '</div>';
+    }).join('')
+  ) : '<div class="empty">ไม่เจอ NPC ที่ตรงกับคำค้น</div>';
+  return rows.length;
+}
+
+// ---------------- งานภาพที่ยังไม่ทำ ----------------
+function renderAssets(){
+  const A = D.assets;
+  if(!A){ $('#pane-assets').innerHTML = '<div class="empty">ยังไม่มีข้อมูล — รัน dump_gamedata.py ใหม่</div>'; return 0; }
+  const C = A.counts, T = A.totals || {};
+  const cats = [
+    {k:'monsters', name:'มอนสเตอร์', note:'สไปรท์ placeholder / ท่าไม่ครบ / เอฟเฟกต์สกิล / วิดีโอเปิดตัว'},
+    {k:'items',    name:'ไอคอนไอเทม', note:'ยังเป็น placeholder หรือไม่มีไอคอน'},
+    {k:'maps',     name:'ฉากหลังแมพ', note:'ฉากหลัง generated / ไม่มีฉากหลัง'},
+    {k:'npcs',     name:'NPC', note:'ไม่มีสไปรท์ / ท่า / รูปคุย'},
+    {k:'skills',   name:'สกิล', note:'ไอคอน / เอฟเฟกต์'},
+    {k:'player',   name:'ท่าผู้เล่น', note:'ท่าโจมตีต่ออาวุธ+สกิลที่ยังไม่มี'},
+    {k:'ui',       name:'ไอคอน UI', note:'ui_icons ที่หายไป'},
+    {k:'videos',   name:'วิดีโอบอส', note:'บอสที่ไม่มี intro_video'},
+    {k:'big',      name:'ไฟล์ใหญ่เกิน', note:'ควรย่อขนาด (โหลดช้า/กินแรม)'},
+  ];
+  const total = Object.values(C).reduce((a,b)=>a+b,0);
+  const q = query;
+  const f = (arr, ...keys) => arr.filter(x => !q || keys.map(k => typeof k==='function' ? k(x) : x[k]).flat().filter(Boolean).join(' ').toLowerCase().includes(q));
+  const sec = (id, title, n, tot) => `<div class="sec" id="todo-${id}"><h2>${title}</h2><span class="rule"></span><span class="meta">${n} รายการ${tot?` / ทั้งหมด ${tot}`:''}</span></div>`;
+  const table = (head, body) => body.length ? `<div class="tw"><table><thead><tr>${head.map(h=>`<th${h.startsWith('#')?' style="text-align:right"':''}>${h.replace(/^#/,'')}</th>`).join('')}</tr></thead><tbody>${body.join('')}</tbody></table></div>` : '<div class="empty">✓ ไม่มีค้าง</div>';
+
+  const mons = f(A.monsters, 'id', 'name', x=>x.missingAnims);
+  const items = f(A.items, 'id', 'name', 'type', 'reason');
+  const maps = f(A.maps, 'id', 'name', 'reason');
+  const npcs = f(A.npcs, 'name', 'map', x=>x.reasons);
+  const skills = f(A.skills, 'id', 'name', 'type', x=>x.reasons);
+  const player = f(A.player, 'anim', 'weapon', 'skill');
+  const ui = f(A.ui, x=>[x.key||x.id||'', x.file||'', x.name||'']);
+  const videos = f(A.videos, 'id', 'name');
+  const big = f(A.big, 'file', 'hint');
+  let shown = mons.length+items.length+maps.length+npcs.length+skills.length+player.length+ui.length+videos.length+big.length;
+
+  $('#pane-assets').innerHTML =
+    `<p class="lead">รายการ "งานภาพ/เสียง/วิดีโอ" ที่ยังไม่ได้ทำ ตรวจจากไฟล์จริงทุกครั้งที่รัน <code>dump_gamedata.py</code> — ทำเสร็จวางไฟล์แล้วรันใหม่ รายการจะหายไปเอง · คลิกการ์ดเพื่อกระโดดไปหมวดนั้น</p>
+     <div class="todo-sum">${cats.map(c => {
+        const n = C[c.k]||0, tot = T[c.k];
+        const pct = tot ? Math.round((tot-n)/tot*100) : null;
+        return `<div class="tcard${n?'':' done'}" onclick="document.getElementById('todo-${c.k}').scrollIntoView({behavior:'smooth'})">
+          <div class="big">${n||'✓'}${tot?`<small> / ${tot}</small>`:''}</div><h4>${c.name}</h4><p>${c.note}</p>
+          ${pct!=null?`<div class="bar"><i style="width:${pct}%"></i></div>`:''}</div>`;
+     }).join('')}</div>
+     <p class="lead"><b>รวมค้าง ${total} รายการ</b> — แถบเขียว = สัดส่วนที่ทำเสร็จแล้วในหมวดนั้น</p>
+
+     ${sec('monsters','มอนสเตอร์', mons.length, T.monsters)}
+     <div class="spec"><b>สเปกสไปรท์มอน</b> ชีทแนวนอน 1 แถว/ท่า · ท่าที่ต้องมี Idle · Run · Attack · Hit · Die · ตั้งชื่อไฟล์ <code>Sprites/&lt;id&gt; &lt;ท่า&gt;.png</code> (เช่น <code>poring attack.png</code>) แล้วโยงใน SpriteFrames · บอสต้องมี <code>intro_video</code> (.ogv) เพิ่ม</div>
+     ${table(['id','ชื่อ','#Lv','สถานะ','ท่าที่ขาด','ไฟล์ที่มีตอนนี้'], mons.map(m=>`<tr><td class="id">${esc(m.id)}</td><td class="nm">${esc(m.name)}${m.boss?' <span class="chip boss">บอส</span>':''}</td><td class="n">${m.lv}</td>
+        <td>${m.placeholder?'<span class="chip gold">placeholder</span> ':''}${m.needSkillFx?'<span class="chip rune">ขาดเอฟเฟกต์สกิล</span> ':''}${m.needVideo?'<span class="chip ember">ขาดวิดีโอเปิดตัว</span>':''}</td>
+        <td>${m.missingAnims.length?m.missingAnims.map(a=>`<span class="chip no">${a}</span>`).join(' '):'<span class="chip ok">ครบ</span>'}</td>
+        <td class="src">${m.files.length?m.files.map(x=>`<code>${esc(x)}</code>`).join('<br>'):'<span class="dim">—</span>'}</td></tr>`))}
+
+     ${sec('items','ไอคอนไอเทม', items.length, T.items)}
+     <div class="spec"><b>สเปกไอคอน</b> PNG พื้นใส <b>256×256</b> (ในเกมโชว์ ~48 px) · วางที่ <code>Sprites/items/&lt;ชื่อ&gt;.png</code> แล้วชี้ช่อง <code>icon</code> ในไฟล์ <code>data/items/&lt;id&gt;.tres</code> — ไฟล์ที่อยู่ในโฟลเดอร์ <code>placeholder/</code> นับว่ายังไม่ทำ</div>
+     ${table(['id','ชื่อ','ประเภท','สาเหตุ','ไฟล์ปัจจุบัน'], items.map(i=>`<tr><td class="id">${esc(i.id)}</td><td class="nm">${esc(i.name)}</td><td>${esc(i.type)}</td><td><span class="chip ${i.reason.includes('placeholder')?'gold':'no'}">${esc(i.reason)}</span></td><td class="src">${i.file?`<code>${esc(i.file)}</code>`:'<span class="dim">—</span>'}</td></tr>`))}
+
+     ${sec('maps','ฉากหลังแมพ', maps.length, T.maps)}
+     <div class="spec"><b>สเปกฉากหลัง</b> PNG กว้างเท่าแมพ (ดูขนาดในแท็บแมพ) สูงเท่าแมพ · ระดับพื้นอยู่ล่าง ~15% · วางที่ <code>Sprites/map/&lt;map_id&gt;_bg.png</code> แล้วเปลี่ยน texture ของ Background ในฉาก — ไฟล์ใน <code>map/generated/</code> คือของชั่วคราวที่สคริปต์วาดให้</div>
+     ${table(['id','ชื่อ','#บท','ขนาดที่ต้องวาด','สาเหตุ','ไฟล์ปัจจุบัน'], maps.map(m=>`<tr><td class="id">${esc(m.id)}</td><td class="nm">${esc(m.name)}</td><td class="n">${m.chapter}</td><td class="n">${m.size?`${num(m.size[0])} × ${num(m.size[1])}`:'—'}</td><td><span class="chip ${m.reason.includes('generated')?'gold':'no'}">${esc(m.reason)}</span></td><td class="src">${m.files.length?m.files.map(x=>`<code>${esc(x)}</code>`).join('<br>'):'<span class="dim">—</span>'}</td></tr>`))}
+
+     ${sec('npcs','NPC', npcs.length, T.npcs)}
+     <div class="spec"><b>สเปก NPC</b> ชีท Idle 6 เฟรม แบบ 3×2 (เช่น 1540×1540) วางที่ <code>Sprites/npc/</code> · ปลายเท้าต้องอยู่ระดับเดียวกันทุกช่อง (รัน <code>fix_npc_sheets.py</code> จัดให้ได้) · รูปคุย (portrait) PNG พื้นใส ~600×800 ชี้ที่ช่อง <code>Portrait</code> ของ NPC</div>
+     ${table(['ชื่อ','แมพ','ที่ยังขาด','ไฟล์ที่มี'], npcs.map(n=>`<tr><td class="nm">${esc(n.name)}</td><td>${esc(n.map)}</td><td>${n.reasons.map(r=>`<span class="chip ${r.includes('ชั่วคราว')||r.includes('placeholder')?'gold':'no'}">${esc(r)}</span>`).join(' ')}</td><td class="src">${n.sprites.length?n.sprites.map(x=>`<code>${esc(String(x).replace('res://',''))}</code>`).join('<br>'):'<span class="dim">—</span>'}</td></tr>`))}
+
+     ${sec('skills','สกิล', skills.length, T.skills)}
+     <div class="spec"><b>สเปกสกิล</b> ไอคอน 128×128 พื้นใส ชี้ช่อง <code>icon</code> · เอฟเฟกต์ = SpriteFrames (<code>data/sprites/fx_*.tres</code>) ชี้ช่อง <code>effect</code> — สกิลโจมตีทุกตัวควรมีเอฟเฟกต์</div>
+     ${table(['id','ชื่อ','ชนิด','ที่ยังขาด'], skills.map(s=>`<tr><td class="id">${esc(s.id)}</td><td class="nm">${esc(s.name)}</td><td>${esc(s.type)}</td><td>${s.reasons.map(r=>`<span class="chip no">${esc(r)}</span>`).join(' ')}</td></tr>`))}
+
+     ${sec('player','ท่าผู้เล่น', player.length)}
+     <div class="spec"><b>สเปกท่าผู้เล่น</b> เพิ่มแอนิเมชันชื่อ <code>Attack_&lt;อาวุธ&gt;_&lt;สกิล&gt;</code> ใน <code>player_frames.tres</code> — ถ้าไม่มี เกมจะใช้ท่าโจมตีปกติของอาวุธนั้นแทน (ไม่พัง แต่ไม่สวย)</div>
+     ${table(['ชื่อท่าที่ต้องเพิ่ม','ท่าอาวุธที่ใช้แทนอยู่','สกิล'], player.map(p=>`<tr><td class="id">${esc(p.anim)}</td><td class="id">${esc(p.weapon)}</td><td>${esc(p.skill)}</td></tr>`))}
+
+     ${sec('ui','ไอคอน UI', ui.length)}
+     ${table(['ไอคอน','ไฟล์'], ui.map(u=>`<tr><td class="nm">${esc(u.name||u.key||u.id||'')}</td><td class="src"><code>${esc(u.file||'')}</code></td></tr>`))}
+
+     ${sec('videos','วิดีโอเปิดตัวบอส', videos.length)}
+     <div class="spec"><b>สเปกวิดีโอ</b> .ogv (Theora) 1280×720 ยาว 3-8 วิ · วางที่ <code>Sprites/video/&lt;id&gt;_intro.ogv</code> แล้วชี้ช่อง <code>intro_video</code> ใน MonsterData</div>
+     ${table(['id','ชื่อบอส'], videos.map(v=>`<tr><td class="id">${esc(v.id)}</td><td class="nm">${esc(v.name)}</td></tr>`))}
+
+     ${sec('big','ไฟล์ใหญ่เกินจำเป็น', big.length)}
+     <div class="spec"><b>ทำไมต้องย่อ</b> ไอคอนไอเทมโชว์ ~48 px แต่ไฟล์ 2,000+ px กินแรมและทำให้โหลดกระตุก (เห็นชัดตอนเข้าแมพ) — ย่อด้วยสคริปต์ <code>shrink_icons.py</code> หรือโปรแกรมวาดภาพ</div>
+     ${table(['ไฟล์','#MB','ควรทำ'], big.map(b=>`<tr><td class="src"><code>${esc(b.file)}</code></td><td class="n">${b.mb}</td><td>${esc(b.hint)}</td></tr>`))}`;
+  return q ? shown : total;
+}
+
+function render(){
+  let n = 0;
+  if(active === 'items') n = renderItems();
+  else if(active === 'monsters') n = renderMonsters();
+  else if(active === 'maps') n = renderMaps();
+  else if(active === 'skills') n = renderSkills();
+  else if(active === 'quests') n = renderQuests();
+  else if(active === 'npcs') n = renderNpcs();
+  else if(active === 'assets') n = renderAssets();
+  else n = renderHealth();
+  $('#count').textContent = query ? `เจอ ${n} รายการ` : `${n} รายการ`;
+}
+$('#stamp').textContent = `ไอเทม ${D.items.length} · มอน ${D.monsters.length} · แมพ ${D.maps.length} · เควส ${D.quests.length} · NPC ${(D.npcs||[]).length}${D.assets?` · งานภาพค้าง ${Object.values(D.assets.counts).reduce((a,b)=>a+b,0)}`:''}`;
+$('#foot').innerHTML = `สร้างจากไฟล์จริงในโปรเจกต์ด้วย dump_gamedata.py — รันใหม่เมื่อข้อมูลเปลี่ยน แล้วหน้านี้จะตรงกับเกมเสมอ · กด / เพื่อค้นหา`;
+render();
+</script>

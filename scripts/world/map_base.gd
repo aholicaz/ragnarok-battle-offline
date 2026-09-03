@@ -53,6 +53,7 @@ func _ready() -> void:
 	_ensure_floating_text_layer()
 	_spawn_player()
 	_setup_camera()
+	_warm_sprite_fit()
 	Events.say(display_name)
 
 
@@ -180,3 +181,25 @@ func _setup_camera() -> void:
 	camera.position_smoothing_speed = camera_smoothing
 
 	camera.make_current()
+
+
+# =========================================================
+# ★ รอบ 44 — อุ่นเครื่อง auto-fit ตอนโหลดแมพ ★
+# วัดขอบภาพของผู้เล่น + มอนทุกชนิดในแมพนี้ให้เสร็จระหว่างจอยังมืด
+# (SpriteFit จำไว้ทั้งเกม — มอนเกิดกลางเกมจะไม่ต้องดึงภาพจากการ์ดจออีก = ไม่กระตุก)
+# =========================================================
+func _warm_sprite_fit() -> void:
+	var n := 0
+	if player != null:
+		var ps := player.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+		if ps != null:
+			n += SpriteFit.warm(ps.sprite_frames)
+	for node in _all_descendants(self):
+		if "monster_types" in node:
+			for md in node.monster_types:
+				if md != null and "sprite_frames" in md:
+					n += SpriteFit.warm(md.sprite_frames)
+		if "data" in node and node.data != null and "sprite_frames" in node.data:
+			n += SpriteFit.warm(node.data.sprite_frames)
+	if n > 0:
+		print("[Map] %s อุ่นเครื่อง auto-fit %d ท่า" % [map_id, n])

@@ -139,6 +139,28 @@ const KNOCKBACK_DECAY := 900.0
 # ทำอาวุธใหม่ = วาดเฉพาะท่าที่อยากให้เปลี่ยน ไม่ต้องวาดครบทุกท่า
 # ไม่ต้องแก้โค้ดเลย
 # =========================================================
+# =========================================================
+# ★ เอฟเฟกต์รอยฟันตอนโจมตีปกติ (รอบ 44) ★
+# ภาพเสี้ยวแสงโผล่ข้างหน้าตัวละครทุกครั้งที่ตี สลับ "ฟันลง" / "ฟันสวนขึ้น"
+# ไม่ทำดาเมจเอง (ดาเมจยังคิดจากกรอบ Attack Range เหมือนเดิม) — แค่ภาพ
+# ว่างไว้ = ใช้ res://data/sprites/fx_attack.tres อัตโนมัติ · อยากปิดให้ติ๊ก Attack Effect Enabled ออก
+# =========================================================
+@export_group("เอฟเฟกต์โจมตีปกติ")
+@export var attack_effect_enabled: bool = true
+@export var attack_effect_frames: SpriteFrames
+## ชื่อท่าที่จะสลับกันเล่น (ว่าง = ทุกท่าในไฟล์) — ท่าที่ 2, 4, ... จะถูกพลิกแนวตั้ง (ฟันสวนขึ้น)
+@export var attack_effect_anims: Array[StringName] = [&"slash", &"slash2"]
+## จุดเกิดเทียบกับตัวละคร (x = ข้างหน้า)
+@export var attack_effect_offset: Vector2 = Vector2(78, -28)
+## ความสูงของภาพบนจอ (0 = ใช้ Scale)
+@export var attack_effect_height: float = 230.0
+@export var attack_effect_scale: float = 1.0
+## โผล่หลังกดตีกี่วิ (ให้ตรงจังหวะดาบเหวี่ยง)
+@export var attack_effect_delay: float = 0.06
+@export var attack_effect_z: int = 40
+const ATTACK_FX_PATH := "res://data/sprites/fx_attack.tres"
+var _attack_fx_turn := 0
+
 @export_group("ท่าโจมตี")
 ## ชื่อท่าตอนมือเปล่า
 @export var unarmed_attack_anim: StringName = &"Attack"
@@ -819,50 +841,16 @@ func _fit_info(anim: StringName) -> Dictionary:
 	if frames == null or not frames.has_animation(anim):
 		return {}
 
-	var list: Array = []
-	var tallest := 0.0
-
-	for i in range(frames.get_frame_count(anim)):
-		var tex := frames.get_frame_texture(anim, i)
-		if tex == null:
-			continue
-		var tw := float(tex.get_width())
-		var th := float(tex.get_height())
-		var used := Rect2i(0, 0, int(tw), int(th))
-		var img := tex.get_image()
-		if img != null:
-			var r := img.get_used_rect()
-			if r.size.x > 0 and r.size.y > 0:
-				used = r
-		tallest = maxf(tallest, float(used.size.y))
-		list.append({
-			# ระยะจากกึ่งกลางผ้าใบถึงปลายเท้า
-			"bottom": float(used.position.y + used.size.y) - th * 0.5,
-			# ตัวละครเยื้องจากกึ่งกลางผ้าใบไปทางขวาเท่าไหร่
-			"dx": float(used.position.x) + float(used.size.x) * 0.5 - tw * 0.5,
-		})
-
-	# ★ รอบ 39 — กันตัวเด้งตอน idle ★
-	# ขอบภาพแต่ละเฟรมคลาดกันเล็กน้อยเป็นเรื่องปกติของงานวาด (เงา/ขอบเบลอ/ผมปลิว)
-	# ถ้าจัดเท้าตามค่าดิบรายเฟรม ทั้งตัวจะกระตุกตาม → ใช้ "ค่ากลาง" ของทั้งท่าแทน
-	# เฟรมไหนต่างจากค่ากลางมากจริง ๆ (>12 px ในภาพต้นฉบับ เช่น ท่าก้ม/กระโดด) ค่อยใช้ค่าของเฟรมนั้น
-	const SNAP := 12.0
-	var bots: Array = []
-	var dxs: Array = []
-	for fdd in list:
-		bots.append(fdd.bottom)
-		dxs.append(fdd.dx)
-	bots.sort()
-	dxs.sort()
-	var med_bottom: float = bots[bots.size() >> 1] if not bots.is_empty() else 0.0
-	var med_dx: float = dxs[dxs.size() >> 1] if not dxs.is_empty() else 0.0
-	for fdd in list:
-		fdd["bottom_use"] = fdd.bottom if absf(fdd.bottom - med_bottom) > SNAP else med_bottom
-		fdd["dx_use"] = fdd.dx if absf(fdd.dx - med_dx) > SNAP else med_dx
-
+	# ★ รอบ 44 — วัดผ่าน SpriteFit (จำไว้ตรงกลางทั้งเกม ไม่วัดซ้ำทุกครั้งที่ถูกสร้างใหม่) ★
+	# get_image() คือการดึงภาพกลับจากการ์ดจอ ช้ามาก — เดิมทำใหม่หลังเปลี่ยนแมพทุกครั้ง = กระตุก
+	# ค่ากลาง (median) กันตัวเด้งของรอบ 39 ย้ายไปอยู่ใน SpriteFit แล้ว (SNAP 12 px)
+	var base: Dictionary = SpriteFit.measure(frames, anim)
+	if base.is_empty():
+		return {}
+	var tallest: float = base.tallest
 	var info := {
 		"scale": auto_fit_height / maxf(1.0, tallest),
-		"frames": list,
+		"frames": base.frames,
 		"tallest": tallest,
 	}
 	_fit_cache[anim] = info
@@ -943,6 +931,7 @@ func start_attack() -> void:
 	_hit_left = 0.0
 	_jump_anim = ""
 	_play(attack_animation())
+	_spawn_attack_effect()
 
 	await get_tree().create_timer(attack_windup).timeout
 	if not is_instance_valid(self) or _dead:
@@ -1028,6 +1017,38 @@ func use_skill(skill_id: StringName) -> void:
 			await get_tree().create_timer(0.2).timeout
 			if is_instance_valid(self):
 				is_attacking = false
+
+
+## ★ รอยฟันตอนโจมตีปกติ (รอบ 44) ★
+func _spawn_attack_effect() -> void:
+	if not attack_effect_enabled:
+		return
+	if attack_effect_frames == null and ResourceLoader.exists(ATTACK_FX_PATH):
+		attack_effect_frames = load(ATTACK_FX_PATH)
+	if attack_effect_frames == null:
+		return
+	var anims: Array = attack_effect_anims.duplicate()
+	if anims.is_empty():
+		for a in attack_effect_frames.get_animation_names():
+			if String(a) != "default":
+				anims.append(StringName(a))
+	if anims.is_empty():
+		return
+	var idx: int = _attack_fx_turn % anims.size()
+	_attack_fx_turn += 1
+	SkillEffect.spawn_config({
+		"frames": attack_effect_frames,
+		"anim": anims[idx],
+		"offset": attack_effect_offset,
+		"height": attack_effect_height,
+		"scale": attack_effect_scale,
+		"follow": true,
+		"delay": attack_effect_delay,
+		"z": attack_effect_z,
+		"name": "attack",
+		"flip_v": idx % 2 == 1,
+		"damage": false,
+	}, self, facing)
 
 
 ## ★ เอฟเฟกต์สกิล ★ เกิดเป็นโหนดแยกในแมพ เลยใหญ่/ไกลเกินตัวละครได้

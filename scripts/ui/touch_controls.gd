@@ -17,13 +17,18 @@ enum Mode { AUTO, ON, OFF }
 
 const LAYOUT_PATH := "user://ui_layout.cfg"
 
-## ---------- ขนาดปุ่ม (แก้ตรงนี้ถ้าอยากให้ใหญ่/เล็กลง) ----------
-const PAD_BIG := 112.0        # ปุ่มเดินซ้าย-ขวา · ปุ่มโจมตี
-const PAD_MID := 96.0         # กระโดด · คุย/เก็บของ
-const PAD_SMALL := 78.0       # สกิล 1-4
-const PAD_TINY := 68.0        # ยา Q/R · เมนู
-const EDGE := 22.0            # ห่างจากขอบจอ
-const GAP := 10.0             # ห่างระหว่างปุ่ม
+## ---------- ขนาดปุ่ม (แก้ตรงนี้ถ้าอยากให้ใหญ่/เล็กลง) — รอบ 45 ใหญ่ขึ้น + ยกสูงจากขอบล่าง ----------
+const PAD_BIG := 128.0        # ปุ่มเดินซ้าย-ขวา
+const PAD_ATTACK := 150.0     # ★ ปุ่มโจมตี (ใหญ่สุด อยู่กลางวงสกิล) ★
+const PAD_MID := 100.0        # คุย/เก็บของ
+const PAD_SMALL := 86.0       # สกิล 1-4 (ล้อมรอบปุ่มโจมตี)
+const PAD_TINY := 70.0        # ยา Q/R · เมนู
+const EDGE := 26.0            # ห่างจากขอบซ้าย-ขวา
+const EDGE_BOTTOM := 64.0     # ★ ห่างจากขอบล่าง (เดิม 22 — นิ้วโป้งจะได้ไม่ชนขอบเครื่อง) ★
+const GAP := 12.0             # ห่างระหว่างปุ่ม
+## ★ วงสกิลรอบปุ่มโจมตี: เริ่มที่ 8 นาฬิกา ไปจบที่ 1 นาฬิกา (ตามเข็ม) ★  (มุมนาฬิกา: 12 = บน · 3 = ขวา)
+const SKILL_CLOCK_START := 8.0
+const SKILL_CLOCK_END := 13.0
 ## ความจางตอนไม่ได้กด / ตอนกด
 const IDLE_ALPHA := 0.55
 const HOLD_ALPHA := 1.0
@@ -63,14 +68,14 @@ func _define_zones() -> void:
 		{"id": "right",   "action": "move_right", "arrow": "right", "size": PAD_BIG},
 		{"id": "down",    "action": "move_down",  "arrow": "down",  "size": PAD_MID},
 
-		{"id": "attack",  "action": "attack",   "label": "โจมตี",  "size": PAD_BIG},
-		{"id": "jump",    "action": "jump",     "label": "พุ่งหลบ", "size": PAD_MID},
+		{"id": "attack",  "action": "attack",   "label": "โจมตี",  "size": PAD_ATTACK},
+		# (รอบ 45: เอาปุ่มพุ่งหลบออกตามที่สั่ง — ปัดนิ้วบนปุ่มเดินยังใช้ได้ตามปกติ)
 		{"id": "interact","action": "interact", "label": "คุย/เก็บ", "size": PAD_MID},
 
-		{"id": "skill_1", "action": "skill_1", "label": "1", "size": PAD_SMALL},
-		{"id": "skill_2", "action": "skill_2", "label": "2", "size": PAD_SMALL},
-		{"id": "skill_3", "action": "skill_3", "label": "3", "size": PAD_SMALL},
-		{"id": "skill_4", "action": "skill_4", "label": "4", "size": PAD_SMALL},
+		{"id": "skill_1", "action": "skill_1", "label": "1", "size": PAD_SMALL, "skill": 0},
+		{"id": "skill_2", "action": "skill_2", "label": "2", "size": PAD_SMALL, "skill": 1},
+		{"id": "skill_3", "action": "skill_3", "label": "3", "size": PAD_SMALL, "skill": 2},
+		{"id": "skill_4", "action": "skill_4", "label": "4", "size": PAD_SMALL, "skill": 3},
 
 		{"id": "potion",  "action": "quick_potion",    "label": "ยา", "size": PAD_TINY},
 		{"id": "sp",      "action": "quick_sp_potion", "label": "มานา", "size": PAD_TINY},
@@ -102,14 +107,64 @@ func _build() -> void:
 				cap.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 				panel.add_child(cap)
 		else:
+			# ★ รอบ 45 — ปุ่มสกิลมีไอคอนสกิลข้างใน (ถ้าช่องลัดนั้นตั้งสกิลไว้) ★
+			if z.has("skill"):
+				var art := TextureRect.new()
+				art.name = "SkillIcon"
+				art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+				art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+				art.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+				art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+				var m := float(z.size) * 0.2   # ให้สี่เหลี่ยมไอคอนอยู่ในวงกลมพอดี
+				art.offset_left = m
+				art.offset_top = m
+				art.offset_right = -m
+				art.offset_bottom = -m
+				panel.add_child(art)
+				z["icon"] = art
 			var lbl := UITheme.make_label(String(z.get("label", "")),
-				18 if float(z.size) >= PAD_MID else 15, Color.WHITE)
+				20 if float(z.size) >= PAD_MID else 15, Color.WHITE)
 			lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 			lbl.add_theme_color_override("font_outline_color", Color.BLACK)
 			lbl.add_theme_constant_override("outline_size", 5)
 			panel.add_child(lbl)
+			z["label_node"] = lbl
+			if z.has("skill"):
+				# เลขช่องเล็ก ๆ มุมขวาล่าง เมื่อมีไอคอนแล้ว
+				lbl.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+				lbl.offset_left = -26
+				lbl.offset_top = -24
+				lbl.offset_right = -8
+				lbl.offset_bottom = -6
+				lbl.add_theme_font_size_override("font_size", 13)
+	if Events.has_signal("skills_changed"):
+		Events.skills_changed.connect(refresh_skill_icons)
+	refresh_skill_icons()
+
+
+## ★ รอบ 45 — อัพเดตไอคอนสกิลบนปุ่มตามช่องลัด 1-4 ★
+func refresh_skill_icons() -> void:
+	if PlayerState == null or PlayerState.skills == null:
+		return
+	for z in _zones:
+		if not z.has("skill") or not z.has("icon"):
+			continue
+		var sid: StringName = PlayerState.skills.hotkey_at(int(z.skill))
+		var sk := GameData.get_skill(sid) if sid != &"" else null
+		var art: TextureRect = z.icon
+		art.texture = sk.icon if sk != null else null
+		var lbl: Label = z.get("label_node", null)
+		if lbl != null:
+			# มีไอคอนแล้ว = เหลือแค่เลขช่องเล็ก ๆ · ไม่มีไอคอน = ชื่อสกิลย่อ/เลขใหญ่กลางปุ่ม
+			if art.texture != null:
+				lbl.text = str(int(z.skill) + 1)
+			elif sk != null:
+				lbl.text = sk.display_name.substr(0, 6)
+			else:
+				lbl.text = str(int(z.skill) + 1)
 
 
 static func _pad_style(pressed: bool) -> StyleBoxFlat:
@@ -126,7 +181,7 @@ static func _pad_style(pressed: bool) -> StyleBoxFlat:
 # =========================================================
 func _layout() -> void:
 	var vp := get_viewport_rect().size
-	var bottom := vp.y - EDGE
+	var bottom := vp.y - EDGE_BOTTOM
 
 	# ---------- ฝั่งซ้าย: เดิน ----------
 	_set_rect("left",  Vector2(EDGE, bottom - PAD_BIG))
@@ -134,24 +189,32 @@ func _layout() -> void:
 	_set_rect("down",  Vector2(EDGE + (PAD_BIG * 2.0 + GAP - PAD_MID) * 0.5,
 		bottom - PAD_BIG - GAP - PAD_MID))
 
-	# ---------- ฝั่งขวา แถวล่าง: โจมตี / กระโดด / คุย ----------
-	var x := vp.x - EDGE - PAD_BIG
-	_set_rect("attack", Vector2(x, bottom - PAD_BIG))
-	x -= GAP + PAD_MID
-	_set_rect("jump", Vector2(x, bottom - PAD_MID))
-	x -= GAP + PAD_MID
-	_set_rect("interact", Vector2(x, bottom - PAD_MID))
+	# ---------- ฝั่งขวา: ปุ่มโจมตีใหญ่ตรงกลาง + สกิลล้อมรอบ 8 → 1 นาฬิกา ----------
+	# วงสกิลกินพื้นที่ล่างซ้ายของปุ่มโจมตีด้วย (8 นาฬิกา) → ยกปุ่มโจมตีขึ้นให้วงไม่ตกขอบจอ
+	# รัศมีวง = ครึ่งปุ่มโจมตี + ช่องว่าง + ครึ่งปุ่มสกิล (+16 กันกรอบสี่เหลี่ยมของปุ่มข้างกันเกยกัน)
+	var ring_r: float = PAD_ATTACK * 0.5 + GAP + PAD_SMALL * 0.5 + 16.0
+	var lowest_extra: float = maxf(0.0, ring_r * -cos(deg_to_rad(SKILL_CLOCK_START * 30.0)) + PAD_SMALL * 0.5 - PAD_ATTACK * 0.5)
+	var center := Vector2(vp.x - EDGE - PAD_SMALL - GAP * 0.5 - PAD_ATTACK * 0.5,
+		bottom - lowest_extra - PAD_ATTACK * 0.5)
+	_set_rect("attack", center - Vector2.ONE * PAD_ATTACK * 0.5)
+	var ids := ["skill_1", "skill_2", "skill_3", "skill_4"]
+	var n := ids.size()
+	for i in range(n):
+		var t: float = float(i) / float(maxi(1, n - 1))
+		var clock: float = SKILL_CLOCK_START + (SKILL_CLOCK_END - SKILL_CLOCK_START) * t
+		var ang: float = deg_to_rad(clock * 30.0)          # 12 นาฬิกา = 0° · ตามเข็ม
+		var dir := Vector2(sin(ang), -cos(ang))
+		_set_rect(ids[i], center + dir * ring_r - Vector2.ONE * PAD_SMALL * 0.5)
 
-	# ---------- ฝั่งขวา แถวสกิล ----------
-	var row2 := bottom - PAD_BIG - GAP - PAD_SMALL
-	var sx := vp.x - EDGE - PAD_SMALL
-	for id in ["skill_4", "skill_3", "skill_2", "skill_1"]:
-		_set_rect(id, Vector2(sx, row2))
-		sx -= GAP + PAD_SMALL
+	# ---------- คุย/เก็บของ: ซ้ายของวงสกิล ----------
+	var ring_left: float = minf(center.x - PAD_ATTACK * 0.5,
+		center.x + ring_r * sin(deg_to_rad(SKILL_CLOCK_START * 30.0)) - PAD_SMALL * 0.5)
+	var ix: float = ring_left - GAP - PAD_MID
+	_set_rect("interact", Vector2(ix, bottom - PAD_MID))
 
-	# ---------- ฝั่งขวา แถวยา + เมนู ----------
-	var row3 := row2 - GAP - PAD_TINY
-	var tx := vp.x - EDGE - PAD_TINY
+	# ---------- ยา / มานา / เมนู: แถวเหนือปุ่มคุย ----------
+	var row3 := bottom - PAD_MID - GAP - PAD_TINY
+	var tx: float = ix + PAD_MID - PAD_TINY
 	for id in ["menu", "sp", "potion"]:
 		_set_rect(id, Vector2(tx, row3))
 		tx -= GAP + PAD_TINY

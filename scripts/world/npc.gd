@@ -45,6 +45,10 @@ enum NPCType { DIALOG, SHOP, REFINER, HEALER, SAVE_POINT, QUEST }
 
 ## ค่าบริการรักษา (สำหรับ HEALER)
 @export var heal_price: int = 100
+## ★ รอบ 45 — NPC ประเภทอื่น (เช่นนักบวช) ก็มีร้านได้ ★ ติ๊กแล้วเมนู "ซื้อขาย" จะโผล่ (ใช้ Shop Items ข้างบน)
+@export var has_shop: bool = false
+## ★ รอบ 45 — ประโยคทักตอนเปิดเมนู พูดคุย / ซื้อขาย / ไม่คุย ★
+@export var greeting: String = "มีอะไรให้ช่วยไหม"
 
 ## ★ เควสที่ NPC คนนี้เป็นคนให้ ★ (ใส่ id ของเควสจาก data/quests/)
 ## ใส่ได้กับ NPC ทุกแบบ ไม่ใช่แค่แบบ QUEST — คุยแล้วจะถามเรื่องเควสก่อน แล้วค่อยเปิดร้าน
@@ -164,20 +168,32 @@ func interact() -> void:
 	if PlayerState.quests != null:
 		PlayerState.quests.on_talked_to(npc_name)
 
-	# ★ เรื่องเควสมาก่อน ★ คุยเรื่องเควสให้จบก่อน แล้วค่อยเปิดร้าน/ตีบวกตามปกติ
-	var quest_handled: bool = await _handle_quests()
-	if quest_handled and type == NPCType.DIALOG:
+	# ศิลาเซฟไม่ใช่คน — ไม่มีเมนู
+	if type == NPCType.SAVE_POINT:
+		SaveManager.save_game(0)
 		return
-	if not is_instance_valid(self):
+
+	# ★★ รอบ 45 — เมนูก่อนคุย: พูดคุย / ซื้อขาย / ไม่คุย ★★
+	var options: Array = [MENU_TALK]
+	if has_shop_menu():
+		options.append(MENU_SHOP)
+	options.append(MENU_LEAVE)
+	var pick: int = await UI.talk([line(greeting, "", options)])
+	if not is_instance_valid(self) or pick < 0 or pick >= options.size():
+		return
+	var chosen: String = options[pick]
+	if chosen == MENU_LEAVE:
+		return
+	if chosen == MENU_SHOP:
+		open_shop()
+		return
+
+	# ---- พูดคุย: เรื่องเควสมาก่อน แล้วค่อยบริการ/บทพูด ----
+	var quest_handled: bool = await _handle_quests()
+	if quest_handled or not is_instance_valid(self):
 		return
 
 	match type:
-		NPCType.SHOP:
-			var ids: Array = []
-			for id in shop_items:
-				ids.append(id)
-			Events.shop_opened.emit(ids)
-
 		NPCType.REFINER:
 			Events.refine_npc_opened.emit()
 
@@ -193,9 +209,6 @@ func interact() -> void:
 				PlayerState.restore_sp(PlayerState.stats.max_sp)
 				Events.say("%s: หายดีแล้ว!" % npc_name)
 
-		NPCType.SAVE_POINT:
-			SaveManager.save_game(0)
-
 		_:
 			# ★ คุยผ่านกล่องสนทนา ★ เว้นบรรทัดว่าง = ขึ้นหน้าใหม่
 			var pages: Array = []
@@ -206,6 +219,23 @@ func interact() -> void:
 			if pages.is_empty():
 				pages.append(line(current_dialog()))
 			await UI.talk(pages)
+
+
+const MENU_TALK := "พูดคุย"
+const MENU_SHOP := "ซื้อขาย"
+const MENU_LEAVE := "ไม่คุย"
+
+
+## มีเมนูซื้อขายไหม — ร้านค้า หรือ NPC ที่ติ๊ก Has Shop
+func has_shop_menu() -> bool:
+	return type == NPCType.SHOP or has_shop
+
+
+func open_shop() -> void:
+	var ids: Array = []
+	for id in shop_items:
+		ids.append(id)
+	Events.shop_opened.emit(ids)
 
 
 ## ★ บทพูดที่ควรใช้ตอนนี้ ★ ดูจากธงเนื้อเรื่องที่ตั้งไว้แล้ว

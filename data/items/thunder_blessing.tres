@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="res://Sprites/items/placeholder/thunder_blessing.png" id="2_icon"]
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"thunder_blessing"
+display_name = "พรแห่งสายฟ้า"
+description = "พรจากนักบวชสูงสุด สายฟ้าเข้าสิงมือที่ถือดาบ
+ความเร็วโจมตี +10% นาน 3 นาที"
+icon = ExtResource("2_icon")
+type = 0
+buy_price = 1500
+sell_price = 300
+buff_values = {
+"aspd_percent": 10.0
+}
+buff_duration = 180.0
+max_stack = 30

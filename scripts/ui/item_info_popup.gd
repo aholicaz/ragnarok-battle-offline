@@ -155,6 +155,13 @@ func _make_action_button(a: Dictionary, in_row: bool) -> Button:
 # เปิดกล่อง
 # =========================================================
 ## โชว์รายละเอียดของไอเทมชิ้นจริงในกระเป๋า (มีตีบวก/การ์ดที่ใส่ไว้ด้วย)
+const BUFF_LABELS := {
+	"atk_percent": "ATK", "matk_percent": "MATK", "def_percent": "DEF", "max_hp_percent": "MaxHP",
+	"max_sp_percent": "MaxSP", "aspd_percent": "ความเร็วโจมตี", "move_speed_percent": "ความเร็วเดิน",
+	"crit_damage_percent": "ดาเมจคริ", "damage_percent": "ดาเมจ", "atk": "ATK", "def": "DEF", "hit": "HIT", "flee": "FLEE",
+}
+
+
 func show_item(inst: ItemInstance, anchor: Control = null, extra: String = "") -> void:
 	if inst == null:
 		hide_popup()
@@ -295,6 +302,21 @@ static func describe(d: ItemData, inst: ItemInstance = null, extra: String = "")
 		stats.append("ฟื้น HP %d (+%.0f%%)" % [d.heal_hp, d.heal_hp_percent])
 	if d.heal_sp != 0 or d.heal_sp_percent != 0.0:
 		stats.append("ฟื้น SP %d (+%.0f%%)" % [d.heal_sp, d.heal_sp_percent])
+	# ★ รอบ 45 — โบนัส % / บัฟไอเทม / ไอเทมพิเศษ ★
+	for pair in [["ดาเมจ", d.damage_percent], ["ป้องกัน", d.defense_percent], ["HP สูงสุด", d.hp_percent],
+			["SP สูงสุด", d.sp_percent], ["ดูดเลือด", d.hp_drain_percent], ["ดูดมานา", d.sp_drain_percent]]:
+		if float(pair[1]) != 0.0:
+			stats.append("%s %+.1f%%" % [pair[0], float(pair[1])])
+	if d.buff_duration > 0.0 and not d.buff_values.is_empty():
+		var bparts: Array = []
+		for key in d.buff_values.keys():
+			bparts.append("%s %+.0f%s" % [BUFF_LABELS.get(String(key), String(key)), float(d.buff_values[key]),
+				"%" if String(key).ends_with("_percent") else ""])
+		stats.append("บัฟ: %s (%d วินาที)" % [", ".join(bparts), int(d.buff_duration)])
+	if d.special_effect == &"reset_skills":
+		stats.append("ใช้แล้วรีเซ็ตสกิลทั้งหมด (คืนแต้มสกิล)")
+	elif d.special_effect == &"reset_stats":
+		stats.append("ใช้แล้วรีเซ็ตสเตตัสทั้งหมด (คืนแต้มสเตตัส)")
 	if not stats.is_empty():
 		lines.append("[color=#7dffa8]%s[/color]" % "\n".join(stats))
 

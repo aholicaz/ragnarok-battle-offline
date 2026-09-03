@@ -23,12 +23,12 @@ chance = 8.0
 [sub_resource type="Resource" id="Drop_silent_wraith_3"]
 script = ExtResource("2_drop")
 item_id = &"emveretarcon"
-chance = 15.0
+chance = 2.39
 
 [sub_resource type="Resource" id="Drop_silent_wraith_card"]
 script = ExtResource("2_drop")
 item_id = &"card_silent_wraith"
-chance = 5.0
+chance = 0.64
 
 [resource]
 script = ExtResource("1_monster")

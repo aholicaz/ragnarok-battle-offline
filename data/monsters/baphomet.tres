@@ -11,17 +11,17 @@ chance = 100.0
 [sub_resource type="Resource" id="Drop_baphomet_1"]
 script = ExtResource("2_drop")
 item_id = &"flame_sword"
-chance = 15.0
+chance = 1.0
 
 [sub_resource type="Resource" id="Drop_baphomet_2"]
 script = ExtResource("2_drop")
 item_id = &"plate_armor"
-chance = 20.0
+chance = 1.0
 
 [sub_resource type="Resource" id="Drop_baphomet_3"]
 script = ExtResource("2_drop")
 item_id = &"emveretarcon"
-chance = 100.0
+chance = 1.0
 min_count = 3
 max_count = 6
 
@@ -35,7 +35,7 @@ max_count = 10
 [sub_resource type="Resource" id="Drop_baphomet_card"]
 script = ExtResource("2_drop")
 item_id = &"card_baphomet"
-chance = 5.0
+chance = 2.0
 
 [sub_resource type="Resource" id="Drop_baphomet_junk_giant_hoof"]
 script = ExtResource("2_drop")

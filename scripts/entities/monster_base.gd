@@ -12,6 +12,7 @@ extends CharacterBody2D
 enum State { IDLE, WANDER, CHASE, ATTACK, HURT, DEAD }
 
 ## มอนใจดีที่ถูกตี จะไล่ตามต่ออีกกี่วินาทีหลังคลาดสายตา
+## ★ รอบ 44: ไม่ใช้แล้ว ★ — โดนตี/เห็นผู้เล่น = ไล่ไม่หยุดจนกว่าผู้เล่นหรือมอนตัวนั้นตาย
 const AGGRO_MEMORY := 8.0
 
 ## ★ ขนาดตัวเลขดาเมจ ★ อยากให้ใหญ่ขึ้นอีก แก้สองเลขนี้
@@ -44,10 +45,15 @@ var _hurt_flash := 0.0
 var _hp_bar: ProgressBar
 var _aggro := false
 var _aggro_timer := 0.0
+## ★ รอบ 44 — "ล็อกเป้า" แล้ว ★ มอนที่เห็นผู้เล่น (ตัวดุ) หรือโดนตี (ทุกตัว)
+## จะไล่ตามได้ไกลไม่จำกัด ไม่สนระยะ leash/detect อีก จนกว่าผู้เล่นตาย หรือมันตาย
+var _aggro_locked := false
 var _jump_cd := 0.0
 var _skill_cd := 0.0
 var _spawn_locked := false
 var _fit_cache: Dictionary = {}
+## โหลดฉากของตกไว้ล่วงหน้า (รอบ 44 — เดิม load() ตอนมอนตาย)
+const DROPPED_ITEM_SCENE: PackedScene = preload("res://scenes/items/dropped_item.tscn")
 
 
 ## ให้ Spawner เรียกหลังวางตำแหน่งเสร็จ เพื่อบอกว่า "บ้าน" อยู่ตรงไหน
@@ -157,9 +163,9 @@ func _apply_fit() -> void:
 		return
 	var fd: Dictionary = list[clampi(sprite.frame, 0, list.size() - 1)]
 
-	sprite.offset.x = data.sprite_offset.x + (fd.dx if sprite.flip_h else -fd.dx)
+	sprite.offset.x = data.sprite_offset.x + (fd.dx_use if sprite.flip_h else -fd.dx_use)
 	if data.align_feet:
-		sprite.offset.y = data.sprite_offset.y + data.foot_offset() / k - fd.bottom
+		sprite.offset.y = data.sprite_offset.y + data.foot_offset() / k - fd.bottom_use
 
 
 ## วัดขนาดจริงของมอน (ไม่นับพื้นที่โปร่งใส) แล้วจำไว้
@@ -171,25 +177,12 @@ func _fit_frames(anim: StringName) -> Dictionary:
 	if frames == null or not frames.has_animation(anim):
 		return {}
 
-	var list: Array = []
-	var tallest := 0.0
-	for i in range(frames.get_frame_count(anim)):
-		var tex := frames.get_frame_texture(anim, i)
-		if tex == null:
-			continue
-		var tw := float(tex.get_width())
-		var th := float(tex.get_height())
-		var used := Rect2i(0, 0, int(tw), int(th))
-		var img := tex.get_image()
-		if img != null:
-			var r := img.get_used_rect()
-			if r.size.x > 0 and r.size.y > 0:
-				used = r
-		tallest = maxf(tallest, float(used.size.y))
-		list.append({
-			"bottom": float(used.position.y + used.size.y) - th * 0.5,
-			"dx": float(used.position.x) + float(used.size.x) * 0.5 - tw * 0.5,
-		})
+	# ★ รอบ 44 — วัดผ่าน SpriteFit (วัดครั้งเดียวทั้งเกมต่อชนิดมอน ไม่ใช่ทุกครั้งที่เกิด) ★
+	var base: Dictionary = SpriteFit.measure(frames, anim)
+	if base.is_empty():
+		return {}
+	var list: Array = base.frames
+	var tallest: float = base.tallest
 
 	var k: float = data.sprite_scale.y
 	if data.display_height > 0.0:
@@ -227,13 +220,12 @@ func _physics_process(delta: float) -> void:
 	if _skill_cd > 0.0:
 		_skill_cd -= delta
 
-	# ความโกรธจะจางลงถ้าไล่ผู้เล่นไม่ทันสักพัก (มอนใจดีจะกลับไปเดินเล่นเหมือนเดิม)
-	if _aggro and data.ai_type != MonsterData.AIType.AGGRESSIVE:
-		_aggro_timer -= delta
-		if _aggro_timer <= 0.0:
-			_aggro = false
-
+	# ★ รอบ 44 — ความโกรธไม่จางอีกแล้ว ★ (เดิมมอนใจดีเลิกไล่หลัง 8 วิ)
+	# เลิกไล่อย่างเดียวคือผู้เล่นตาย → กลับไปเดินเล่นตามปกติ
 	_player = get_tree().get_first_node_in_group("player")
+	if _aggro_locked and (_player == null or not is_instance_valid(_player) or PlayerState.is_dead()):
+		_aggro_locked = false
+		_aggro = data.ai_type == MonsterData.AIType.AGGRESSIVE
 
 	if state == State.ATTACK or state == State.HURT:
 		velocity.x = move_toward(velocity.x, 0.0, data.move_speed * 4.0 * delta)
@@ -241,7 +233,9 @@ func _physics_process(delta: float) -> void:
 		return
 
 	var home_offset := global_position.x - spawn_position.x
-	var too_far_from_home: bool = data.leash_range > 0.0 and absf(home_offset) > data.leash_range
+	# ★ รอบ 44 — ล็อกเป้าแล้วไม่มี "กำแพงระยะ" ★ ไล่ไปได้ทั่วแมพ
+	var too_far_from_home: bool = (not _aggro_locked) and data.leash_range > 0.0 \
+		and absf(home_offset) > data.leash_range
 
 	# ------- ตัดสินใจว่าจะสู้ไหม -------
 	# วัดจาก "ตำแหน่งเท้า" ทั้งคู่ จะได้ไม่เพี้ยนเพราะกล่องชนคนละขนาด
@@ -256,8 +250,12 @@ func _physics_process(delta: float) -> void:
 
 	# มอนดุ = เห็นแล้วไล่เลย / มอนใจดี = ไล่เฉพาะตอนถูกตี
 	var hostile: bool = _aggro or data.ai_type == MonsterData.AIType.AGGRESSIVE
-	# ถ้าถูกตีแล้ว จะตามได้ไกลกว่าปกติ
-	var chase_range: float = data.detect_range if not _aggro else maxf(data.detect_range, data.leash_range)
+	# ★ รอบ 44 — มอนดุที่ "เห็น" ผู้เล่นครั้งแรก (เข้าระยะ detect) = ล็อกเป้าทันที ★
+	if hostile and not _aggro_locked and distance <= data.detect_range \
+			and data.ai_type != MonsterData.AIType.STATIONARY:
+		_set_aggro()
+	# ล็อกเป้าแล้ว = ไล่ได้ไกลไม่จำกัด (เดิมจำกัดที่ detect/leash → มอนวิ่งไปชน "กำแพงระยะ" แล้วหยุด)
+	var chase_range: float = INF if _aggro_locked else data.detect_range
 	var will_engage: bool = hostile and distance <= chase_range and not too_far_from_home
 
 	if data.ai_type == MonsterData.AIType.STATIONARY:
@@ -659,6 +657,22 @@ func take_damage_from_player(skill_mult: float = 1.0, use_matk: bool = false, fr
 		return
 
 	take_damage(int(result.damage), bool(result.crit), from_dir)
+	_drain_to_player(int(result.damage))
+
+
+## ★ รอบ 45 — ดูดเลือด/ดูดมานา ★ ได้คืน = % ของดาเมจที่ทำได้ (ตัวเลขลอยสีเขียว/ฟ้าเล็ก ๆ)
+func _drain_to_player(damage: int) -> void:
+	if damage <= 0:
+		return
+	var st := PlayerState.stats
+	if st == null:
+		return
+	if st.hp_drain_percent > 0.0:
+		var hp_gain := maxi(1, int(damage * st.hp_drain_percent / 100.0))
+		PlayerState.heal_hp(hp_gain, false)
+	if st.sp_drain_percent > 0.0:
+		var sp_gain := maxi(1, int(damage * st.sp_drain_percent / 100.0))
+		PlayerState.restore_sp(sp_gain)
 
 
 ## ทำดาเมจตรง ๆ (ใช้กับกับดัก/สกิลพิเศษ)
@@ -708,6 +722,14 @@ func _show_mvp() -> void:
 func _set_aggro() -> void:
 	_aggro = true
 	_aggro_timer = AGGRO_MEMORY
+	# ★ รอบ 44 — ล็อกเป้าถาวร (จนกว่าผู้เล่นตาย/มอนตาย) ★ ตัวนิ่ง (STATIONARY) ไม่ไล่อยู่แล้ว
+	if data != null and data.ai_type != MonsterData.AIType.STATIONARY:
+		_aggro_locked = true
+
+
+## ล็อกเป้าอยู่ไหม (ไว้ให้เทสต์/ระบบอื่นดู)
+func is_aggro_locked() -> bool:
+	return _aggro_locked
 
 
 func is_dead() -> bool:
@@ -786,7 +808,7 @@ func _spawn_drops() -> void:
 	if drops.is_empty():
 		return
 
-	var scene: PackedScene = load("res://scenes/items/dropped_item.tscn")
+	var scene: PackedScene = DROPPED_ITEM_SCENE
 	if scene == null:
 		# ถ้ายังไม่มี scene ให้ใส่เข้ากระเป๋าตรง ๆ กันของหาย
 		for inst in drops:

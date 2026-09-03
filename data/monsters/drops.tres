@@ -6,18 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://niemvpr6qgtj" path="res://Sprites/Drops_Idle.png" id="3_yqyoy"]
 [ext_resource type="Texture2D" uid="uid://cps8mxyg1fvm2" path="res://Sprites/drops die.png" id="4_5u5cw"]
 
-[sub_resource type="Resource" id="Drop_drops_0"]
-script = ExtResource("2_drop")
-item_id = &"jellopy"
-chance = 60.0
-max_count = 2
-
-[sub_resource type="Resource" id="Drop_drops_1"]
-script = ExtResource("2_drop")
-item_id = &"sticky_mucus"
-chance = 25.0
-max_count = 2
-
 [sub_resource type="Resource" id="Drop_drops_2"]
 script = ExtResource("2_drop")
 item_id = &"red_potion"
@@ -26,7 +14,7 @@ chance = 5.0
 [sub_resource type="Resource" id="Drop_drops_card"]
 script = ExtResource("2_drop")
 item_id = &"card_drops"
-chance = 2.0
+chance = 0.87
 
 [sub_resource type="Resource" id="Resource_g4v7s"]
 script = ExtResource("2_drop")
@@ -325,5 +313,5 @@ jump_interval = 0.6
 exp_reward = 34
 zeny_min = 10
 zeny_max = 28
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_drops_0"), SubResource("Drop_drops_1"), SubResource("Drop_drops_2"), SubResource("Drop_drops_card"), SubResource("Resource_g4v7s"), SubResource("Resource_yf5fn"), SubResource("Drop_drops_junk_orange_jelly"), SubResource("Drop_drops_junk_sun_dew")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_drops_2"), SubResource("Drop_drops_card"), SubResource("Resource_g4v7s"), SubResource("Resource_yf5fn"), SubResource("Drop_drops_junk_orange_jelly"), SubResource("Drop_drops_junk_sun_dew")])
 respawn_time = 7.0

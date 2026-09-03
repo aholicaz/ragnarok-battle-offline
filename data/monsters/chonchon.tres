@@ -7,12 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://ksqaw574qgwa" path="res://Sprites/chonchon_die.png" id="4_yc8r1"]
 [ext_resource type="Texture2D" uid="uid://de4b6rnnbuvrx" path="res://Sprites/chonchon_hit.png" id="5_ekvov"]
 
-[sub_resource type="Resource" id="Drop_chonchon_0"]
-script = ExtResource("2_drop")
-item_id = &"fluff"
-chance = 50.0
-max_count = 3
-
 [sub_resource type="Resource" id="Drop_chonchon_1"]
 script = ExtResource("2_drop")
 item_id = &"iron_ore"
@@ -26,7 +20,7 @@ chance = 20.0
 [sub_resource type="Resource" id="Drop_chonchon_card"]
 script = ExtResource("2_drop")
 item_id = &"card_chonchon"
-chance = 5.0
+chance = 0.83
 
 [sub_resource type="Resource" id="Drop_chonchon_junk_insect_wing"]
 script = ExtResource("2_drop")
@@ -254,5 +248,5 @@ attack_cooldown = 1.1
 exp_reward = 48
 zeny_min = 14
 zeny_max = 35
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_chonchon_0"), SubResource("Drop_chonchon_1"), SubResource("Drop_chonchon_2"), SubResource("Drop_chonchon_card"), SubResource("Drop_chonchon_junk_insect_wing"), SubResource("Drop_chonchon_junk_chonchon_eye")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_chonchon_1"), SubResource("Drop_chonchon_2"), SubResource("Drop_chonchon_card"), SubResource("Drop_chonchon_junk_insect_wing"), SubResource("Drop_chonchon_junk_chonchon_eye")])
 projectile_height = 84.0

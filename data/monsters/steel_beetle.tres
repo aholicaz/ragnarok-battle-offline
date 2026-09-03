@@ -28,7 +28,7 @@ chance = 1.0
 [sub_resource type="Resource" id="Drop_steel_beetle_card"]
 script = ExtResource("2_drop")
 item_id = &"card_steel_beetle"
-chance = 5.0
+chance = 0.73
 
 [resource]
 script = ExtResource("1_monster")

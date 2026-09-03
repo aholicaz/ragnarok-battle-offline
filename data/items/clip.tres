@@ -14,5 +14,6 @@ slot = 7
 card_slots = 1
 max_stack = 1
 buy_price = 9000
-sell_price = 3600
+sell_price = 7200
+metadata/sell_price_base_r44 = 3600
 max_sp = 40

@@ -8,24 +8,10 @@
 [ext_resource type="Texture2D" uid="uid://bnq2hly68ji8a" path="res://Sprites/kingporing_skill.png" id="6_jtl3n"]
 [ext_resource type="Texture2D" uid="uid://dcx77mwbaxbkh" path="res://Sprites/effects/king_poring_ball.png" id="fx_slime"]
 
-[sub_resource type="Resource" id="Drop_kp_0"]
-script = ExtResource("2_drop")
-item_id = &"jellopy"
-chance = 100.0
-min_count = 3
-max_count = 8
-
-[sub_resource type="Resource" id="Drop_kp_1"]
-script = ExtResource("2_drop")
-item_id = &"sticky_mucus"
-chance = 80.0
-min_count = 2
-max_count = 5
-
 [sub_resource type="Resource" id="Drop_kp_2"]
 script = ExtResource("2_drop")
 item_id = &"phracon"
-chance = 55.0
+chance = 3.86
 max_count = 2
 
 [sub_resource type="Resource" id="Drop_kp_3"]
@@ -38,18 +24,20 @@ max_count = 4
 [sub_resource type="Resource" id="Drop_kp_card"]
 script = ExtResource("2_drop")
 item_id = &"card_king_poring"
-chance = 5.0
+chance = 2.36
 
 [sub_resource type="Resource" id="Resource_fem3u"]
 resource_local_to_scene = true
 script = ExtResource("2_drop")
 item_id = &"clip"
+chance = 2.43
 metadata/_custom_type_script = "uid://lfvvfifv5f84"
 
 [sub_resource type="Resource" id="Resource_g4v7s"]
 resource_local_to_scene = true
 script = ExtResource("2_drop")
 item_id = &"falchion"
+chance = 2.43
 metadata/_custom_type_script = "uid://lfvvfifv5f84"
 
 [sub_resource type="Resource" id="Resource_fyhd2"]
@@ -72,12 +60,12 @@ chance = 25.0
 [sub_resource type="Resource" id="Drop_king_poring_eq_leather_jacket"]
 script = ExtResource("2_drop")
 item_id = &"leather_jacket"
-chance = 5.0
+chance = 2.43
 
 [sub_resource type="Resource" id="Drop_king_poring_eq_ribbon"]
 script = ExtResource("2_drop")
 item_id = &"ribbon"
-chance = 8.0
+chance = 2.43
 
 [sub_resource type="Resource" id="Drop_kp_glow"]
 script = ExtResource("2_drop")
@@ -371,7 +359,7 @@ exp_reward = 900
 job_exp_reward = 700
 zeny_min = 400
 zeny_max = 900
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_kp_0"), SubResource("Drop_kp_1"), SubResource("Drop_kp_2"), SubResource("Drop_kp_3"), SubResource("Drop_kp_card"), SubResource("Resource_fem3u"), SubResource("Resource_g4v7s"), SubResource("Resource_fyhd2"), SubResource("Drop_king_poring_junk_royal_jelly"), SubResource("Drop_king_poring_junk_tiny_crown"), SubResource("Drop_king_poring_eq_leather_jacket"), SubResource("Drop_king_poring_eq_ribbon"), SubResource("Drop_kp_glow")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_kp_2"), SubResource("Drop_kp_3"), SubResource("Drop_kp_card"), SubResource("Resource_fem3u"), SubResource("Resource_g4v7s"), SubResource("Resource_fyhd2"), SubResource("Drop_king_poring_junk_royal_jelly"), SubResource("Drop_king_poring_junk_tiny_crown"), SubResource("Drop_king_poring_eq_leather_jacket"), SubResource("Drop_king_poring_eq_ribbon"), SubResource("Drop_kp_glow")])
 is_boss = true
 intro_video = "res://Sprites/video/boss_intro_king_poring.ogv"
 skill_name = "ระเบิดเหมือก"
@@ -382,6 +370,7 @@ skill_radius_y = 160.0
 skill_damage_mult = 2.4
 skill_windup = 0.55
 skill_duration = 1.0
+skill_cooldown = 5.0
 skill_chance = 0.65
 skill_knockback = 360.0
 skill_projectile_texture = ExtResource("fx_slime")
@@ -391,4 +380,4 @@ skill_projectile_arc = 260.0
 skill_projectile_time = 0.95
 skill_explosion_height = 280.0
 death_fade = 0.6
-respawn_time = 120.0
+respawn_time = 300.0

@@ -3,15 +3,13 @@
 [ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore38"]
 [ext_resource type="Script" uid="uid://cj52mis2ydm4e" path="res://scripts/world/map_base.gd" id="map_base"]
 [ext_resource type="Script" uid="uid://cwutmh7bygsgm" path="res://scripts/world/map_spawner.gd" id="map_spawner"]
-[ext_resource type="Resource" uid="uid://13phq5jcelit" path="res://data/monsters/baphomet.tres" id="md_baphomet"]
-[ext_resource type="Resource" uid="uid://d18nbft3t6apl" path="res://data/monsters/chonchon.tres" id="md_chonchon"]
 [ext_resource type="Resource" uid="uid://c8n7s6ei1p733" path="res://data/monsters/hornet.tres" id="md_hornet"]
+[ext_resource type="Resource" uid="uid://beie24ui0373o" path="res://data/monsters/lunatic.tres" id="md_lunatic"]
 [ext_resource type="Resource" uid="uid://ddphalxkv2ksp" path="res://data/monsters/wolf.tres" id="md_wolf"]
 [ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="monster_data"]
 [ext_resource type="PackedScene" uid="uid://ce4i2xgacms7p" path="res://scenes/monsters/monster.tscn" id="monster_scene"]
 [ext_resource type="PackedScene" uid="uid://bhp7c8ti14pnn" path="res://scenes/player/player.tscn" id="player"]
 [ext_resource type="PackedScene" uid="uid://d3v8kjt45bnvr" path="res://scenes/world/portal.tscn" id="portal"]
-[ext_resource type="Script" uid="uid://c2no85difcfo6" path="res://scripts/world/monster_spawner.gd" id="spawner"]
 [ext_resource type="Texture2D" uid="uid://bgly5um8tv6hv" path="res://Sprites/map/dark forest.png" id="tex_forest"]
 
 [sub_resource type="RectangleShape2D" id="Rect_0"]
@@ -68,41 +66,34 @@ position = Vector2(3590, 519)
 [node name="from_thunder_scar" type="Marker2D" parent="SpawnPoints" unique_id=274964488]
 position = Vector2(2350, 560)
 
+[node name="from_dark_forest_2" type="Marker2D" parent="SpawnPoints" unique_id=26729369]
+position = Vector2(3590, 519)
+
 [node name="Spawners" type="Node2D" parent="." unique_id=1423565791]
 
 [node name="MapSpawner" type="Node2D" parent="Spawners" unique_id=1706550236]
 script = ExtResource("map_spawner")
-monster_types = Array[ExtResource("monster_data")]([ExtResource("md_chonchon"), ExtResource("md_hornet"), ExtResource("md_wolf")])
+monster_types = Array[ExtResource("monster_data")]([ExtResource("md_hornet"), ExtResource("md_wolf"), ExtResource("md_lunatic")])
 monster_scene = ExtResource("monster_scene")
-
-[node name="BaphometBoss" type="Node2D" parent="Spawners" unique_id=1485892315]
-position = Vector2(3740, 569)
-script = ExtResource("spawner")
-monster_types = Array[ExtResource("monster_data")]([ExtResource("md_baphomet")])
-monster_scene = ExtResource("monster_scene")
-max_alive = 1
-spawn_width = 120
 
 [node name="Portals" type="Node2D" parent="." unique_id=1378185495]
 
 [node name="ToField" parent="Portals" unique_id=2104942923 instance=ExtResource("portal")]
-position = Vector2(94, 656)
+position = Vector2(98, 612)
 target_map = &"asgard_forest_2"
 target_spawn_point = &"from_dark_forest"
 label_text = "← ป่าสนธยา"
 destination_name = "ป่าสนธยา"
 
-[node name="ToIronRoad" parent="Portals" unique_id=406754322 instance=ExtResource("portal")]
-position = Vector2(3746, 629)
-target_map = &"iron_road"
-target_spawn_point = &"from_forest"
-label_text = "→ ทางเหล็ก"
-destination_name = "ทางเหล็ก (บทที่ 2)"
-required_flag = &"chapter2_open"
-locked_text = "ทางเดินแคบ ๆ ลงไปใต้ดิน... มืดเกินกว่าจะไปต่อโดยไม่มีแผนที่"
+[node name="ToDarkForest2" parent="Portals" unique_id=406754322 instance=ExtResource("portal")]
+position = Vector2(3596, 597)
+target_map = &"dark_forest_2"
+target_spawn_point = &"from_dark_forest"
+label_text = "→ ป่าเงาลึกชั้นใน"
+destination_name = "ป่าเงาลึกชั้นใน"
 
 [node name="ToThunderScar" parent="Portals" unique_id=737107434 instance=ExtResource("portal")]
-position = Vector2(2350, 640)
+position = Vector2(2346, 591)
 target_map = &"thunder_scar"
 target_spawn_point = &"from_dark_forest"
 label_text = "⚡ รอยสายฟ้า"

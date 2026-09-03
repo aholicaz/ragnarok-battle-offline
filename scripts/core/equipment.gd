@@ -110,11 +110,25 @@ func collect_percent_bonus() -> Dictionary:
 		var inst: ItemInstance = slots[slot]
 		if inst == null:
 			continue
+		var d := inst.data()
+		if d != null:
+			_add_percent_bonus(b, d)
 		for card in inst.card_list():
 			for key in card.percent_effects.keys():
 				var k := StringName(key)
 				b[k] = float(b.get(k, 0.0)) + float(card.percent_effects[key])
+			_add_percent_bonus(b, card)
 	return b
+
+
+## ★ รอบ 45 — ช่อง % ของ ItemData → คีย์ที่ PlayerStats ใช้ ★
+static func _add_percent_bonus(b: Dictionary, d: ItemData) -> void:
+	_add(b, &"damage_percent", d.damage_percent)
+	_add(b, &"def_percent", d.defense_percent)
+	_add(b, &"max_hp_percent", d.hp_percent)
+	_add(b, &"max_sp_percent", d.sp_percent)
+	_add(b, &"hp_drain_percent", d.hp_drain_percent)
+	_add(b, &"sp_drain_percent", d.sp_drain_percent)
 
 
 static func _add(b: Dictionary, key: StringName, value) -> void:

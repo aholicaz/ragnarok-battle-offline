@@ -1,0 +1,166 @@
+[gd_scene load_steps=19 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/map_base.gd" id="map_base"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="player"]
+[ext_resource type="PackedScene" path="res://scenes/monsters/monster.tscn" id="monster_scene"]
+[ext_resource type="Script" path="res://scripts/world/map_spawner.gd" id="map_spawner"]
+[ext_resource type="Script" path="res://scripts/world/monster_spawner.gd" id="spawner"]
+[ext_resource type="Script" path="res://scripts/resources/monster_data.gd" id="monster_data"]
+[ext_resource type="PackedScene" path="res://scenes/world/portal.tscn" id="portal"]
+[ext_resource type="PackedScene" path="res://scenes/npc/npc.tscn" id="npc"]
+[ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore"]
+[ext_resource type="Resource" path="res://data/monsters/munak.tres" id="md_munak"]
+[ext_resource type="Resource" path="res://data/monsters/orc_warrior.tres" id="md_orc_warrior"]
+[ext_resource type="Resource" path="res://data/monsters/baphomet_jr.tres" id="md_baphomet_jr"]
+[ext_resource type="Resource" path="res://data/monsters/baphomet.tres" id="md_baphomet"]
+[ext_resource type="Texture2D" path="res://Sprites/map/generated/dark_forest_2_bg.png" id="bg38"]
+
+[sub_resource type="RectangleShape2D" id="Rect_ground"]
+size = Vector2(4600, 240)
+
+[sub_resource type="RectangleShape2D" id="Rect_p0"]
+size = Vector2(320, 32)
+
+[sub_resource type="RectangleShape2D" id="Rect_p1"]
+size = Vector2(300, 32)
+
+[sub_resource type="RectangleShape2D" id="Rect_p2"]
+size = Vector2(340, 32)
+
+[node name="Map" type="Node2D"]
+script = ExtResource("map_base")
+map_id = &"dark_forest_2"
+display_name = "ป่าเงาลึกชั้นใน"
+chapter = 1
+region = "มิดการ์ด"
+map_bounds = Rect2(-100, -200, 4400, 1300)
+player_scene = ExtResource("player")
+
+[node name="Background" type="Node2D" parent="."]
+
+[node name="Sky" type="Polygon2D" parent="Background"]
+z_index = -100
+position = Vector2(-100, -200)
+color = Color(1, 1, 1, 1)
+texture = ExtResource("bg38")
+polygon = PackedVector2Array(0, 0, 4400, 0, 4400, 1300, 0, 1300)
+uv = PackedVector2Array(0, 0, 2100, 0, 2100, 650, 0, 650)
+
+[node name="FarLayer" type="Polygon2D" parent="Background"]
+visible = false
+z_index = -90
+position = Vector2(-100, 520)
+color = Color(0.12, 0.1, 0.16, 1)
+polygon = PackedVector2Array(0, 0, 4400, 0, 4400, 360, 0, 360)
+
+[node name="Art" type="Sprite2D" parent="Background"]
+z_index = -80
+position = Vector2(2100, 550)
+
+[node name="Terrain" type="Node2D" parent="."]
+
+[node name="Ground" type="StaticBody2D" parent="Terrain"]
+position = Vector2(2100, 1000)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Ground"]
+shape = SubResource("Rect_ground")
+
+[node name="Visual" type="Polygon2D" parent="Terrain/Ground"]
+visible = false
+color = Color(0.17, 0.15, 0.2, 1)
+polygon = PackedVector2Array(-2300, -120, 2300, -120, 2300, 120, -2300, 120)
+
+[node name="Plat0" type="StaticBody2D" parent="Terrain"]
+position = Vector2(1200, 700)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat0"]
+shape = SubResource("Rect_p0")
+
+[node name="Visual" type="Polygon2D" parent="Terrain/Plat0"]
+color = Color(0.17, 0.15, 0.2, 1)
+polygon = PackedVector2Array(-160, -16, 160, -16, 160, 16, -160, 16)
+
+[node name="Plat1" type="StaticBody2D" parent="Terrain"]
+position = Vector2(2300, 640)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat1"]
+shape = SubResource("Rect_p1")
+
+[node name="Visual" type="Polygon2D" parent="Terrain/Plat1"]
+color = Color(0.17, 0.15, 0.2, 1)
+polygon = PackedVector2Array(-150, -16, 150, -16, 150, 16, -150, 16)
+
+[node name="Plat2" type="StaticBody2D" parent="Terrain"]
+position = Vector2(3100, 700)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat2"]
+shape = SubResource("Rect_p2")
+
+[node name="Visual" type="Polygon2D" parent="Terrain/Plat2"]
+color = Color(0.17, 0.15, 0.2, 1)
+polygon = PackedVector2Array(-170, -16, 170, -16, 170, 16, -170, 16)
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="default" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(200, 820)
+
+[node name="from_dark_forest" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(200, 820)
+
+[node name="from_iron_road" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(3980, 820)
+
+[node name="Spawners" type="Node2D" parent="."]
+
+[node name="MapSpawner" type="Node2D" parent="Spawners"]
+script = ExtResource("map_spawner")
+monster_types = Array[ExtResource("monster_data")]([ExtResource("md_munak"), ExtResource("md_orc_warrior"), ExtResource("md_baphomet_jr")])
+count_per_type = 4
+monster_scene = ExtResource("monster_scene")
+max_spawn_distance = 1700.0
+
+[node name="Boss_baphomet" type="Node2D" parent="Spawners"]
+position = Vector2(3880, 850)
+script = ExtResource("spawner")
+monster_types = Array[ExtResource("monster_data")]([ExtResource("md_baphomet")])
+monster_scene = ExtResource("monster_scene")
+max_alive = 1
+spawn_width = 160
+
+[node name="Portals" type="Node2D" parent="."]
+
+[node name="ToDarkForest" parent="Portals" instance=ExtResource("portal")]
+position = Vector2(60, 880)
+target_map = &"dark_forest"
+target_spawn_point = &"from_dark_forest_2"
+label_text = "← ป่าเงาลึก"
+destination_name = "ป่าเงาลึก"
+
+[node name="ToIronRoad" parent="Portals" instance=ExtResource("portal")]
+position = Vector2(4140, 880)
+target_map = &"iron_road"
+target_spawn_point = &"from_forest"
+label_text = "→ ทางเหล็ก"
+destination_name = "ทางเหล็ก (บทที่ 2)"
+required_flag = &"chapter2_open"
+locked_text = "ทางเดินแคบ ๆ ลงไปใต้ดิน... มืดเกินกว่าจะไปต่อโดยไม่มีแผนที่"
+
+[node name="Lore" type="Node2D" parent="."]
+
+[node name="AltarStone" parent="Lore" instance=ExtResource("lore")]
+position = Vector2(2700, 790)
+lore_id = &"dark_altar"
+title = "แท่นบูชาหินดำ"
+text = "หินดำสลักรูปแพะเขาโค้ง เลือดแห้งกรังเป็นชั้น ๆ
+
+รอยกีบเท้าขนาดใหญ่เดินวนรอบแท่น... แล้วมุ่งหน้าไปทางตะวันออก"
+label_text = "แท่นบูชาหินดำ"

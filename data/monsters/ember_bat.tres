@@ -28,7 +28,7 @@ chance = 1.5
 [sub_resource type="Resource" id="Drop_ember_bat_card"]
 script = ExtResource("2_drop")
 item_id = &"card_ember_bat"
-chance = 5.0
+chance = 0.7
 
 [resource]
 script = ExtResource("1_monster")

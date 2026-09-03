@@ -95,7 +95,7 @@ func describe() -> String:
 		"atk_percent": "ATK", "matk_percent": "MATK", "def_percent": "DEF",
 		"max_hp_percent": "MaxHP", "max_sp_percent": "MaxSP",
 		"aspd_percent": "ความเร็วโจมตี", "move_speed_percent": "ความเร็วเดิน",
-		"crit_damage_percent": "ดาเมจคริติคอล",
+		"crit_damage_percent": "ดาเมจคริติคอล", "damage_percent": "ดาเมจ", "hp_drain_percent": "ดูดเลือด", "sp_drain_percent": "ดูดมานา",
 	}
 	for key in percent_effects.keys():
 		var label: String = PERCENT_LABELS.get(String(key), String(key))

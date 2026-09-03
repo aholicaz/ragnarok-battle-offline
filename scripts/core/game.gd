@@ -20,6 +20,8 @@ const MAPS := {
 	&"cold_forge": "res://scenes/maps/cold_forge.tscn",
 	## ★ ลานบอสบทที่ 1 (รอบ 38) ★
 	&"thunder_scar": "res://scenes/maps/thunder_scar.tscn",
+	## ★ ป่าเงาลึกชั้นใน (รอบ 44) — มอนบท 1 ที่เหลือ + บาฟโฟเมทเฝ้าทางไปบท 2 ★
+	&"dark_forest_2": "res://scenes/maps/dark_forest_2.tscn",
 }
 
 var _spawn_point_name: StringName = &"default"

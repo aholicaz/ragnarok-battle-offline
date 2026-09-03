@@ -1,0 +1,86 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://ceg270tf7lrs"]
+
+[ext_resource type="Texture2D" uid="uid://bbs11n05lj7ib" path="res://Sprites/effects/SlashFX 5A Attack.png" id="1_u4ogi"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uep0f"]
+atlas = ExtResource("1_u4ogi")
+region = Rect2(190, 0, 190, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_onfwg"]
+atlas = ExtResource("1_u4ogi")
+region = Rect2(380, 0, 190, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ebtth"]
+atlas = ExtResource("1_u4ogi")
+region = Rect2(570, 0, 190, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3wl1j"]
+atlas = ExtResource("1_u4ogi")
+region = Rect2(760, 0, 190, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hl77k"]
+atlas = ExtResource("1_u4ogi")
+region = Rect2(950, 0, 190, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_joxcn"]
+atlas = ExtResource("1_u4ogi")
+region = Rect2(190, 0, 190, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4upx0"]
+atlas = ExtResource("1_u4ogi")
+region = Rect2(380, 0, 190, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u4ogi"]
+atlas = ExtResource("1_u4ogi")
+region = Rect2(570, 0, 190, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_50is6"]
+atlas = ExtResource("1_u4ogi")
+region = Rect2(760, 0, 190, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_anyls"]
+atlas = ExtResource("1_u4ogi")
+region = Rect2(950, 0, 190, 192)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uep0f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_onfwg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ebtth")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3wl1j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hl77k")
+}],
+"loop": 0,
+"name": &"slash",
+"speed": 15.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_joxcn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4upx0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u4ogi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_50is6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_anyls")
+}],
+"loop": 0,
+"name": &"slash2",
+"speed": 15.0
+}]

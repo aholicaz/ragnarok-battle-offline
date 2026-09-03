@@ -619,7 +619,7 @@ func _refresh_buffs() -> void:
 		GameWindow.clear_container(buff_box)
 		for sid in PlayerState.active_buffs.keys():
 			var s := GameData.get_skill(StringName(sid))
-			var name_text: String = s.display_name if s != null else String(sid)
+			var name_text: String = s.display_name if s != null else String(PlayerState.active_buffs[sid].get("name", sid))
 			var lbl := UITheme.make_label(name_text, 12, UITheme.ACCENT)
 			lbl.name = String(sid)
 			buff_box.add_child(lbl)
@@ -628,7 +628,7 @@ func _refresh_buffs() -> void:
 		var info: Dictionary = PlayerState.active_buffs.get(StringName(child.name), {})
 		if info.has("time_left") and child is Label:
 			var s := GameData.get_skill(StringName(child.name))
-			var n: String = s.display_name if s != null else child.name
+			var n: String = s.display_name if s != null else String(info.get("name", child.name))
 			(child as Label).text = "%s %ds" % [n, int(info.time_left)]
 
 

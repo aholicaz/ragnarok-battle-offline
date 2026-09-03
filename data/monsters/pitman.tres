@@ -30,7 +30,7 @@ chance = 5.0
 [sub_resource type="Resource" id="Drop_pitman_card"]
 script = ExtResource("2_drop")
 item_id = &"card_pitman"
-chance = 5.0
+chance = 0.75
 
 [resource]
 script = ExtResource("1_monster")

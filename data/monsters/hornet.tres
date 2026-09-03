@@ -12,7 +12,7 @@ max_count = 2
 [sub_resource type="Resource" id="Drop_hornet_1"]
 script = ExtResource("2_drop")
 item_id = &"phracon"
-chance = 8.0
+chance = 4.35
 
 [sub_resource type="Resource" id="Drop_hornet_2"]
 script = ExtResource("2_drop")
@@ -21,7 +21,7 @@ item_id = &"orange_potion"
 [sub_resource type="Resource" id="Drop_hornet_card"]
 script = ExtResource("2_drop")
 item_id = &"card_hornet"
-chance = 5.0
+chance = 0.83
 
 [sub_resource type="Resource" id="Drop_hornet_junk_stinger"]
 script = ExtResource("2_drop")

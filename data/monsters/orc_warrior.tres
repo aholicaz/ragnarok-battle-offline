@@ -18,6 +18,7 @@ max_count = 2
 [sub_resource type="Resource" id="Drop_orc_warrior_2"]
 script = ExtResource("2_drop")
 item_id = &"emveretarcon"
+chance = 3.12
 
 [sub_resource type="Resource" id="Drop_orc_warrior_3"]
 script = ExtResource("2_drop")
@@ -27,7 +28,7 @@ chance = 2.0
 [sub_resource type="Resource" id="Drop_orc_warrior_card"]
 script = ExtResource("2_drop")
 item_id = &"card_orc_warrior"
-chance = 5.0
+chance = 0.71
 
 [sub_resource type="Resource" id="Drop_orc_warrior_junk_broken_axe_blade"]
 script = ExtResource("2_drop")

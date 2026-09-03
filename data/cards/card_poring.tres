@@ -14,6 +14,6 @@ description = "การ์ดจากเจ้าก้อนวุ้นส�
 icon = ExtResource("1_mxpej")
 type = 5
 buy_price = 0
-sell_price = 5000
+sell_price = 500
 flee = 5
 bonus_luk = 2

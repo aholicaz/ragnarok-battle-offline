@@ -17,7 +17,7 @@ chance = 10.0
 [sub_resource type="Resource" id="Drop_rune_watcher_2"]
 script = ExtResource("2_drop")
 item_id = &"emveretarcon"
-chance = 30.0
+chance = 2.22
 max_count = 2
 
 [sub_resource type="Resource" id="Drop_rune_watcher_3"]
@@ -33,7 +33,7 @@ chance = 1.0
 [sub_resource type="Resource" id="Drop_rune_watcher_card"]
 script = ExtResource("2_drop")
 item_id = &"card_rune_watcher"
-chance = 5.0
+chance = 0.62
 
 [resource]
 script = ExtResource("1_monster")

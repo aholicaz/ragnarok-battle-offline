@@ -147,6 +147,7 @@ func _setup(cfg: Dictionary, caster: Node2D, facing: int) -> void:
 	_sprite = AnimatedSprite2D.new()
 	_sprite.sprite_frames = frames
 	_sprite.flip_h = _dir < 0
+	_sprite.flip_v = bool(cfg.get("flip_v", false))   # รอบ 44: ฟันสวนขึ้น
 	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	add_child(_sprite)
 

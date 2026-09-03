@@ -12,7 +12,7 @@ max_count = 2
 [sub_resource type="Resource" id="Drop_munak_1"]
 script = ExtResource("2_drop")
 item_id = &"emveretarcon"
-chance = 6.0
+chance = 3.61
 
 [sub_resource type="Resource" id="Drop_munak_2"]
 script = ExtResource("2_drop")
@@ -22,12 +22,12 @@ chance = 8.0
 [sub_resource type="Resource" id="Drop_munak_3"]
 script = ExtResource("2_drop")
 item_id = &"hood"
-chance = 4.0
+chance = 2.31
 
 [sub_resource type="Resource" id="Drop_munak_card"]
 script = ExtResource("2_drop")
 item_id = &"card_munak"
-chance = 5.0
+chance = 0.76
 
 [sub_resource type="Resource" id="Drop_munak_junk_old_hairpin"]
 script = ExtResource("2_drop")

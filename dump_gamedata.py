@@ -843,6 +843,112 @@ for nm, lst in shops.items():
 w("- ไอเทมที่ถูกอ้างถึงแต่ไม่มีไฟล์: %s" % (", ".join("`%s`" % x for x in sorted(missing)) if missing else "**ไม่มี ✓**"))
 w()
 
+
+# =========================================================
+# ส่งออก JSON ด้วย (ใช้ทำหน้าเว็บอ่านง่าย)
+# =========================================================
+def clean(d):
+    return {k: v for k, v in d.items() if not k.startswith("_")}
+
+def mon_json(mid, m):
+    je, auto = job_exp_of(m)
+    return {
+        "id": mid, "name": m.get("display_name", ""), "boss": bool(m.get("is_boss")),
+        "lv": m.get("level", 1), "hp": m.get("max_hp", 0),
+        "atk": [m.get("atk_min", 0), m.get("atk_max", 0)],
+        "def": m.get("def", 0), "mdef": m.get("mdef", 0),
+        "hit": m.get("hit", 0), "flee": m.get("flee", 0), "crit": m.get("crit", 0),
+        "element": enum_name(ELEMENT, m.get("element", 2)),
+        "race": enum_name(RACE, m.get("race", 0)), "size": enum_name(SIZE, m.get("size", 0)),
+        "ai": enum_name(AI, m.get("ai_type", 0)).split(" ")[0],
+        "speed": m.get("move_speed", 90), "detect": m.get("detect_range", 250),
+        "range": m.get("attack_range", 70), "height": m.get("display_height", 0),
+        "exp": m.get("exp_reward", 0), "jobexp": je, "jobauto": auto,
+        "zeny": [m.get("zeny_min", 0), m.get("zeny_max", 0)],
+        "respawn": m.get("respawn_time", 15),
+        "windup": m.get("attack_windup", 0.4), "cooldown": m.get("attack_cooldown", 1.8),
+        "skill": ({"name": m.get("skill_name"), "range": m.get("skill_range"),
+                   "rx": m.get("skill_radius_x"), "ry": m.get("skill_radius_y"),
+                   "mult": m.get("skill_damage_mult"), "cd": m.get("skill_cooldown"),
+                   "chance": m.get("skill_chance")} if m.get("skill_name") else None),
+        "ranged": bool(m.get("projectile_texture")),
+        "lob": bool(m.get("skill_projectile_texture")),
+        "intro": bool(m.get("intro_video")),
+        "maps": mon_maps.get(mid, []),
+        "drops": [{"id": d["item"], "name": items.get(d["item"], {}).get("display_name", d["item"]),
+                   "chance": d["chance"], "min": d["min"], "max": d["max"]} for d in m["_drops"]],
+    }
+
+data_json = {
+    "items": [{"id": i, "name": d.get("display_name", ""), "desc": d.get("description", ""),
+               "type": enum_name(ITEM_TYPE, d.get("type", 3)), "typeIdx": d.get("type", 3),
+               "slot": enum_name(ITEM_SLOT, d.get("slot", 0)), "lv": d.get("required_level", 1),
+               "stats": stat_str(d), "buy": d.get("buy_price", 0), "sell": d.get("sell_price", 0),
+               "cards": d.get("card_slots", 0), "refine": bool(d.get("refinable")),
+               "monster": d.get("monster_id", ""), "fits": enum_name(ITEM_SLOT, d.get("fits_slot", 0)),
+               "src": sources.get(i, [])}
+              for i, d in sorted(items.items(), key=lambda x: (x[1].get("type", 3), x[1].get("required_level", 1), x[0]))],
+    "monsters": [mon_json(m, monsters[m]) for m in sorted(monsters, key=lambda x: monsters[x].get("level", 1))],
+    "skills": [{"id": s, "name": d.get("display_name", ""), "type": enum_name(SKILL_TYPE, d.get("type", 0)),
+                "typeIdx": d.get("type", 0), "lv": d.get("required_level", 1),
+                "maxlv": d.get("max_level", 10), "desc": d.get("description", ""),
+                "sp": d.get("sp_cost_base", 0), "spLv": d.get("sp_cost_per_level", 0),
+                "cd": d.get("cooldown", 0), "mult": d.get("damage_mult_base", 0),
+                "multLv": d.get("damage_mult_per_level", 0),
+                "rx": d.get("range_x", 0), "ry": d.get("range_y", 0),
+                "targets": d.get("max_targets", 0),
+                "req": re.findall(r'"([a-z_]+)":\s*(\d+)', str(d.get("required_skills", ""))),
+                "effects": re.findall(r'"([a-z_]+)":\s*([\d.]+)',
+                                      str(d.get("buff_effects", "")) + str(d.get("passive_effects", "")))}
+               for s, d in sorted(skills.items(), key=lambda x: x[1].get("required_level", 1))],
+    "maps": [{"id": m, "name": maps[m]["display_name"], "chapter": maps[m]["chapter"],
+              "region": maps[m]["region"], "file": maps[m]["file"],
+              "bounds": list(maps[m]["bounds"]) if maps[m]["bounds"] else None,
+              "spawns": [{"name": n, "x": p[0], "y": p[1]} for n, p in maps[m]["spawns"]],
+              "portals": [{"name": p["name"], "x": p["pos"][0], "to": p["to"], "spawn": p["spawn"],
+                           "label": p["label"], "flag": p["flag"]} for p in maps[m]["portals"]],
+              "spawners": [{"node": sp["node"], "mons": sp["mons"], "count": sp["count"],
+                            "boss": bool(sp.get("max_alive")),
+                            "x": (sp["pos"] or [0, 0])[0]} for sp in maps[m]["spawners"]],
+              "npcs": [{"name": n["name"], "x": n["pos"][0], "type": enum_name(NPC_TYPE, n["type"], "คุย"),
+                        "shop": n["shop"], "quests": n["quests"]} for n in maps[m]["npcs"]],
+              "lore": [{"id": l["id"], "title": l["title"], "x": l["pos"][0],
+                        "give": l["give"], "flag": l["flag"]} for l in maps[m]["lore"]],
+              "bg": [b[1] for b in maps[m]["bg"] if b[1]]}
+             for m in order],
+    "quests": [{"id": q, "title": d.get("title", ""), "giver": d.get("giver_name", ""),
+                "lv": d.get("required_level", 1),
+                "req": re.findall(r'&"([^"]+)"', str(d.get("required_quests", ""))),
+                "flag": d.get("set_flag_on_complete", ""),
+                "reqFlag": d.get("required_flag", ""),
+                "objs": [{"kind": enum_name(KIND, o["kind"]), "target": o["target"], "count": o["count"]}
+                         for o in d["_objs"]],
+                "reward": {"item": d.get("reward_item_id", ""), "count": d.get("reward_item_count", 1),
+                           "zeny": d.get("reward_zeny", 0), "exp": d.get("reward_exp", 0)}}
+               for q, d in sorted(quests.items(), key=qorder)],
+    "shops": [{"npc": k, "items": v} for k, v in shops.items()],
+    "health": {
+        "orphanItems": [{"id": i, "name": d.get("display_name", ""), "lv": d.get("required_level", 1),
+                         "type": enum_name(ITEM_TYPE, d.get("type", 3)), "stats": stat_str(d)}
+                        for i, d in orphan_items],
+        "orphanMonsters": [{"id": m, "name": monsters[m].get("display_name", ""),
+                            "lv": monsters[m].get("level", 1), "hp": monsters[m].get("max_hp", 0)}
+                           for m in orphan_mons],
+        "noCard": no_card, "noJunk": no_junk, "badPortals": bad, "missingItems": sorted(missing),
+    },
+}
+# ★ รอบ 46 — NPC ทุกคน + งานภาพที่ยังไม่ทำ (ไฟล์แยก dump_assets_ext.py) ★
+if os.path.exists("dump_assets_ext.py"):
+    exec(compile(open("dump_assets_ext.py", encoding="utf-8").read(), "dump_assets_ext.py", "exec"))
+open("gamedata.json", "w", encoding="utf-8").write(json.dumps(data_json, ensure_ascii=False, indent=1))
+print("เขียน gamedata.json (%.0f KB)" % (os.path.getsize("gamedata.json") / 1024))
+# ★ รอบ 46 — สร้างหน้าเว็บ codex.html จากเทมเพลต (เปิดในเบราว์เซอร์ได้เลย / ให้ Claude อัปเดต artifact) ★
+if os.path.exists("codex_template.html"):
+    _tpl = open("codex_template.html", encoding="utf-8").read()
+    _js = json.dumps(data_json, ensure_ascii=False).replace("</script>", "<\\/script>")
+    open("codex.html", "w", encoding="utf-8").write(_tpl.replace("__DATA__", _js))
+    print("เขียน codex.html (%.0f KB)" % (os.path.getsize("codex.html") / 1024))
+
 out = "ข้อมูลเกมทั้งหมด.md"
 open(out, "w", encoding="utf-8").write("\n".join(L))
 print("เขียน %s (%d บรรทัด · %.0f KB)" % (out, len(L), os.path.getsize(out) / 1024))

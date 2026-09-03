@@ -126,6 +126,9 @@ static func player_hits_monster(
 	# --- สุ่มแกว่ง ---
 	damage *= randf_range(1.0 - DAMAGE_VARIANCE, 1.0 + DAMAGE_VARIANCE)
 
+	# ★ รอบ 45 — ดาเมจสุดท้าย +% จากของสวมใส่ ★
+	damage *= 1.0 + stats.damage_percent / 100.0
+
 	result.damage = maxi(1, int(round(damage))) if elem > 0.0 else 0
 	return result
 

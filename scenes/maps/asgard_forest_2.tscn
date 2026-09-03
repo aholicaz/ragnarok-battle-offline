@@ -1,18 +1,18 @@
 [gd_scene format=3 uid="uid://blodxsbqompev"]
 
 [ext_resource type="Texture2D" uid="uid://il0gkoxbttwk" path="res://Sprites/map/test.png" id="4_1lhe5"]
+[ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore38"]
 [ext_resource type="Script" uid="uid://cj52mis2ydm4e" path="res://scripts/world/map_base.gd" id="map_base"]
 [ext_resource type="Script" uid="uid://cwutmh7bygsgm" path="res://scripts/world/map_spawner.gd" id="map_spawner"]
-[ext_resource type="Resource" uid="uid://5fqcedkqf7wo" path="res://data/monsters/fabre.tres" id="md_fabre"]
+[ext_resource type="Resource" uid="uid://d18nbft3t6apl" path="res://data/monsters/chonchon.tres" id="md_chonchon"]
+[ext_resource type="Resource" uid="uid://gl0q4jqqgbe8" path="res://data/monsters/drops.tres" id="md_drops"]
 [ext_resource type="Resource" uid="uid://b0un72rhmdqdy" path="res://data/monsters/king_poring.tres" id="md_king_poring"]
-[ext_resource type="Resource" uid="uid://beie24ui0373o" path="res://data/monsters/lunatic.tres" id="md_lunatic"]
-[ext_resource type="Resource" uid="uid://dctfetjjy4cox" path="res://data/monsters/poring.tres" id="md_poring"]
+[ext_resource type="Resource" uid="uid://ddphalxkv2ksp" path="res://data/monsters/wolf.tres" id="md_wolf"]
 [ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="monster_data"]
 [ext_resource type="PackedScene" uid="uid://ce4i2xgacms7p" path="res://scenes/monsters/monster.tscn" id="monster_scene"]
 [ext_resource type="PackedScene" uid="uid://bhp7c8ti14pnn" path="res://scenes/player/player.tscn" id="player"]
 [ext_resource type="PackedScene" uid="uid://d3v8kjt45bnvr" path="res://scenes/world/portal.tscn" id="portal"]
 [ext_resource type="Texture2D" uid="uid://bh2r555to20aj" path="res://Sprites/map/asgard forest2 sky.png" id="tex_sky"]
-[ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore38"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_1lhe5"]
 load_path = "res://.godot/imported/Asgard forest 1.png-2c3d95c3f73e5942f9bcf732f2b48b72.ctex"
@@ -89,7 +89,7 @@ position = Vector2(2863, 564)
 
 [node name="MapSpawner" type="Node2D" parent="Spawners" unique_id=1187714887]
 script = ExtResource("map_spawner")
-monster_types = Array[ExtResource("monster_data")]([ExtResource("md_poring"), ExtResource("md_fabre"), ExtResource("md_lunatic")])
+monster_types = Array[ExtResource("monster_data")]([ExtResource("md_drops"), ExtResource("md_chonchon"), ExtResource("md_wolf")])
 monster_scene = ExtResource("monster_scene")
 max_spawn_distance = 1700.0
 
@@ -108,34 +108,42 @@ despawn_distance = 0.0
 [node name="Portals" type="Node2D" parent="." unique_id=1498973762]
 
 [node name="ToForest1" parent="Portals" unique_id=532989640 instance=ExtResource("portal")]
-position = Vector2(81, 515)
+position = Vector2(96, 478)
 target_map = &"prontera_field"
 target_spawn_point = &"from_forest_2"
 label_text = "← ทุ่งวิหาร"
 destination_name = "ทุ่งวิหาร"
 
 [node name="ToTown" parent="Portals" unique_id=177933821 instance=ExtResource("portal")]
-position = Vector2(3253, 525)
+position = Vector2(3245, 477)
 target_map = &"dark_forest"
 target_spawn_point = &"from_forest_2"
 label_text = "→ ป่าเงาลึก"
 destination_name = "ป่าเงาลึก"
 
-[node name="Lore38" type="Node2D" parent="."]
+[node name="Lore38" type="Node2D" parent="." unique_id=25258121]
 
-[node name="DeadMonster" parent="Lore38" instance=ExtResource("lore38")]
-position = Vector2(1500, 570)
+[node name="DeadMonster" parent="Lore38" unique_id=1904920064 instance=ExtResource("lore38")]
+position = Vector2(1665, 405)
 lore_id = &"dead_monster"
 title = "ซากมอนสเตอร์"
-text = "ซากชอนชอนนอนแน่นิ่งอยู่หลายตัว\n\nไม่มีบาดแผลเลยสักแห่ง...\n\nราวกับชีวิตถูกดูดออกไปเฉย ๆ"
+text = "ซากชอนชอนนอนแน่นิ่งอยู่หลายตัว
+
+ไม่มีบาดแผลเลยสักแห่ง...
+
+ราวกับชีวิตถูกดูดออกไปเฉย ๆ"
 label_text = "ซากมอนสเตอร์"
 prompt_text = "กด F เพื่อตรวจดู"
 
-[node name="BurntBark" parent="Lore38" instance=ExtResource("lore38")]
-position = Vector2(2450, 570)
+[node name="BurntBark" parent="Lore38" unique_id=1816746572 instance=ExtResource("lore38")]
+position = Vector2(2279, 360)
 lore_id = &"burnt_bark"
 title = "ต้นไม้ไหม้เกรียม"
-text = "เปลือกไม้มีรอยไหม้เป็นเส้นตรงหลายเส้น\n\nไม่ใช่รอยไฟป่า... เส้นพวกนี้เป็นระเบียบเกินไป\n\n(ได้รับ เศษเปลือกไม้ไหม้)"
+text = "เปลือกไม้มีรอยไหม้เป็นเส้นตรงหลายเส้น
+
+ไม่ใช่รอยไฟป่า... เส้นพวกนี้เป็นระเบียบเกินไป
+
+(ได้รับ เศษเปลือกไม้ไหม้)"
 give_item = &"burnt_bark_piece"
 label_text = "ต้นไม้ไหม้"
 prompt_text = "กด F เพื่อตรวจดู"

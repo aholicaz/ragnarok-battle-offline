@@ -8,17 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://bwtqgdl5vg0v1" path="res://Sprites/lunatic run.png" id="4_vcd0d"]
 [ext_resource type="Texture2D" uid="uid://drx4q3ieqb2j5" path="res://Sprites/effects/lunatic_ball.png" id="fx_ball"]
 
-[sub_resource type="Resource" id="Drop_lunatic_0"]
-script = ExtResource("2_drop")
-item_id = &"clover"
-chance = 45.0
-max_count = 2
-
-[sub_resource type="Resource" id="Drop_lunatic_1"]
-script = ExtResource("2_drop")
-item_id = &"animal_skin"
-chance = 25.0
-
 [sub_resource type="Resource" id="Drop_lunatic_2"]
 script = ExtResource("2_drop")
 item_id = &"red_potion"
@@ -27,7 +16,7 @@ max_count = 2
 [sub_resource type="Resource" id="Drop_lunatic_card"]
 script = ExtResource("2_drop")
 item_id = &"card_lunatic"
-chance = 5.0
+chance = 0.86
 
 [sub_resource type="Resource" id="Drop_lunatic_junk_lunatic_tail"]
 script = ExtResource("2_drop")
@@ -316,7 +305,7 @@ attack_cooldown = 1.6
 exp_reward = 28
 zeny_min = 8
 zeny_max = 22
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_lunatic_0"), SubResource("Drop_lunatic_1"), SubResource("Drop_lunatic_2"), SubResource("Drop_lunatic_card"), SubResource("Drop_lunatic_junk_lunatic_tail"), SubResource("Drop_lunatic_junk_chewed_carrot"), SubResource("Drop_lunatic_eq_ribbon")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_lunatic_2"), SubResource("Drop_lunatic_card"), SubResource("Drop_lunatic_junk_lunatic_tail"), SubResource("Drop_lunatic_junk_chewed_carrot"), SubResource("Drop_lunatic_eq_ribbon")])
 projectile_texture = ExtResource("fx_ball")
 projectile_speed = 540.0
 projectile_height = 130.0

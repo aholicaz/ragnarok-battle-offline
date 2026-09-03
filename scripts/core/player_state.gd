@@ -557,10 +557,31 @@ func use_item(inv_index: int) -> bool:
 		Events.say("ไอเทมนี้ใช้ไม่ได้")
 		return false
 
+	# ★ รอบ 45 — ไอเทมพิเศษ: รีสกิล / รีสเตตัส ★
+	if data.special_effect != &"":
+		match data.special_effect:
+			&"reset_skills":
+				var before := stats.skill_points
+				skills.reset(stats)
+				inventory.take_from_slot(inv_index, 1)
+				refresh()
+				Events.say("รีเซ็ตสกิลแล้ว — ได้แต้มสกิลคืน %d แต้ม" % (stats.skill_points - before))
+			&"reset_stats":
+				var refund := stats.reset_stats()
+				inventory.take_from_slot(inv_index, 1)
+				refresh()
+				Events.say("รีเซ็ตสเตตัสแล้ว — ได้แต้มสเตตัสคืน %d แต้ม" % refund)
+			_:
+				Events.say("ไอเทมนี้ยังไม่มีผล (%s)" % String(data.special_effect))
+				return false
+		Events.item_used.emit(data.id)
+		return true
+
 	var heal := data.heal_hp + int(stats.max_hp * data.heal_hp_percent / 100.0)
 	var sp_heal := data.heal_sp + int(stats.max_sp * data.heal_sp_percent / 100.0)
+	var has_buff := data.buff_duration > 0.0 and not data.buff_values.is_empty()
 
-	if heal > 0 and stats.hp >= stats.max_hp and sp_heal <= 0:
+	if heal > 0 and stats.hp >= stats.max_hp and sp_heal <= 0 and not has_buff:
 		Events.say("เลือดเต็มอยู่แล้ว")
 		return false
 
@@ -569,8 +590,25 @@ func use_item(inv_index: int) -> bool:
 		heal_hp(heal)
 	if sp_heal > 0:
 		restore_sp(sp_heal)
+	if has_buff:
+		apply_item_buff(data)
 	Events.item_used.emit(data.id)
 	return true
+
+
+## ★ รอบ 45 — บัฟจากไอเทม ★ เก็บใน active_buffs เหมือนบัฟสกิล (คีย์ = "item_<id>") ใช้ซ้ำ = ต่ออายุใหม่
+func apply_item_buff(data: ItemData) -> void:
+	var key := StringName("item_" + String(data.id))
+	active_buffs[key] = {
+		"time_left": data.buff_duration,
+		"values": data.buff_values.duplicate(),
+		"level": 1,
+		"name": data.display_name,
+		"icon": data.icon,
+	}
+	refresh()
+	Events.buff_changed.emit()
+	Events.say("ได้รับบัฟ %s (%d วินาที)" % [data.display_name, int(data.buff_duration)])
 
 
 # =========================================================

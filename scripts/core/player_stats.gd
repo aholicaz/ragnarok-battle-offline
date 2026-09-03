@@ -17,6 +17,29 @@ const BASE_MOVE_SPEED := 430.0
 const HIT_PER_DEX := 1.5
 
 # =========================================================
+# ★★ ตารางผลของสเตตัส (รอบ 45) — แก้ตัวเลขตรงนี้ที่เดียว ★★
+# ค่าที่ขึ้นกับ "อาชีพ" (hp_vit_percent / sp_int_percent / aspd_agi_percent) อยู่ในไฟล์ data/jobs/*.tres
+# =========================================================
+## STR 1 = ATK +1 · และทุก ๆ 10 STR ได้โบนัส (STR/10)² (10→+1 · 20→+4 · 30→+9)
+const STR_ATK := 1.0
+## AGI 1 = FLEE +1 · ASPD +aspd_agi_percent% (อาชีพ: นักดาบ 1.2%)
+const AGI_FLEE := 1.0
+## VIT 1 = DEF +0.5 (2 VIT = DEF 1) · HP +VIT_HP_FLAT · HP +hp_vit_percent% ของ HP พื้นฐาน (อาชีพ) · ฟื้น HP +0.05/วิ
+const VIT_DEF := 0.5
+const VIT_HP_FLAT := 6
+const VIT_HP_REGEN := 0.05
+## INT 1 = MATK +1 (+ (INT/7)²) · MDEF +0.5 · SP +INT_SP_FLAT · SP +sp_int_percent% ของ SP พื้นฐาน (อาชีพ) · ฟื้น SP +INT_SP_REGEN/วิ
+const INT_MDEF := 0.5
+const INT_SP_FLAT := 4
+const INT_SP_REGEN := 0.12
+## DEX 1 = HIT +1.5 (HIT_PER_DEX) · ATK +0.2 · ASPD +0.4%
+const DEX_ATK := 0.2
+const DEX_ASPD := 0.004
+## LUK 1 = CRIT +0.3% · ATK +0.33
+const LUK_CRIT := 0.3
+const LUK_ATK := 1.0 / 3.0
+
+# =========================================================
 # ค่าที่เซฟ
 # =========================================================
 @export var job_id: StringName = &"swordsman"
@@ -71,6 +94,10 @@ var aspd: float = 1.0            ## ครั้ง/วินาที
 var move_speed: float = BASE_MOVE_SPEED
 var hp_regen: float = 1.0        ## ต่อวินาที
 var sp_regen: float = 0.5
+## ★ รอบ 45 ★ ดาเมจสุดท้าย +% (ของสวมใส่) · ดูดเลือด/มานา % ของดาเมจที่ทำได้
+var damage_percent: float = 0.0
+var hp_drain_percent: float = 0.0
+var sp_drain_percent: float = 0.0
 
 
 func job() -> JobData:
@@ -97,18 +124,22 @@ func recalculate(keep_ratio: bool = false) -> void:
 	total_luk = clampi(base_luk + _flat(&"luk"), 1, 999)
 
 	# ---------- HP / SP ----------
-	var raw_hp := (j.hp_base + j.hp_per_level * (level - 1)) * (1.0 + total_vit * j.hp_vit_percent / 100.0)
+	# ★ รอบ 45: VIT เพิ่ม HP ทั้งแบบ % (อาชีพ) และแบบตรง ๆ (VIT_HP_FLAT ต่อแต้ม) ★
+	var raw_hp := (j.hp_base + j.hp_per_level * (level - 1)) * (1.0 + total_vit * j.hp_vit_percent / 100.0) \
+		+ total_vit * VIT_HP_FLAT
 	max_hp = maxi(1, int((raw_hp + _flat(&"max_hp")) * (1.0 + _pct(&"max_hp_percent") / 100.0)))
 
-	var raw_sp := (j.sp_base + j.sp_per_level * (level - 1)) * (1.0 + total_int * j.sp_int_percent / 100.0)
+	# ★ รอบ 45: INT เพิ่ม SP ทั้งแบบ % (อาชีพ) และแบบตรง ๆ (INT_SP_FLAT ต่อแต้ม) ★
+	var raw_sp := (j.sp_base + j.sp_per_level * (level - 1)) * (1.0 + total_int * j.sp_int_percent / 100.0) \
+		+ total_int * INT_SP_FLAT
 	max_sp = maxi(1, int((raw_sp + _flat(&"max_sp")) * (1.0 + _pct(&"max_sp_percent") / 100.0)))
 
 	# ---------- ATK (สูตร RO ย่อ) ----------
 	var status_atk := float(level) / 4.0 \
-		+ total_str \
+		+ total_str * STR_ATK \
 		+ pow(floori(total_str / 10.0), 2) \
-		+ total_dex / 5.0 \
-		+ total_luk / 3.0
+		+ total_dex * DEX_ATK \
+		+ total_luk * LUK_ATK
 	atk = maxi(1, int((status_atk * j.atk_mod + weapon_atk + _flat(&"atk")) * (1.0 + _pct(&"atk_percent") / 100.0)))
 
 	# ---------- MATK ----------
@@ -116,14 +147,14 @@ func recalculate(keep_ratio: bool = false) -> void:
 	matk = maxi(1, int((status_matk * j.matk_mod + _flat(&"matk")) * (1.0 + _pct(&"matk_percent") / 100.0)))
 
 	# ---------- DEF / MDEF ----------
-	def = maxi(0, int((floori(total_vit / 2.0) + _flat(&"def")) * j.def_mod * (1.0 + _pct(&"def_percent") / 100.0)))
-	mdef = maxi(0, floori(total_int / 2.0) + _flat(&"mdef"))
+	def = maxi(0, int((floori(total_vit * VIT_DEF) + _flat(&"def")) * j.def_mod * (1.0 + _pct(&"def_percent") / 100.0)))
+	mdef = maxi(0, floori(total_int * INT_MDEF) + _flat(&"mdef"))
 
 	# ---------- HIT / FLEE / CRIT ----------
 	# ★ DEX 1 หน่วย = ความแม่น +1.5% ★ (เดิม +1%) อยากให้ DEX คุ้มกว่านี้อีก แก้ HIT_PER_DEX
 	hit = int((100 + level + total_dex * HIT_PER_DEX + _flat(&"hit")) * j.hit_mod)
-	flee = int((100 + level + total_agi + _flat(&"flee")) * j.flee_mod)
-	crit = 1.0 + total_luk * 0.3 + _flat(&"crit")
+	flee = int((100 + level + total_agi * AGI_FLEE + _flat(&"flee")) * j.flee_mod)
+	crit = 1.0 + total_luk * LUK_CRIT + _flat(&"crit")
 	crit_damage = 1.5 + _pct(&"crit_damage_percent") / 100.0
 
 	# ---------- โบนัสจากเลเวลอาชีพ (Job Level) ----------
@@ -135,15 +166,21 @@ func recalculate(keep_ratio: bool = false) -> void:
 		def += floori(jb / 2.0)
 
 	# ---------- ASPD ----------
-	var aspd_raw := j.aspd_base * (1.0 + total_agi * j.aspd_agi_percent / 100.0 + total_dex * 0.004)
+	var aspd_raw := j.aspd_base * (1.0 + total_agi * j.aspd_agi_percent / 100.0 + total_dex * DEX_ASPD)
 	aspd = maxf(0.2, aspd_raw * (1.0 + (_pct(&"aspd_percent") + _flat(&"aspd_percent")) / 100.0))
 
 	# ---------- ความเร็วเดิน ----------
 	move_speed = BASE_MOVE_SPEED * (1.0 + _pct(&"move_speed_percent") / 100.0)
 
 	# ---------- ฟื้นฟู ----------
-	hp_regen = 1.0 + max_hp / 200.0 + total_vit * 0.05
-	sp_regen = 0.5 + max_sp / 300.0 + total_int * 0.03
+	hp_regen = 1.0 + max_hp / 200.0 + total_vit * VIT_HP_REGEN
+	# ★ รอบ 45: INT เพิ่มอัตราฟื้น SP ชัดขึ้น (0.03 → INT_SP_REGEN) ★
+	sp_regen = 0.5 + max_sp / 300.0 + total_int * INT_SP_REGEN
+
+	# ★ รอบ 45 — ค่า % จากของสวมใส่/การ์ด ★
+	damage_percent = _pct(&"damage_percent")
+	hp_drain_percent = _pct(&"hp_drain_percent")
+	sp_drain_percent = _pct(&"sp_drain_percent")
 
 	# ---------- ปรับ HP/SP ปัจจุบัน ----------
 	if keep_ratio and old_max_hp > 0:
@@ -269,6 +306,28 @@ func raise_stat(stat: StringName) -> bool:
 	stat_points -= stat_cost(stat)
 	_set_base_stat(stat, get_base_stat(stat) + 1)
 	return true
+
+
+## ★ รอบ 45 — รีเซ็ตสเตตัสทั้งหมด คืนแต้มให้ครบ ★ (คืนตามค่าใช้จ่ายจริงของทุกแต้มที่เคยอัพ)
+func reset_stats() -> int:
+	var refund := 0
+	for stat in STAT_NAMES:
+		var base := get_base_stat(stat)
+		for c in range(1, base):
+			refund += floori((c - 1) / 10.0) + 2
+		_set_base_stat(stat, 1)
+	stat_points += refund
+	return refund
+
+
+## รวมแต้มที่เคยอัพไปแล้ว (ไว้โชว์ในหน้าต่าง)
+func spent_stat_points() -> int:
+	var total := 0
+	for stat in STAT_NAMES:
+		var base := get_base_stat(stat)
+		for c in range(1, base):
+			total += floori((c - 1) / 10.0) + 2
+	return total
 
 
 # =========================================================

@@ -6,26 +6,15 @@
 [ext_resource type="Texture2D" uid="uid://cf6w777cwy8i3" path="res://Sprites/fabre_idle.png" id="4_cmmrm"]
 [ext_resource type="Texture2D" uid="uid://pp5i542agjro" path="res://Sprites/fable_die.png" id="4_fe1t8"]
 
-[sub_resource type="Resource" id="Drop_fabre_0"]
-script = ExtResource("2_drop")
-item_id = &"fluff"
-chance = 60.0
-max_count = 3
-
-[sub_resource type="Resource" id="Drop_fabre_1"]
-script = ExtResource("2_drop")
-item_id = &"clover"
-chance = 20.0
-
 [sub_resource type="Resource" id="Drop_fabre_2"]
 script = ExtResource("2_drop")
 item_id = &"cotton_shirt"
-chance = 15.0
+chance = 2.96
 
 [sub_resource type="Resource" id="Drop_fabre_card"]
 script = ExtResource("2_drop")
 item_id = &"card_fabre"
-chance = 5.0
+chance = 0.89
 
 [sub_resource type="Resource" id="Drop_fabre_junk_fabre_silk"]
 script = ExtResource("2_drop")
@@ -251,5 +240,5 @@ wander_walk_max = 2.6
 exp_reward = 18
 zeny_min = 5
 zeny_max = 15
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_fabre_0"), SubResource("Drop_fabre_1"), SubResource("Drop_fabre_2"), SubResource("Drop_fabre_card"), SubResource("Drop_fabre_junk_fabre_silk"), SubResource("Drop_fabre_junk_feeler"), SubResource("Drop_fabre_eq_wooden_shield")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_fabre_2"), SubResource("Drop_fabre_card"), SubResource("Drop_fabre_junk_fabre_silk"), SubResource("Drop_fabre_junk_feeler"), SubResource("Drop_fabre_eq_wooden_shield")])
 respawn_time = 6.0

@@ -95,6 +95,21 @@ enum Slot {
 @export var max_sp: int = 0
 @export var aspd_percent: float = 0.0
 
+# ★ รอบ 45 — โบนัสแบบ % ของของสวมใส่ (การ์ดก็ใส่ได้เพราะสืบทอดมา) ★
+@export_group("Percent Bonus")
+## ดาเมจสุดท้าย +% (ทั้งตีธรรมดาและสกิล)
+@export var damage_percent: float = 0.0
+## DEF +%
+@export var defense_percent: float = 0.0
+## HP สูงสุด +%
+@export var hp_percent: float = 0.0
+## SP สูงสุด +%
+@export var sp_percent: float = 0.0
+## ดูดเลือด: ได้ HP คืน = % ของดาเมจที่ทำกับมอน
+@export var hp_drain_percent: float = 0.0
+## ดูดมานา: ได้ SP คืน = % ของดาเมจที่ทำกับมอน
+@export var sp_drain_percent: float = 0.0
+
 @export_group("Stat Bonus")
 @export var bonus_str: int = 0
 @export var bonus_agi: int = 0
@@ -124,6 +139,11 @@ enum Slot {
 ## % ของ MaxHP ที่ฟื้นเพิ่ม
 @export var heal_hp_percent: float = 0.0
 @export var heal_sp_percent: float = 0.0
+## ★ รอบ 45 — ไอเทมพิเศษ ★ reset_skills = รีสกิล · reset_stats = รีสเตตัส (ว่าง = ไม่มี)
+@export var special_effect: StringName = &""
+## ★ รอบ 45 — บัฟชั่วคราวจากไอเทม ★ ใส่ค่าเหมือนบัฟสกิล เช่น {"aspd_percent": 10.0} · buff_duration = วินาที
+@export var buff_values: Dictionary = {}
+@export var buff_duration: float = 0.0
 
 
 func is_equipment() -> bool:

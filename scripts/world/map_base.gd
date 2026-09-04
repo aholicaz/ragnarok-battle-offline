@@ -68,6 +68,9 @@ func _ready() -> void:
 	_spawn_player()
 	_setup_camera()
 	_warm_sprite_fit()
+	# ★ รอบ 52 — เพลงประจำแมพ ★ หาไฟล์ Sprites/music/<map_id>.mp3 ให้เอง (ไม่มี = เงียบ)
+	if Game.music != null:
+		Game.music.play_for_map(map_id)
 	Events.say(display_name)
 
 

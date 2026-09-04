@@ -11,6 +11,38 @@ func _init(p_size: int = 40) -> void:
 	slots.resize(size)
 
 
+## ★ รอบ 50 — เปลี่ยนจำนวนช่อง (STR ทุก 5 แต้มได้ +1 ช่อง) ★
+## ★★ ห้ามทำของหาย ★★ ตอนย่อ: ย้ายของที่อยู่เกินช่องใหม่ลงมาช่องว่างข้างล่างก่อน
+## ถ้าข้างล่างเต็ม จะย่อได้แค่ถึงช่องสุดท้ายที่ยังมีของ (ค้างไว้จนผู้เล่นใช้/ทิ้งของออก)
+func set_size(new_size: int) -> void:
+	new_size = maxi(1, new_size)
+	if new_size == size:
+		return
+	if new_size > size:
+		size = new_size
+		slots.resize(size)
+	else:
+		for i in range(new_size, size):
+			if slots[i] == null:
+				continue
+			var dest := -1
+			for j in range(new_size):
+				if slots[j] == null:
+					dest = j
+					break
+			if dest < 0:
+				break
+			slots[dest] = slots[i]
+			slots[i] = null
+		var last := 0
+		for i in range(size):
+			if slots[i] != null:
+				last = i + 1
+		size = maxi(new_size, last)
+		slots.resize(size)
+	Events.inventory_changed.emit()
+
+
 func used_slots() -> int:
 	var n := 0
 	for s in slots:
@@ -189,6 +221,9 @@ func to_array() -> Array:
 
 func from_array(arr: Array) -> void:
 	slots.clear()
+	# ★ รอบ 50 ★ เซฟเก่าอาจมีช่องมากกว่าตอนนี้ (STR สูง) — ขยายรับให้หมดก่อน ของจะได้ไม่หาย
+	# (PlayerState.refresh() จะย่อกลับให้พอดีเองทีหลัง)
+	size = maxi(size, arr.size())
 	slots.resize(size)
 	for i in range(mini(arr.size(), size)):
 		var d = arr[i]

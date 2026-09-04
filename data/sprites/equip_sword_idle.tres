@@ -1,0 +1,14 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://c04ucofe3wjxi"]
+
+[ext_resource type="Texture2D" path="res://Sprites/equip/sword_idle.png" id="tex_1"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("tex_1")
+}],
+"loop": 1,
+"name": &"Idle",
+"speed": 5.0
+}]

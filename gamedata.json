@@ -37,7 +37,7 @@
    "monster": "",
    "fits": "—",
    "src": [
-    "ดรอป: หมาป่า 30.0% x1-2",
+    "ดรอป: ชอนชอน 3.0%",
     "ร้าน: พ่อค้าโทนี่"
    ]
   },
@@ -2762,7 +2762,7 @@
    "name": "ชอนชอน",
    "boss": false,
    "lv": 9,
-   "hp": 130,
+   "hp": 230,
    "atk": [
     20,
     27
@@ -2780,8 +2780,8 @@
    "detect": 320.0,
    "range": 84.0,
    "height": 150.0,
-   "exp": 48,
-   "jobexp": 34,
+   "exp": 58,
+   "jobexp": 41,
    "jobauto": true,
    "zeny": [
     14,
@@ -2830,6 +2830,13 @@
      "id": "chonchon_eye",
      "name": "เขี้ยวหมูป่า",
      "chance": 8.0,
+     "min": 1,
+     "max": 1
+    },
+    {
+     "id": "meat",
+     "name": "เนื้อย่าง",
+     "chance": 3.0,
      "min": 1,
      "max": 1
     }
@@ -2975,13 +2982,6 @@
      "chance": 55.0,
      "min": 1,
      "max": 3
-    },
-    {
-     "id": "meat",
-     "name": "เนื้อย่าง",
-     "chance": 30.0,
-     "min": 1,
-     "max": 2
     },
     {
      "id": "phracon",
@@ -4441,30 +4441,6 @@
    ]
   },
   {
-   "id": "slash",
-   "name": "Slash (พุ่งฟัน)",
-   "type": "พุ่งฟัน",
-   "typeIdx": 5,
-   "lv": 1,
-   "maxlv": 10,
-   "desc": "พุ่งตัวไปข้างหน้าอย่างรวดเร็ว ฟันมอนสเตอร์ทุกตัวที่ขวางทาง โดนตัวละ 5 ครั้ง",
-   "sp": 1,
-   "spLv": 2.0,
-   "cd": 4.0,
-   "mult": 1.6,
-   "multLv": 0.3,
-   "rx": 130.0,
-   "ry": 90.0,
-   "targets": 0,
-   "req": [
-    [
-     "bash",
-     "5"
-    ]
-   ],
-   "effects": []
-  },
-  {
    "id": "sword_mastery",
    "name": "Sword Mastery (เชี่ยวชาญดาบ)",
    "type": "พาสซีฟ",
@@ -4568,6 +4544,30 @@
      "10.0"
     ]
    ]
+  },
+  {
+   "id": "slash",
+   "name": "Slash (พุ่งฟัน)",
+   "type": "พุ่งฟัน",
+   "typeIdx": 5,
+   "lv": 15,
+   "maxlv": 10,
+   "desc": "พุ่งตัวไปข้างหน้าอย่างรวดเร็ว ฟันมอนสเตอร์ทุกตัวที่ขวางทาง โดนตัวละ 5 ครั้ง",
+   "sp": 8,
+   "spLv": 2.0,
+   "cd": 4.0,
+   "mult": 1.6,
+   "multLv": 0.3,
+   "rx": 130.0,
+   "ry": 90.0,
+   "targets": 0,
+   "req": [
+    [
+     "bash",
+     "5"
+    ]
+   ],
+   "effects": []
   }
  ],
  "maps": [
@@ -8147,5 +8147,403 @@
    "npcs": 15,
    "skills": 8
   }
+ },
+ "stats": {
+  "effects": [
+   {
+    "id": "str",
+    "name": "STR",
+    "thai": "พลัง",
+    "color": "#e07a5f",
+    "summary": "พลังโจมตี + ช่องกระเป๋า — ตัวหลักของสายดาบ",
+    "rows": [
+     {
+      "what": "ATK",
+      "per": "1.15",
+      "const": "STR_ATK × atk_mod",
+      "file": "player_stats.gd + jobs/*.tres",
+      "note": "STR_ATK = 1 · นักดาบ atk_mod = 1.15"
+     },
+     {
+      "what": "ATK โบนัสก้อน",
+      "per": "ทุก 10 แต้ม",
+      "const": "(STR/10)² (ฝังในสูตร)",
+      "file": "player_stats.gd บรรทัด status_atk",
+      "note": "STR 10 → +1 · 20 → +4 · 30 → +9 · 40 → +16 (คูณ atk_mod อีกที) — ยิ่งอัพเป็นสิบยิ่งคุ้ม"
+     },
+     {
+      "what": "ช่องกระเป๋า",
+      "per": "1 ทุก 5 แต้ม",
+      "const": "STR_PER_BAG_SLOT",
+      "file": "player_stats.gd",
+      "note": "ฐาน 40 ช่อง · STR 50 = 50 ช่อง · STR 99 = 59 ช่อง — ★ ลด STR แล้วช่องหดลง แต่ของไม่หาย (ระบบย้ายลงช่องว่างก่อน · ถ้าไม่พอจะค้างช่องไว้จนใช้ของออก) ★"
+     }
+    ]
+   },
+   {
+    "id": "agi",
+    "name": "AGI",
+    "thai": "ความคล่องแคล่ว",
+    "color": "#5cc98f",
+    "summary": "หลบเก่ง + ตีถี่ขึ้น",
+    "rows": [
+     {
+      "what": "FLEE (โอกาสหลบ)",
+      "per": "1",
+      "const": "AGI_FLEE × flee_mod",
+      "file": "player_stats.gd + jobs/*.tres",
+      "note": "FLEE 1 แต้ม = มอนตีพลาดเพิ่ม 1% ตรง ๆ (สูตร: 72 + HIT มอน − FLEE เรา)"
+     },
+     {
+      "what": "ASPD (ความเร็วโจมตี)",
+      "per": "0.013 ครั้ง/วิ",
+      "const": "aspd_agi_percent",
+      "file": "data/jobs/*.tres",
+      "note": "= +1.2% ของ ASPD พื้นฐาน (1.1 ครั้ง/วิ) ต่อแต้ม"
+     }
+    ]
+   },
+   {
+    "id": "vit",
+    "name": "VIT",
+    "thai": "ความอึด",
+    "color": "#e0a94f",
+    "summary": "เลือดหนา + ทนดาเมจ — ★ ยิ่งเลเวลสูง VIT ยิ่งให้ HP เยอะขึ้น ★",
+    "rows": [
+     {
+      "what": "HP สูงสุด (Lv.1)",
+      "per": "6.54",
+      "const": "VIT_HP_FLAT + hp_vit_percent",
+      "file": "player_stats.gd + jobs/*.tres",
+      "note": "= 6 (ตรง ๆ) + 1.2% ของ HP พื้นฐาน"
+     },
+     {
+      "what": "HP สูงสุด (Lv.50)",
+      "per": "15.948",
+      "const": "— (ค่าเดียวกัน)",
+      "file": "—",
+      "note": "ส่วน % คิดจาก HP พื้นฐานซึ่งโตตามเลเวล → VIT แต้มเดียวกันให้ HP มากขึ้นเรื่อย ๆ"
+     },
+     {
+      "what": "HP สูงสุด (Lv.99)",
+      "per": "25.356",
+      "const": "—",
+      "file": "—",
+      "note": ""
+     },
+     {
+      "what": "DEF",
+      "per": "0.6",
+      "const": "VIT_DEF × def_mod",
+      "file": "player_stats.gd + jobs/*.tres",
+      "note": "ปัดเศษลงก่อนคูณ → ได้จริงทุก 2 แต้ม · DEF 100 = ลดดาเมจครึ่งหนึ่ง (100/(100+DEF)) ผลตอบแทนลดหลั่น"
+     },
+     {
+      "what": "ฟื้น HP",
+      "per": "0.05/วิ",
+      "const": "VIT_HP_REGEN",
+      "file": "player_stats.gd",
+      "note": ""
+     }
+    ]
+   },
+   {
+    "id": "int",
+    "name": "INT",
+    "thai": "ปัญญา",
+    "color": "#6aa8e0",
+    "summary": "มานาและเวทย์ — สายดาบใช้แค่ให้สกิลพอร่าย",
+    "rows": [
+     {
+      "what": "SP สูงสุด (Lv.1)",
+      "per": "4.12",
+      "const": "INT_SP_FLAT + sp_int_percent",
+      "file": "player_stats.gd + jobs/*.tres",
+      "note": "= 4 (ตรง ๆ) + 1% ของ SP พื้นฐาน"
+     },
+     {
+      "what": "SP สูงสุด (Lv.50)",
+      "per": "5.345",
+      "const": "—",
+      "file": "—",
+      "note": ""
+     },
+     {
+      "what": "ฟื้น SP",
+      "per": "0.12/วิ",
+      "const": "INT_SP_REGEN",
+      "file": "player_stats.gd",
+      "note": "ตัวนี้แรงสุดของ INT สำหรับสายดาบ — ร่ายสกิลถี่ขึ้นชัดเจน"
+     },
+     {
+      "what": "MATK",
+      "per": "0.5",
+      "const": "matk_mod",
+      "file": "data/jobs/*.tres",
+      "note": "+ โบนัสก้อนทุก 7 แต้ม (INT/7)² · นักดาบ matk_mod = 0.5 จึงแทบไม่มีผล"
+     },
+     {
+      "what": "MDEF",
+      "per": "0.5",
+      "const": "INT_MDEF",
+      "file": "player_stats.gd",
+      "note": "ปัดเศษลง → ได้จริงทุก 2 แต้ม · ไม่มีตัวคูณอาชีพ"
+     }
+    ]
+   },
+   {
+    "id": "dex",
+    "name": "DEX",
+    "thai": "ความแม่นยำ",
+    "color": "#c9a0e0",
+    "summary": "ตีไม่พลาด + ร่ายสกิลถี่ขึ้น — ★ แต้มแรก ๆ คุ้มที่สุดถ้ารู้สึกว่าตีพลาดบ่อย ★",
+    "rows": [
+     {
+      "what": "HIT (ความแม่น)",
+      "per": "1.5",
+      "const": "HIT_PER_DEX × hit_mod",
+      "file": "player_stats.gd + jobs/*.tres",
+      "note": "HIT 1 แต้ม = โอกาสตีเข้าเพิ่ม 1% ตรง ๆ (สูตร: 85 + HIT เรา − FLEE มอน · เพดาน 98%)"
+     },
+     {
+      "what": "ATK",
+      "per": "0.23",
+      "const": "DEX_ATK × atk_mod",
+      "file": "player_stats.gd + jobs/*.tres",
+      "note": ""
+     },
+     {
+      "what": "ASPD",
+      "per": "0.004 ครั้ง/วิ",
+      "const": "DEX_ASPD",
+      "file": "player_stats.gd",
+      "note": "= +0.4% ของ ASPD พื้นฐาน ต่อแต้ม (น้อยกว่า AGI ประมาณ 3 เท่า)"
+     },
+     {
+      "what": "ลดคูลดาวน์สกิล",
+      "per": "1% ทุก 5 แต้ม",
+      "const": "DEX_PER_COOLDOWN",
+      "file": "player_stats.gd",
+      "note": "DEX 50 = ลด 10% · DEX 99 = ลด 19% · เพดาน 50% (MAX_COOLDOWN_REDUCTION) · ของสวมใส่เพิ่มได้ด้วยคีย์ cooldown_reduction_percent"
+     }
+    ]
+   },
+   {
+    "id": "luk",
+    "name": "LUK",
+    "thai": "โชค",
+    "color": "#e0c94f",
+    "summary": "คริติคอล — ★ คริทะลุ DEF ทั้งหมด ยิ่งตีมอนเกราะหนายิ่งคุ้ม ★",
+    "rows": [
+     {
+      "what": "CRIT (โอกาสคริ)",
+      "per": "0.3%",
+      "const": "LUK_CRIT",
+      "file": "player_stats.gd",
+      "note": "คริ = ข้าม DEF ของเป้าหมายทั้งหมด แล้วคูณดาเมจ ×1.5 (crit_damage)"
+     },
+     {
+      "what": "ATK",
+      "per": "0.383",
+      "const": "LUK_ATK × atk_mod",
+      "file": "player_stats.gd + jobs/*.tres",
+      "note": ""
+     }
+    ]
+   }
+  ],
+  "levelGain": [
+   {
+    "what": "แต้มสเตตัส",
+    "per": "3 + (เลเวล ÷ 5)",
+    "note": "Lv.10 ได้ 5 แต้ม · Lv.50 ได้ 13 แต้ม (`add_exp`)"
+   },
+   {
+    "what": "ATK",
+    "per": "+0.25 × atk_mod",
+    "note": "สูตร status_atk มี level/4 อยู่"
+   },
+   {
+    "what": "HIT",
+    "per": "+1",
+    "note": "100 + level + DEX×1.5"
+   },
+   {
+    "what": "FLEE",
+    "per": "+1",
+    "note": "100 + level + AGI×1"
+   },
+   {
+    "what": "HP สูงสุด",
+    "per": "+16 × (1 + VIT×1.2%)",
+    "note": "hp_per_level ในไฟล์อาชีพ"
+   },
+   {
+    "what": "SP สูงสุด",
+    "per": "+2.5 × (1 + INT×1%)",
+    "note": "sp_per_level ในไฟล์อาชีพ"
+   }
+  ],
+  "jobLevelGain": [
+   {
+    "what": "แต้มสกิล",
+    "per": "+1",
+    "note": "ทุกระดับ (`add_job_exp`)"
+   },
+   {
+    "what": "ATK",
+    "per": "+1",
+    "note": "บวกตรง ๆ ไม่คูณ atk_mod"
+   },
+   {
+    "what": "HIT",
+    "per": "+1",
+    "note": ""
+   },
+   {
+    "what": "DEF",
+    "per": "+1 ทุก 2 ระดับ",
+    "note": "Job Lv.50 = DEF +24"
+   }
+  ],
+  "cost": {
+   "formula": "((แต้มปัจจุบัน − 1) ÷ 10) + 2",
+   "note": "ปัดเศษลง — 1→10 จ่ายแต้มละ 2 · 11→20 จ่าย 3 · 21→30 จ่าย 4 … สูงสุด 99",
+   "table": [
+    {
+     "range": "1 → 10",
+     "cost": 2
+    },
+    {
+     "range": "11 → 20",
+     "cost": 3
+    },
+    {
+     "range": "21 → 30",
+     "cost": 4
+    },
+    {
+     "range": "31 → 40",
+     "cost": 5
+    },
+    {
+     "range": "41 → 50",
+     "cost": 6
+    },
+    {
+     "range": "51 → 60",
+     "cost": 7
+    }
+   ]
+  },
+  "formulas": [
+   {
+    "name": "โอกาสตีเข้า (ผู้เล่น → มอน)",
+    "text": "85 + HIT ของเรา − FLEE ของมอน",
+    "note": "จำกัด 5% ถึง 98% · มอนเลเวลต่ำกว่า 15 โดนลดค่าหลบ 20%"
+   },
+   {
+    "name": "โอกาสมอนตีเราเข้า",
+    "text": "72 + HIT ของมอน − FLEE ของเรา",
+    "note": "ฐานคนละตัวกับฝั่งเรา — ปรับความแม่นของเราได้โดยมอนไม่แม่นตาม"
+   },
+   {
+    "name": "ลดดาเมจจาก DEF",
+    "text": "ดาเมจ × 100 ÷ (100 + DEF)",
+    "note": "DEF 50 = ลด 33% · DEF 100 = ลด 50% · DEF 200 = ลด 67% (ผลตอบแทนลดหลั่น)"
+   },
+   {
+    "name": "คริติคอล",
+    "text": "ข้าม DEF ทั้งหมด แล้ว × crit_damage (1.5)",
+    "note": "ยิ่งเป้าหมาย DEF สูง คริยิ่งได้เปรียบ"
+   },
+   {
+    "name": "ดาเมจแกว่ง",
+    "text": "× สุ่ม 0.88 ถึง 1.12",
+    "note": "DAMAGE_VARIANCE ใน combat.gd"
+   },
+   {
+    "name": "เวลาระหว่างตี 1 ครั้ง",
+    "text": "1 ÷ ASPD วินาที",
+    "note": "ASPD 1.1 ครั้ง/วิ = ตีทุก 0.909 วิ"
+   }
+  ],
+  "consts": {
+   "AGI_FLEE": 1.0,
+   "BASE_MOVE_SPEED": 430.0,
+   "DEX_ASPD": 0.004,
+   "DEX_ATK": 0.2,
+   "DEX_PER_COOLDOWN": 5.0,
+   "HIT_PER_DEX": 1.5,
+   "INT_MDEF": 0.5,
+   "INT_SP_FLAT": 4.0,
+   "INT_SP_REGEN": 0.12,
+   "LUK_ATK": 0.3333333333333333,
+   "LUK_CRIT": 0.3,
+   "MAX_COOLDOWN_REDUCTION": 50.0,
+   "MAX_JOB_LEVEL": 50.0,
+   "MAX_LEVEL": 99.0,
+   "MAX_STAT": 99.0,
+   "STAT_NAMES": 0.0,
+   "STR_ATK": 1.0,
+   "STR_PER_BAG_SLOT": 5.0,
+   "VIT_DEF": 0.5,
+   "VIT_HP_FLAT": 6.0,
+   "VIT_HP_REGEN": 0.05
+  },
+  "combatConsts": {
+   "BASE_HIT_RATE": 85.0,
+   "DAMAGE_VARIANCE": 0.12,
+   "ELEMENT_CHART": 0.0,
+   "LOW_LEVEL_FLEE_CAP": 15.0,
+   "LOW_LEVEL_FLEE_REDUCTION": 0.2,
+   "MAX_HIT_RATE": 98.0,
+   "MIN_HIT_RATE": 5.0,
+   "MONSTER_BASE_HIT_RATE": 72.0
+  },
+  "jobs": [
+   {
+    "id": 0.0,
+    "display_name": "มือใหม่",
+    "hp_base": 35.0,
+    "hp_per_level": 10.0,
+    "hp_vit_percent": 1.0,
+    "sp_base": 10.0,
+    "sp_per_level": 2.0,
+    "sp_int_percent": 1.0,
+    "atk_mod": 1.0,
+    "matk_mod": 0.6,
+    "def_mod": 1.0,
+    "hit_mod": 1.0,
+    "flee_mod": 1.0,
+    "aspd_base": 1.0,
+    "aspd_agi_percent": 1.0,
+    "job_change_level": 10.0,
+    "file": "novice.tres"
+   },
+   {
+    "id": 0.0,
+    "display_name": "นักดาบ",
+    "hp_base": 45.0,
+    "hp_per_level": 16.0,
+    "hp_vit_percent": 1.2,
+    "sp_base": 12.0,
+    "sp_per_level": 2.5,
+    "sp_int_percent": 1.0,
+    "atk_mod": 1.15,
+    "matk_mod": 0.5,
+    "def_mod": 1.2,
+    "hit_mod": 1.0,
+    "flee_mod": 1.0,
+    "aspd_base": 1.1,
+    "aspd_agi_percent": 1.2,
+    "job_change_level": 40.0,
+    "file": "swordsman.tres"
+   }
+  ],
+  "mainJob": "นักดาบ",
+  "maxLevel": 99,
+  "maxJobLevel": 50,
+  "moveSpeed": 430.0
  }
 }

@@ -38,10 +38,16 @@ var _scene_cache: Dictionary = {}      # path -> PackedScene
 var _cache_order: Array[String] = []
 
 
+## ★ รอบ 52 — เพลงประจำแมพ ★ เรียกใช้ผ่าน Game.music (ดู scripts/core/music_player.gd)
+var music: MusicPlayer
+
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	InputSetup.ensure()
 	_build_fade()
+	music = MusicPlayer.new()
+	add_child(music)
 	var loading_root := Node.new()
 	loading_root.name = "Loading"
 	_loading_scene = PackedScene.new()

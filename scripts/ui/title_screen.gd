@@ -28,6 +28,9 @@ var _t := 0.0
 
 
 func _ready() -> void:
+	# ★ รอบ 52 — เพลงหน้าหลัก (วางไฟล์ Sprites/music/title.mp3 แล้วเล่นเอง) ★
+	if Game.music != null:
+		Game.music.play_key("title")
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	if UI != null:

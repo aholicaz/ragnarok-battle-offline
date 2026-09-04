@@ -11,16 +11,30 @@ const COLUMNS := 8
 const SLOT_SIZE := Vector2(50, 50)
 
 # ---- โทนสีครีม-ชมพูแบบตัวอย่าง ----
-const C_BG := Color(0.957, 0.918, 0.824, 0.88)   # พื้นหน้าต่าง ครีม โปร่งแสงเล็กน้อย (รอบ 39)
-const C_BORDER := Color("#8a6f4d")      # ขอบน้ำตาล
-const C_BAR := Color(0.99, 0.975, 0.945, 0.92)   # แถบหัวเรื่อง ขาว (รอบ 39 — เดิมชมพู)
-const C_SLOT := Color(0.902, 0.847, 0.722, 0.72) # ช่องว่าง (โปร่งแสงมองทะลุนิด ๆ)
-const C_SLOT_EDGE := Color("#b39a6f")
-const C_SLOT_SEL := Color("#fff3c4")    # ช่องที่เลือก
-const C_TEXT := Color("#4a3a2a")        # ตัวหนังสือเข้ม
-const C_TEXT_DIM := Color("#8a795f")
-const C_COUNT := Color("#e0314e")       # เลขจำนวน สีแดง
-const C_GOLD := Color("#b8860b")
+## ★★ รอบ 48 — โทนสีเดียวกับ HUD (แผงเลือด + แถบช่องลัดสกิล) ★★
+## ทุกสีอ้างจาก UITheme เดียวกับ HUD — อยากเปลี่ยนทั้งเกมแก้ที่ ui_theme.gd ที่เดียว
+## (โทนครีมรอบ 39 เก็บไว้ที่ inventory_window_ก่อนรอบ48.gd.bak)
+const C_BG := Color("#161b28cc")          # พื้นหน้าต่าง = แผง HUD (โปร่งแสงเท่ากัน)
+const C_BORDER := UITheme.BORDER          # ขอบหน้าต่าง/ปุ่มตอนชี้
+const C_BAR := UITheme.PANEL              # แถบหัวเรื่อง
+const C_SLOT := UITheme.PANEL_LIGHT       # ช่องว่าง = ช่องลัดสกิลบน HUD
+const C_SLOT_EDGE := UITheme.BORDER       # ขอบช่อง
+const C_SLOT_SEL := Color("#3d4a70")      # ช่องที่เลือก (= ช่องลัดตอนไฮไลต์)
+const C_SEL_EDGE := UITheme.ACCENT        # ขอบช่อง/ปุ่ม/แท็บที่เลือก (เหลืองทอง)
+const C_TEXT := UITheme.TEXT
+const C_TEXT_DIM := UITheme.TEXT_DIM
+const C_COUNT := Color("#ff8a8a")         # เลขจำนวน (แดงอ่อนบนพื้นเข้ม)
+const C_COUNT_OUTLINE := Color.BLACK
+const C_GOLD := UITheme.ACCENT            # ซีนี/ขอบทอง
+const C_BTN := UITheme.PANEL_LIGHT        # ปุ่มปกติ
+const C_BTN_HOVER := Color("#3d4a70")     # ปุ่มตอนชี้
+const C_BTN_DISABLED := UITheme.PANEL
+const C_FIELD := UITheme.BG               # ช่องพิมพ์ค้นหา
+const C_FIELD_FOCUS := UITheme.PANEL_LIGHT
+const C_ZENY_BG := UITheme.PANEL
+const C_ZENY_TEXT := Color("#ffe9a0")     # สีเดียวกับซีนีบน HUD
+const C_FRAME := UITheme.PANEL            # กรอบรูปตัวละคร
+const C_INNER := Color("#1e2537aa")       # แผงย่อยในหน้าต่าง (ตารางช่อง/แถบซีนี/กล่องสเตตัส)
 
 const TAB_NAMES := ["ของใช้", "สวมใส่", "อื่น ๆ"]
 
@@ -55,7 +69,7 @@ func _ready() -> void:
 	var root := get_child(0)
 	var bar := root.get_child(0) as PanelContainer
 	bar.add_theme_stylebox_override("panel", _style(C_BAR, C_BORDER, 8))
-	title_label.add_theme_color_override("font_color", Color("#5a4a33"))
+	title_label.add_theme_color_override("font_color", C_TEXT)
 	Events.inventory_changed.connect(refresh)
 	Events.zeny_changed.connect(func(_z): refresh())
 
@@ -73,7 +87,7 @@ static func _style(bg: Color, border: Color, radius: int = 6, margin: float = 6.
 func _slot_box(selected: bool = false) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
 	s.bg_color = C_SLOT_SEL if selected else C_SLOT
-	s.border_color = Color("#d19a2f") if selected else C_SLOT_EDGE
+	s.border_color = C_SEL_EDGE if selected else C_SLOT_EDGE
 	s.set_border_width_all(2 if selected else 1)
 	s.set_corner_radius_all(6)
 	return s
@@ -89,9 +103,9 @@ func _cream_button(text: String, min_width: float = 0.0) -> Button:
 	b.add_theme_color_override("font_color", C_TEXT)
 	b.add_theme_color_override("font_hover_color", C_TEXT)
 	b.add_theme_color_override("font_pressed_color", C_TEXT)
-	b.add_theme_stylebox_override("normal", _style(Color("#efdfbc"), C_SLOT_EDGE, 8, 4))
-	b.add_theme_stylebox_override("hover", _style(Color("#f8ecd0"), C_BORDER, 8, 4))
-	b.add_theme_stylebox_override("pressed", _style(C_SLOT_SEL, Color("#d19a2f"), 8, 4))
+	b.add_theme_stylebox_override("normal", _style(C_BTN, C_SLOT_EDGE, 8, 4))
+	b.add_theme_stylebox_override("hover", _style(C_BTN_HOVER, C_BORDER, 8, 4))
+	b.add_theme_stylebox_override("pressed", _style(C_SLOT_SEL, C_SEL_EDGE, 8, 4))
 	return b
 
 
@@ -138,8 +152,8 @@ func _build_content() -> void:
 	_search_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_search_edit.add_theme_font_size_override("font_size", 14)
 	_search_edit.add_theme_color_override("font_color", C_TEXT)
-	_search_edit.add_theme_stylebox_override("normal", _style(Color("#e2d3b0"), C_SLOT_EDGE, 8, 5))
-	_search_edit.add_theme_stylebox_override("focus", _style(Color("#f8ecd0"), C_BORDER, 8, 5))
+	_search_edit.add_theme_stylebox_override("normal", _style(C_FIELD, C_SLOT_EDGE, 8, 5))
+	_search_edit.add_theme_stylebox_override("focus", _style(C_FIELD_FOCUS, C_SEL_EDGE, 8, 5))
 	_search_edit.text_changed.connect(func(t: String):
 		_search = t.strip_edges()
 		refresh())
@@ -160,7 +174,7 @@ func _build_content() -> void:
 
 	# ---------- กริดช่องไอเทม ----------
 	var grid_panel := PanelContainer.new()
-	grid_panel.add_theme_stylebox_override("panel", _style(Color(0.925, 0.875, 0.753, 0.55), C_SLOT_EDGE, 10, 6))
+	grid_panel.add_theme_stylebox_override("panel", _style(C_INNER, C_SLOT_EDGE, 10, 6))
 	content.add_child(grid_panel)
 	_grid = GridContainer.new()
 	_grid.columns = COLUMNS
@@ -198,7 +212,7 @@ func _build_content() -> void:
 		# ★ เลขจำนวนสีแดง มุมขวาล่าง เหมือนตัวอย่าง ★
 		cnt.add_theme_font_size_override("font_size", 12)
 		cnt.add_theme_color_override("font_color", C_COUNT)
-		cnt.add_theme_color_override("font_outline_color", Color("#fff6e0"))
+		cnt.add_theme_color_override("font_outline_color", C_COUNT_OUTLINE)
 		cnt.add_theme_constant_override("outline_size", 4)
 		_slot_counts.append(cnt)
 		_display_to_slot.append(-1)
@@ -233,7 +247,7 @@ func _build_content() -> void:
 
 	# ---------- แถบเงินล่างสุด (แบบตัวอย่าง) ----------
 	var money_bar := PanelContainer.new()
-	money_bar.add_theme_stylebox_override("panel", _style(Color(0.937, 0.875, 0.737, 0.8), C_BORDER, 10, 5))
+	money_bar.add_theme_stylebox_override("panel", _style(C_INNER, C_BORDER, 10, 5))
 	content.add_child(money_bar)
 	var money_box := HBoxContainer.new()
 	money_box.add_theme_constant_override("separation", 8)
@@ -245,9 +259,9 @@ func _build_content() -> void:
 	money_box.add_child(sp2)
 	money_box.add_child(_label("ซีนี", 14, C_GOLD))
 	var zeny_panel := PanelContainer.new()
-	zeny_panel.add_theme_stylebox_override("panel", _style(Color("#fff4d6"), C_GOLD, 8, 4))
+	zeny_panel.add_theme_stylebox_override("panel", _style(C_ZENY_BG, C_GOLD, 8, 4))
 	zeny_panel.custom_minimum_size.x = 150
-	_zeny_label = _label("0", 15, Color("#7a5a10"))
+	_zeny_label = _label("0", 15, C_ZENY_TEXT)
 	_zeny_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_zeny_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	zeny_panel.add_child(_zeny_label)
@@ -412,8 +426,8 @@ func refresh() -> void:
 	for i in range(_tab_buttons.size()):
 		var tb := _tab_buttons[i]
 		tb.add_theme_stylebox_override("normal",
-			_style(C_SLOT_SEL if i == _tab else Color("#efdfbc"),
-				Color("#d19a2f") if i == _tab else C_SLOT_EDGE, 8, 4))
+			_style(C_SLOT_SEL if i == _tab else C_BTN,
+				C_SEL_EDGE if i == _tab else C_SLOT_EDGE, 8, 4))
 
 	# ---------- กรองช่องตามแท็บ + คำค้น ----------
 	var shown: Array[int] = []

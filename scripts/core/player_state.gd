@@ -200,6 +200,10 @@ func refresh(keep_ratio: bool = true) -> void:
 	stats.weapon_atk = equipment.weapon_atk()
 	stats.recalculate(keep_ratio)
 
+	# ★ รอบ 50 — ช่องกระเป๋าตาม STR ★ (set_size ปลอดภัยกับของที่มีอยู่แล้ว)
+	if inventory != null:
+		inventory.set_size(INVENTORY_SIZE + stats.bag_bonus_slots)
+
 	Events.stats_changed.emit()
 	Events.hp_changed.emit(stats.hp, stats.max_hp)
 	Events.sp_changed.emit(stats.sp, stats.max_sp)
@@ -691,7 +695,8 @@ func commit_skill_use(skill_id: StringName) -> bool:
 	var s := GameData.get_skill(skill_id)
 	var lv := skills.level_of(skill_id)
 	spend_sp(s.sp_cost(lv))
-	cooldowns[skill_id] = s.cooldown
+	# ★ รอบ 50 — DEX ลดคูลดาวน์ (ดู PlayerStats.cooldown_reduction) ★
+	cooldowns[skill_id] = s.cooldown * (1.0 - stats.cooldown_reduction / 100.0)
 	Events.skill_used.emit(skill_id, lv)
 	return true
 

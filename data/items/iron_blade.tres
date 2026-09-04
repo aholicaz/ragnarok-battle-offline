@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="ItemData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1_item"]
 [ext_resource type="Texture2D" path="res://Sprites/items/placeholder/iron_blade.png" id="2_icon"]
+[ext_resource type="SpriteFrames" path="res://data/sprites/equip_sword_idle.tres" id="equipframes"]
 
 [resource]
 script = ExtResource("1_item")
@@ -25,3 +26,4 @@ atk = 50
 def = 3
 refinable = true
 refine_atk_per_level = 3
+equip_sprite_frames = ExtResource("equipframes")

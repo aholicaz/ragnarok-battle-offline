@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="SpriteFrames" path="res://data/sprites/monsters/hornet_frames.tres" id="1_frames"]
+[ext_resource type="Script" path="res://scripts/tools/monster_preview.gd" id="2_script"]
+
+[node name="hornet_preview" type="Node2D"]
+script = ExtResource("2_script")
+monster_id = &"hornet"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -120)
+sprite_frames = ExtResource("1_frames")
+animation = &"Idle"
+autoplay = "Idle"

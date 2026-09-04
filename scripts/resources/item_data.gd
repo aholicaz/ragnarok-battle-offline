@@ -109,6 +109,8 @@ enum Slot {
 @export var hp_drain_percent: float = 0.0
 ## ดูดมานา: ได้ SP คืน = % ของดาเมจที่ทำกับมอน
 @export var sp_drain_percent: float = 0.0
+## ★ รอบ 51 ★ ลดคูลดาวน์สกิล +% (รวมกับที่ได้จาก DEX · เพดานรวม PlayerStats.MAX_COOLDOWN_REDUCTION)
+@export var cooldown_reduction_percent: float = 0.0
 
 @export_group("Stat Bonus")
 @export var bonus_str: int = 0

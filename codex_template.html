@@ -170,6 +170,24 @@ td.src{color:var(--ink-2); font-size:12.5px; min-width:190px}
 .hcard .big{font-family:"Chakra Petch",sans-serif; font-size:26px; font-weight:700; line-height:1; color:var(--moss)}
 .hcard.warn .big{color:var(--gold)}
 
+/* ---------- สเตตัส ---------- */
+.stat-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:14px}
+.stat{background:var(--surface); border:1px solid var(--line-soft); border-left:4px solid var(--sc); border-radius:var(--r); padding:13px 15px 11px; box-shadow:var(--shadow)}
+.stat h3{font-size:19px; font-weight:700; color:var(--sc); letter-spacing:.02em}
+.stat h3 small{font-family:"IBM Plex Sans Thai",sans-serif; font-size:13px; font-weight:500; color:var(--ink-2); letter-spacing:0; margin-left:7px}
+.stat .lede{font-size:12.5px; color:var(--ink-2); margin:4px 0 10px}
+.stat table{font-size:12.5px}
+.stat td{padding:5px 8px 5px 0; border-bottom:1px dotted var(--line-soft); vertical-align:top}
+.stat tr:last-child td{border-bottom:0}
+.stat td.k{white-space:nowrap; font-weight:500}
+.stat td.v{font-family:"IBM Plex Mono",monospace; font-weight:600; color:var(--ember); white-space:nowrap; text-align:right}
+.stat .src{font-size:11px; color:var(--ink-3); font-family:"IBM Plex Mono",monospace}
+.stat .nb{font-size:11.5px; color:var(--ink-3); line-height:1.45}
+.kv{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:8px}
+.kv div{background:var(--surface); border:1px solid var(--line-soft); border-radius:3px; padding:7px 10px; font-size:12.5px}
+.kv b{font-family:"IBM Plex Mono",monospace; color:var(--ember); font-size:13px}
+.kv span{display:block; color:var(--ink-3); font-size:11px; font-family:"IBM Plex Mono",monospace}
+
 /* ---------- NPC ---------- */
 .npcs{display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:14px}
 .npc{background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--r); padding:13px 15px 12px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow)}
@@ -240,6 +258,7 @@ pre.prompt{
   <section class="pane" id="pane-maps" role="tabpanel" hidden></section>
   <section class="pane" id="pane-skills" role="tabpanel" hidden></section>
   <section class="pane" id="pane-quests" role="tabpanel" hidden></section>
+  <section class="pane" id="pane-stats" role="tabpanel" hidden></section>
   <section class="pane" id="pane-npcs" role="tabpanel" hidden></section>
   <section class="pane" id="pane-assets" role="tabpanel" hidden></section>
   <section class="pane" id="pane-health" role="tabpanel" hidden></section>
@@ -258,6 +277,7 @@ const TABS = [
   {id:'monsters', label:'มอนสเตอร์',  n:D.monsters.length},
   {id:'maps',     label:'แมพ',        n:D.maps.length},
   {id:'skills',   label:'สกิล',       n:D.skills.length},
+  {id:'stats',    label:'สเตตัส',     n:D.stats ? D.stats.effects.length : 0},
   {id:'quests',   label:'เควส',       n:D.quests.length},
   {id:'npcs',     label:'NPC',        n:(D.npcs||[]).length},
   {id:'assets',   label:'งานภาพที่ยังไม่ทำ', n:D.assets ? Object.values(D.assets.counts).reduce((a,b)=>a+b,0) : 0},
@@ -545,6 +565,67 @@ function renderHealth(){
   return h.orphanItems.length + h.orphanMonsters.length;
 }
 
+// ---------------- สเตตัส ----------------
+function renderStats(){
+  const S = D.stats;
+  if(!S){ $('#pane-stats').innerHTML = '<div class="empty">ยังไม่มีข้อมูล — รัน dump_gamedata.py ใหม่</div>'; return 0; }
+  const cards = S.effects.filter(e => hit(e.name, e.thai, e.summary,
+    e.rows.map(r => r.what + ' ' + r.const + ' ' + r.note).join(' ')));
+  const row = r => `<tr><td class="k">${esc(r.what)}<div class="src">${esc(r.const)}</div></td>
+      <td class="v">+${esc(r.per)}</td></tr>${r.note ? `<tr><td colspan="2" class="nb" style="padding-top:0">${esc(r.note)}</td></tr>` : ''}`;
+  $('#pane-stats').innerHTML =
+    `<p class="lead">อัพสเตตัส 1 แต้มได้อะไรบ้าง — ตัวเลขทั้งหมด<b>อ่านจากโค้ดจริง</b>ทุกครั้งที่รัน <code>dump_gamedata.py</code>
+      ตัวอย่างคิดจากอาชีพ <b>${esc(S.mainJob)}</b> · แก้ค่าคงที่ใน <code>scripts/core/player_stats.gd</code> หรือตัวคูณใน <code>data/jobs/*.tres</code> แล้วรันใหม่ ตารางนี้จะตรงเสมอ</p>
+     <div class="stat-cards">${cards.map(e => `
+       <article class="stat" style="--sc:${esc(e.color)}">
+         <h3>${esc(e.name)}<small>${esc(e.thai)}</small></h3>
+         <div class="lede">${esc(e.summary)}</div>
+         <table><tbody>${e.rows.map(row).join('')}</tbody></table>
+       </article>`).join('')}</div>
+
+     <div class="sec"><h2>สูตรที่เกี่ยวข้อง</h2><span class="rule"></span><span class="meta">combat.gd</span></div>
+     <p class="lead">รู้สูตรแล้วจะกะได้ว่าเพิ่มสเตตัสตัวไหนแล้วรู้สึกต่างจริง</p>
+     <div class="tw"><table><thead><tr><th>เรื่อง</th><th>สูตร</th><th>หมายเหตุ</th></tr></thead><tbody>${
+       S.formulas.map(f => `<tr><td class="nm">${esc(f.name)}</td><td class="id">${esc(f.text)}</td><td class="src">${esc(f.note)}</td></tr>`).join('')
+     }</tbody></table></div>
+
+     <div class="sec"><h2>ค่าใช้จ่ายในการอัพ</h2><span class="rule"></span><span class="meta">สูงสุด ${S.consts.MAX_STAT || 99}</span></div>
+     <p class="lead"><code>${esc(S.cost.formula)}</code> — ${esc(S.cost.note)}</p>
+     <div class="kv">${S.cost.table.map(c => `<div><b>${esc(c.range)}</b><span>แต้มละ ${c.cost}</span></div>`).join('')}</div>
+
+     <div class="sec"><h2>ได้อะไรจากการขึ้นเลเวล (ไม่ใช่สเตตัส)</h2><span class="rule"></span></div>
+     <p class="lead">เอาไว้เทียบว่าอัพสเตตัสคุ้มกว่าหรือรอเลเวลคุ้มกว่า</p>
+     <div class="map-grid">
+       <div class="blk"><h4>Base Level (สูงสุด ${S.maxLevel})</h4><ul>${
+         S.levelGain.map(l => `<li><b>${esc(l.what)}</b> ${esc(l.per)}${l.note ? ` <span class="dim">· ${esc(l.note)}</span>` : ''}</li>`).join('')
+       }</ul></div>
+       <div class="blk"><h4>Job Level (สูงสุด ${S.maxJobLevel})</h4><ul>${
+         S.jobLevelGain.map(l => `<li><b>${esc(l.what)}</b> ${esc(l.per)}${l.note ? ` <span class="dim">· ${esc(l.note)}</span>` : ''}</li>`).join('')
+       }</ul></div>
+     </div>
+
+     <div class="sec"><h2>ตัวคูณของอาชีพ</h2><span class="rule"></span><span class="meta">data/jobs/*.tres</span></div>
+     <p class="lead">ค่าพวกนี้คูณทับผลของสเตตัสอีกที — ปรับ "บุคลิก" ของอาชีพได้โดยไม่ต้องแตะสูตรกลาง</p>
+     <div class="tw"><table><thead><tr><th>อาชีพ</th><th style="text-align:right">HP ฐาน</th><th style="text-align:right">HP/Lv</th><th style="text-align:right">HP ต่อ VIT %</th><th style="text-align:right">SP ฐาน</th><th style="text-align:right">SP/Lv</th><th style="text-align:right">SP ต่อ INT %</th><th style="text-align:right">ATK</th><th style="text-align:right">MATK</th><th style="text-align:right">DEF</th><th style="text-align:right">HIT</th><th style="text-align:right">FLEE</th><th style="text-align:right">ASPD</th><th style="text-align:right">ASPD ต่อ AGI %</th></tr></thead><tbody>${
+       S.jobs.map(j => `<tr><td class="nm">${esc(j.display_name)}</td>
+         <td class="n">${num(j.hp_base)}</td><td class="n">${j.hp_per_level}</td><td class="n">${j.hp_vit_percent}</td>
+         <td class="n">${num(j.sp_base)}</td><td class="n">${j.sp_per_level}</td><td class="n">${j.sp_int_percent}</td>
+         <td class="n">×${j.atk_mod}</td><td class="n">×${j.matk_mod}</td><td class="n">×${j.def_mod}</td>
+         <td class="n">×${j.hit_mod}</td><td class="n">×${j.flee_mod}</td><td class="n">${j.aspd_base}</td><td class="n">${j.aspd_agi_percent}</td></tr>`).join('')
+     }</tbody></table></div>
+
+     <div class="sec"><h2>ค่าคงที่ทั้งหมด (แก้ได้)</h2><span class="rule"></span></div>
+     <div class="map-grid">
+       <div class="blk"><h4>scripts/core/player_stats.gd</h4><div class="kv">${
+         Object.entries(S.consts).map(([k,v]) => `<div><b>${esc(k)}</b><span>${v}</span></div>`).join('')
+       }</div></div>
+       <div class="blk"><h4>scripts/core/combat.gd</h4><div class="kv">${
+         Object.entries(S.combatConsts).map(([k,v]) => `<div><b>${esc(k)}</b><span>${v}</span></div>`).join('')
+       }</div></div>
+     </div>`;
+  return cards.length;
+}
+
 // ---------------- NPC ----------------
 const NPC_ITEM_NAME = Object.fromEntries((D.items||[]).map(i=>[i.id, i.name]));
 const unesc = s => String(s??'').replace(/\\n/g,'\n');
@@ -683,6 +764,7 @@ function render(){
   else if(active === 'maps') n = renderMaps();
   else if(active === 'skills') n = renderSkills();
   else if(active === 'quests') n = renderQuests();
+  else if(active === 'stats') n = renderStats();
   else if(active === 'npcs') n = renderNpcs();
   else if(active === 'assets') n = renderAssets();
   else n = renderHealth();

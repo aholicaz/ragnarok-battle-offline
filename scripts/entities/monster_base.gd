@@ -52,6 +52,8 @@ var _jump_cd := 0.0
 var _skill_cd := 0.0
 var _spawn_locked := false
 var _fit_cache: Dictionary = {}
+## ★ รอบ 54 — บิน ★ เฟสของการโยกขึ้นลง (สุ่มเริ่ม ไม่งั้นทั้งฝูงโยกพร้อมกัน)
+var _hover_t: float = randf() * TAU
 ## โหลดฉากของตกไว้ล่วงหน้า (รอบ 44 — เดิม load() ตอนมอนตาย)
 const DROPPED_ITEM_SCENE: PackedScene = preload("res://scenes/items/dropped_item.tscn")
 
@@ -134,7 +136,8 @@ func body_size() -> Vector2:
 func body_rect() -> Rect2:
 	var f := foot_position()
 	var s := body_size()
-	return Rect2(f.x - s.x * 0.5, f.y - s.y, s.x, s.y)
+	# ★ รอบ 54: มอนบิน — กรอบโดนฟันลอยขึ้นตามภาพ (ฟันที่พื้นจะไม่โดน ต้องฟันที่ตัวมัน) ★
+	return Rect2(f.x - s.x * 0.5, f.y - s.y - hover_lift(), s.x, s.y)
 
 
 ## ระยะที่มอนตัวนี้ตีถึง — วัดจาก "ขอบตัวมัน" ออกไป
@@ -193,8 +196,38 @@ func _fit_frames(anim: StringName) -> Dictionary:
 	return info
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	_apply_fit()
+	_apply_hover(delta)
+
+
+# =========================================================
+# ★ บิน / ลอยเหนือพื้น (รอบ 54) ★
+# ตัวมอน (กล่องชน/foot_position) ยังอยู่บนพื้นตามเดิม → AI, ระนาบ, ระยะตี ไม่เปลี่ยน
+# ยกเฉพาะ "ภาพ + หลอดเลือด" ขึ้นไป และ body_rect() (กรอบโดนฟัน) ขยับตามให้ผู้เล่นฟันโดนที่ตัวจริง
+# =========================================================
+## มอนบินตายแล้วร่วงลงพื้นเร็วแค่ไหน (พิกเซล/วินาที)
+const HOVER_FALL_SPEED := 320.0
+
+## ระยะที่ภาพลอยเหนือพื้นตอนนี้ (พิกเซลโลก · 0 = มอนธรรมดา)
+func hover_lift() -> float:
+	if data == null or not data.flying or state == State.DEAD:
+		return 0.0
+	return data.hover_height + sin(_hover_t) * data.hover_bob
+
+
+func _apply_hover(delta: float) -> void:
+	if data == null or not data.flying:
+		return
+	if state == State.DEAD:
+		# ตายแล้วร่วงลงพื้น (ไม่วูบหายทันที)
+		sprite.position.y = move_toward(sprite.position.y, 0.0, HOVER_FALL_SPEED * delta)
+		return
+	_hover_t += delta * TAU * data.hover_bob_speed
+	var lift := hover_lift()
+	sprite.position.y = -lift
+	if _hp_bar != null:
+		_hp_bar.position.y = data.hp_bar_offset_y - lift
 
 
 # =========================================================
@@ -326,6 +359,8 @@ func _has_ground_ahead(dir: int) -> bool:
 func _try_hop(power_scale: float = 1.0) -> void:
 	if data.jump_force == 0.0:
 		return
+	if data.flying and data.flying_no_hop:
+		return                      # ★ รอบ 54: มอนบินไม่กระโดด (โยกขึ้นลงแทน) ★
 	if not is_on_floor() or _jump_cd > 0.0:
 		return
 	velocity.y = data.jump_force * power_scale
@@ -492,7 +527,10 @@ func _play(anim: String) -> String:
 	for candidate in ANIM_FALLBACK.get(anim, [anim]):
 		var real := _real_anim(String(candidate))
 		if real != "" and sprite.sprite_frames.get_frame_count(real) > 0:
-			if sprite.animation != real:
+			# ★ รอบ 54 — กับดัก 82 ★ มอนที่มีท่าเดียว (เช่นฮอร์เน็ต มีแค่ Idle): ตอนใส่ SpriteFrames
+			# Godot จะตั้ง sprite.animation เป็นท่านั้นให้เอง "แต่ไม่เล่น" → เช็คแค่ชื่อไม่พอ ต้องเช็ค is_playing ด้วย
+			# (ท่าที่ไม่วนซ้ำแล้วเล่นจบ เช่น Attack/Death ไม่ต้องเริ่มใหม่ ไม่งั้นจะกระตุกวนไปเรื่อย)
+			if sprite.animation != real or (not sprite.is_playing() and sprite.sprite_frames.get_animation_loop(real)):
 				sprite.play(real)
 			return real
 	return ""
@@ -553,7 +591,7 @@ func _cast_skill() -> void:
 		played = _play("Attack")
 
 	if data.skill_name != "":
-		Events.floating_text(global_position + Vector2(0, data.hp_bar_offset_y - 26),
+		Events.floating_text(global_position + Vector2(0, data.hp_bar_offset_y - 26 - hover_lift()),
 			data.skill_name, Color("#ff9a4a"), 22, 0)
 
 	# ★ เอฟเฟกต์สกิล ★ เกิดเป็นโหนดแยกในแมพ เลยใหญ่/ไกลเกินตัวมอนได้
@@ -652,7 +690,7 @@ func take_damage_from_player(skill_mult: float = 1.0, use_matk: bool = false, fr
 	var result := Combat.player_hits_monster(PlayerState.stats, data, skill_mult, use_matk)
 
 	if result.miss:
-		Events.floating_text(global_position + Vector2(0, data.hp_bar_offset_y), "MISS", Color("#cccccc"), 20, 3)
+		Events.floating_text(global_position + Vector2(0, data.hp_bar_offset_y - hover_lift()), "MISS", Color("#cccccc"), 20, 3)
 		_set_aggro()
 		return
 
@@ -686,7 +724,7 @@ func take_damage(amount: int, is_crit: bool = false, from_dir: int = 0) -> void:
 	# ★ ตัวเลขดาเมจ — ใหญ่และหนา ★ คริติคอลใหญ่กว่าอีก
 	var text := str(amount) + ("!" if is_crit else "")
 	Events.floating_text(
-		global_position + Vector2(randf_range(-6, 6), data.hp_bar_offset_y),
+		global_position + Vector2(randf_range(-6, 6), data.hp_bar_offset_y - hover_lift()),
 		text,
 		Combat.damage_color(is_crit, false),
 		DAMAGE_FONT_CRIT if is_crit else DAMAGE_FONT_SIZE,
@@ -757,7 +795,7 @@ func _die() -> void:
 		PlayerState.add_zeny(zeny)
 
 	# ★ EXP กับ Job EXP อยู่บรรทัดเดียวกัน และลอยแยกทางกับตัวเลขดาเมจ ★
-	Events.floating_text(global_position + Vector2(0, data.hp_bar_offset_y),
+	Events.floating_text(global_position + Vector2(0, data.hp_bar_offset_y + sprite.position.y),
 		"+%d EXP   +%d JOB" % [data.exp_reward, job_exp], Color("#8ad6ff"), 18, 4)
 	Events.monster_killed.emit(data.id, data.level)
 

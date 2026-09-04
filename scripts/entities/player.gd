@@ -237,6 +237,7 @@ func _ready() -> void:
 	add_to_group("player")
 	Events.player_died.connect(_on_died)
 	Events.level_up.connect(_on_level_up)
+	Events.job_level_up.connect(_on_job_level_up)
 	_dead = PlayerState.is_dead()
 
 
@@ -1265,10 +1266,30 @@ func _on_died() -> void:
 		Game.respawn_in_town()
 
 
+## ★ รอบ 48 — เลเวลอัพแบบ Ragnarok Online ★
+## เสาแสงทอง + วงแสงที่เท้า + รัศมี + ประกายดาว + LEVEL UP! เด้งใหญ่ + จอวาบ (scripts/entities/level_up_effect.gd)
 func _on_level_up(new_level: int) -> void:
-	Events.floating_text(global_position + Vector2(0, -60), "LEVEL UP!", Color("#ffe14a"), 32, 0)
-	sprite.modulate = Color(1.4, 1.4, 1.0)
-	_hurt_flash = 0.5
+	_play_level_up(LevelUpEffect.Kind.BASE, new_level)
+
+
+func _on_job_level_up(new_job_level: int) -> void:
+	_play_level_up(LevelUpEffect.Kind.JOB, new_job_level)
+
+
+func _play_level_up(kind: int, level: int) -> void:
+	# เลเวลกับจ๊อบมักขึ้นพร้อมกัน — ถ้ามีเอฟเฟกต์เล่นอยู่ ให้อันใหม่รอต่อคิว 1 วิ (ตัวหนังสือจะได้ไม่ทับกัน)
+	for c in get_children():
+		if c is LevelUpEffect and is_instance_valid(c):
+			await get_tree().create_timer(1.0).timeout
+			if not is_inside_tree():
+				return
+			break
+	LevelUpEffect.spawn(self, Vector2(0.0, _feet_y()), kind, level)
+	# ตัวละครเรืองแสงทองแล้วค่อย ๆ กลับปกติ (ไม่ใช้ _hurt_flash เพราะมันตัดกลับทันที)
+	var glow := Color(1.7, 1.55, 1.0) if kind == LevelUpEffect.Kind.BASE else Color(1.5, 1.2, 1.8)
+	sprite.modulate = glow
+	var tw := create_tween()
+	tw.tween_property(sprite, "modulate", Color.WHITE, 1.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 
 
 # =========================================================

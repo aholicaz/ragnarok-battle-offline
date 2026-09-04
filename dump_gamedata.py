@@ -403,6 +403,12 @@ def stat_str(d):
             parts.append("%s %+d" % (label, v))
     if d.get("aspd_percent"):
         parts.append("ASPD %+.0f%%" % d["aspd_percent"])
+    for k, label in [("damage_percent", "ดาเมจ"), ("defense_percent", "ป้องกัน"),
+                     ("hp_percent", "HP"), ("sp_percent", "SP"),
+                     ("hp_drain_percent", "ดูดเลือด"), ("sp_drain_percent", "ดูดมานา"),
+                     ("cooldown_reduction_percent", "ลดคูลดาวน์")]:
+        if d.get(k):
+            parts.append("%s %+.1f%%" % (label, d[k]))
     if d.get("heal_hp") or d.get("heal_hp_percent"):
         parts.append("ฟื้น HP %d%s" % (d.get("heal_hp", 0),
                      " +%.0f%%" % d["heal_hp_percent"] if d.get("heal_hp_percent") else ""))
@@ -940,6 +946,9 @@ data_json = {
 # ★ รอบ 46 — NPC ทุกคน + งานภาพที่ยังไม่ทำ (ไฟล์แยก dump_assets_ext.py) ★
 if os.path.exists("dump_assets_ext.py"):
     exec(compile(open("dump_assets_ext.py", encoding="utf-8").read(), "dump_assets_ext.py", "exec"))
+# ★ รอบ 49 — ตารางผลของสเตตัส (ไฟล์แยก dump_stats_ext.py) ★
+if os.path.exists("dump_stats_ext.py"):
+    exec(compile(open("dump_stats_ext.py", encoding="utf-8").read(), "dump_stats_ext.py", "exec"))
 open("gamedata.json", "w", encoding="utf-8").write(json.dumps(data_json, ensure_ascii=False, indent=1))
 print("เขียน gamedata.json (%.0f KB)" % (os.path.getsize("gamedata.json") / 1024))
 # ★ รอบ 46 — สร้างหน้าเว็บ codex.html จากเทมเพลต (เปิดในเบราว์เซอร์ได้เลย / ให้ Claude อัปเดต artifact) ★

@@ -6,6 +6,10 @@ extends GameWindow
 var _slot_rows: Array = []      # [{label, save_btn, load_btn, del_btn}]
 var _status: Label
 var _touch_btn: Button
+## ★ รอบ 52 — ระดับเสียงเพลง ★
+var _music_slider: HSlider
+var _music_label: Label
+var _music_btn: Button
 
 
 func _ready() -> void:
@@ -65,6 +69,36 @@ func _build_content() -> void:
 
 	content.add_child(UITheme.make_label(
 		"อัตโนมัติ = โผล่เองเมื่อเล่นบนจอสัมผัส · กดปุ่มนี้เพื่อลองบนคอมได้",
+		11, UITheme.TEXT_DIM))
+
+	content.add_child(UITheme.separator())
+
+	# ---------- ★ รอบ 52 — เพลงประจำแมพ ★ ----------
+	var music_row := HBoxContainer.new()
+	music_row.add_theme_constant_override("separation", 6)
+	content.add_child(music_row)
+
+	_music_label = UITheme.make_label("เพลง", 13, UITheme.TEXT)
+	_music_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	music_row.add_child(_music_label)
+
+	_music_slider = HSlider.new()
+	_music_slider.min_value = 0.0
+	_music_slider.max_value = 100.0
+	_music_slider.step = 5.0
+	_music_slider.custom_minimum_size = Vector2(150, 20)
+	_music_slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_music_slider.value_changed.connect(_on_music_volume)
+	music_row.add_child(_music_slider)
+
+	_music_btn = UITheme.make_button("", 70)
+	_music_btn.pressed.connect(_toggle_music)
+	music_row.add_child(_music_btn)
+	_refresh_music()
+	visibility_changed.connect(_refresh_music)    # เปิดเมนูทีไร อัปเดตชื่อเพลงที่เล่นอยู่
+
+	content.add_child(UITheme.make_label(
+		"เพลงเปลี่ยนตามแมพเอง — วางไฟล์ Sprites/music/<ชื่อแมพ>.mp3 แล้วเล่นได้เลย",
 		11, UITheme.TEXT_DIM))
 
 	content.add_child(UITheme.separator())
@@ -179,6 +213,36 @@ func _cycle_touch_mode() -> void:
 	UI.touch.set_mode(next as TouchControls.Mode)
 	_refresh_touch_button()
 	Events.say("ปุ่มจอสัมผัส: %s" % UI.touch.mode_text())
+
+
+# =========================================================
+# ★ รอบ 52 — เพลง ★
+# =========================================================
+func _on_music_volume(v: float) -> void:
+	if Game.music == null:
+		return
+	Game.music.set_volume(v / 100.0)
+	_refresh_music()
+
+
+func _toggle_music() -> void:
+	if Game.music == null:
+		return
+	Game.music.set_enabled(not Game.music.enabled)
+	_refresh_music()
+
+
+func _refresh_music() -> void:
+	if Game.music == null or _music_slider == null:
+		return
+	_music_slider.set_block_signals(true)
+	_music_slider.value = Game.music.volume_percent()
+	_music_slider.set_block_signals(false)
+	_music_btn.text = "เปิด" if Game.music.enabled else "ปิด"
+	var track := Game.music.current_track()
+	_music_label.text = "เพลง  %d%%" % Game.music.volume_percent()
+	if track != "" and Game.music.enabled:
+		_music_label.text += "   (%s)" % track
 
 
 func _refresh_touch_button() -> void:

@@ -96,6 +96,7 @@ texture = ExtResource("3_y5mfp")
 centered = false
 
 [node name="Strip1" type="Sprite2D" parent="Terrain" unique_id=1282217654]
+visible = false
 position = Vector2(-208, 720)
 texture = ExtResource("3_y5mfp")
 centered = false
@@ -103,6 +104,7 @@ region_enabled = true
 region_rect = Rect2(0, 912, 1664, 16)
 
 [node name="Strip2" type="Sprite2D" parent="Terrain" unique_id=923302998]
+visible = false
 position = Vector2(1456, 720)
 texture = ExtResource("3_y5mfp")
 centered = false
@@ -164,3 +166,5 @@ sprite_frames = SubResource("SpriteFrames_g4v7s")
 animation = &"Idle"
 autoplay = "Idle"
 frame_progress = 0.8749341
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1393925255]

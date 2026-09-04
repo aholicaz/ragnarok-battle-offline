@@ -129,6 +129,7 @@ static func _add_percent_bonus(b: Dictionary, d: ItemData) -> void:
 	_add(b, &"max_sp_percent", d.sp_percent)
 	_add(b, &"hp_drain_percent", d.hp_drain_percent)
 	_add(b, &"sp_drain_percent", d.sp_drain_percent)
+	_add(b, &"cooldown_reduction_percent", d.cooldown_reduction_percent)   # ★ รอบ 51 ★
 
 
 static func _add(b: Dictionary, key: StringName, value) -> void:

@@ -159,6 +159,7 @@ const BUFF_LABELS := {
 	"atk_percent": "ATK", "matk_percent": "MATK", "def_percent": "DEF", "max_hp_percent": "MaxHP",
 	"max_sp_percent": "MaxSP", "aspd_percent": "ความเร็วโจมตี", "move_speed_percent": "ความเร็วเดิน",
 	"crit_damage_percent": "ดาเมจคริ", "damage_percent": "ดาเมจ", "atk": "ATK", "def": "DEF", "hit": "HIT", "flee": "FLEE",
+	"cooldown_reduction_percent": "ลดคูลดาวน์",
 }
 
 
@@ -304,7 +305,8 @@ static func describe(d: ItemData, inst: ItemInstance = null, extra: String = "")
 		stats.append("ฟื้น SP %d (+%.0f%%)" % [d.heal_sp, d.heal_sp_percent])
 	# ★ รอบ 45 — โบนัส % / บัฟไอเทม / ไอเทมพิเศษ ★
 	for pair in [["ดาเมจ", d.damage_percent], ["ป้องกัน", d.defense_percent], ["HP สูงสุด", d.hp_percent],
-			["SP สูงสุด", d.sp_percent], ["ดูดเลือด", d.hp_drain_percent], ["ดูดมานา", d.sp_drain_percent]]:
+			["SP สูงสุด", d.sp_percent], ["ดูดเลือด", d.hp_drain_percent], ["ดูดมานา", d.sp_drain_percent],
+			["ลดคูลดาวน์", d.cooldown_reduction_percent]]:
 		if float(pair[1]) != 0.0:
 			stats.append("%s %+.1f%%" % [pair[0], float(pair[1])])
 	if d.buff_duration > 0.0 and not d.buff_values.is_empty():

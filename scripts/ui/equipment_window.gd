@@ -50,25 +50,32 @@ const STAT_LABELS := {
 }
 ## คำอธิบายสั้น ๆ ว่าแต่ละสเตตัสให้อะไร (tooltip ที่ชื่อ/ปุ่ม +) — ตัวเลขจริงอยู่ที่ PlayerStats (ตารางผลของสเตตัส)
 const STAT_TIPS := {
-	&"str": "ATK +1 ต่อแต้ม (+โบนัสทุก 10 แต้ม)",
+	&"str": "ATK +1 ต่อแต้ม (+โบนัสทุก 10 แต้ม) · ช่องกระเป๋า +1 ทุก 5 แต้ม",
 	&"agi": "FLEE +1 · ความเร็วโจมตี +1.2%",
 	&"vit": "DEF +0.5 · HP +6 และ +1.2% · ฟื้น HP",
 	&"int": "MATK +1 · MDEF +0.5 · SP +4 และ +1% · ฟื้น SP +0.12/วิ",
-	&"dex": "HIT +1.5 · ATK +0.2 · ความเร็วโจมตี +0.4%",
+	&"dex": "HIT +1.5 · ATK +0.2 · ความเร็วโจมตี +0.4% · ลดคูลดาวน์ 1% ทุก 5 แต้ม",
 	&"luk": "CRIT +0.3% · ATK +0.33",
 }
 
 # ---- โทนสีครีม (ใช้ชุดเดียวกับกระเป๋า) ----
+## ★ รอบ 48 — ใช้โทนเดียวกับกระเป๋า (= HUD) ทั้งชุด ★
 const C_BG := InventoryWindow.C_BG
 const C_BORDER := InventoryWindow.C_BORDER
 const C_BAR := InventoryWindow.C_BAR
 const C_SLOT := InventoryWindow.C_SLOT
 const C_SLOT_EDGE := InventoryWindow.C_SLOT_EDGE
 const C_SLOT_SEL := InventoryWindow.C_SLOT_SEL
+const C_SEL_EDGE := InventoryWindow.C_SEL_EDGE
 const C_TEXT := InventoryWindow.C_TEXT
 const C_TEXT_DIM := InventoryWindow.C_TEXT_DIM
-const C_GOOD := Color("#2f8f3a")
-const C_ACCENT := Color("#b8860b")
+const C_BTN := InventoryWindow.C_BTN
+const C_BTN_HOVER := InventoryWindow.C_BTN_HOVER
+const C_BTN_DISABLED := InventoryWindow.C_BTN_DISABLED
+const C_FRAME := InventoryWindow.C_FRAME
+const C_INNER := InventoryWindow.C_INNER
+const C_GOOD := UITheme.GOOD              # ค่าที่ได้จากของสวมใส่ (เขียวสว่างบนพื้นเข้ม)
+const C_ACCENT := UITheme.ACCENT
 
 var _slot_buttons: Dictionary = {}   # EquipSlot -> DragSlot
 var _slot_icons: Dictionary = {}     # EquipSlot -> TextureRect
@@ -105,7 +112,7 @@ func _ready() -> void:
 	var root := get_child(0)
 	var bar := root.get_child(0) as PanelContainer
 	bar.add_theme_stylebox_override("panel", InventoryWindow._style(C_BAR, C_BORDER, 8))
-	title_label.add_theme_color_override("font_color", Color("#5a4a33"))
+	title_label.add_theme_color_override("font_color", C_TEXT)
 	custom_minimum_size = Vector2(0, 0)
 	Events.equipment_changed.connect(refresh)
 	Events.stats_changed.connect(refresh)
@@ -125,11 +132,11 @@ func _cream_button(text: String, min_width: float = 0.0) -> Button:
 	b.add_theme_color_override("font_color", C_TEXT)
 	b.add_theme_color_override("font_hover_color", C_TEXT)
 	b.add_theme_color_override("font_pressed_color", C_TEXT)
-	b.add_theme_stylebox_override("normal", InventoryWindow._style(Color("#efdfbc"), C_SLOT_EDGE, 8, 4))
-	b.add_theme_stylebox_override("hover", InventoryWindow._style(Color("#f8ecd0"), C_BORDER, 8, 4))
-	b.add_theme_stylebox_override("pressed", InventoryWindow._style(C_SLOT_SEL, Color("#d19a2f"), 8, 4))
-	b.add_theme_stylebox_override("disabled", InventoryWindow._style(Color("#e6dcc6"), C_SLOT_EDGE, 8, 4))
-	b.add_theme_color_override("font_disabled_color", Color("#b0a488"))
+	b.add_theme_stylebox_override("normal", InventoryWindow._style(C_BTN, C_SLOT_EDGE, 8, 4))
+	b.add_theme_stylebox_override("hover", InventoryWindow._style(C_BTN_HOVER, C_BORDER, 8, 4))
+	b.add_theme_stylebox_override("pressed", InventoryWindow._style(C_SLOT_SEL, C_SEL_EDGE, 8, 4))
+	b.add_theme_stylebox_override("disabled", InventoryWindow._style(C_BTN_DISABLED, C_SLOT_EDGE, 8, 4))
+	b.add_theme_color_override("font_disabled_color", C_TEXT_DIM)
 	return b
 
 
@@ -145,7 +152,7 @@ func _label(text: String, size: int = 13, color: Color = C_TEXT) -> Label:
 func _slot_box(selected: bool = false) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
 	s.bg_color = C_SLOT_SEL if selected else C_SLOT
-	s.border_color = Color("#d19a2f") if selected else C_SLOT_EDGE
+	s.border_color = C_SEL_EDGE if selected else C_SLOT_EDGE
 	s.set_border_width_all(2 if selected else 1)
 	s.set_corner_radius_all(6)
 	return s
@@ -205,7 +212,7 @@ func _build_content() -> void:
 
 	# สรุปโบนัสจากของสวมใส่
 	var sum_panel := PanelContainer.new()
-	sum_panel.add_theme_stylebox_override("panel", InventoryWindow._style(Color(0.925, 0.875, 0.753, 0.55), C_SLOT_EDGE, 8, 5))
+	sum_panel.add_theme_stylebox_override("panel", InventoryWindow._style(C_INNER, C_SLOT_EDGE, 8, 5))
 	left.add_child(sum_panel)
 	var sum_box := VBoxContainer.new()
 	sum_box.add_theme_constant_override("separation", 2)
@@ -231,7 +238,7 @@ func _build_content() -> void:
 	right.add_child(_point_label)
 
 	var stat_panel := PanelContainer.new()
-	stat_panel.add_theme_stylebox_override("panel", InventoryWindow._style(Color(0.925, 0.875, 0.753, 0.55), C_SLOT_EDGE, 8, 5))
+	stat_panel.add_theme_stylebox_override("panel", InventoryWindow._style(C_INNER, C_SLOT_EDGE, 8, 5))
 	right.add_child(stat_panel)
 	var stat_box := VBoxContainer.new()
 	stat_box.add_theme_constant_override("separation", 2)
@@ -275,6 +282,7 @@ func _build_content() -> void:
 		[&"regen", "ฟื้น HP"], [&"sp_regen", "ฟื้น SP"],
 		[&"speed", "SPEED"], [&"damage_percent", "ดาเมจ%"],
 		[&"hp_drain", "ดูดเลือด"], [&"sp_drain", "ดูดมานา"],
+		[&"bag", "ช่องกระเป๋า"], [&"cdr", "ลดคูลดาวน์"],
 	]
 	for f in fields:
 		var key: StringName = f[0]
@@ -350,7 +358,7 @@ func _make_slot(slot: int) -> VBoxContainer:
 
 	var art_frame := PanelContainer.new()
 	art_frame.custom_minimum_size = Vector2(ICON_MAX + 4, ICON_MAX + 4)
-	art_frame.add_theme_stylebox_override("panel", InventoryWindow._style(Color("#fff8e8"), C_SLOT_EDGE, 4, 2))
+	art_frame.add_theme_stylebox_override("panel", InventoryWindow._style(C_FRAME, C_SLOT_EDGE, 4, 2))
 	art_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	art_frame.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	box.add_child(art_frame)
@@ -379,9 +387,9 @@ func _make_preview() -> Control:
 	_preview_drop.kind = "any"
 	_preview_drop.text = ""
 	_preview_drop.custom_minimum_size = PREVIEW_SIZE
-	_preview_drop.add_theme_stylebox_override("normal", InventoryWindow._style(Color("#efe4c8"), C_SLOT_EDGE, 8, 2))
-	_preview_drop.add_theme_stylebox_override("hover", InventoryWindow._style(Color("#f6ecd4"), C_BORDER, 8, 2))
-	_preview_drop.add_theme_stylebox_override("pressed", InventoryWindow._style(Color("#efe4c8"), C_SLOT_EDGE, 8, 2))
+	_preview_drop.add_theme_stylebox_override("normal", InventoryWindow._style(C_BTN, C_SLOT_EDGE, 8, 2))
+	_preview_drop.add_theme_stylebox_override("hover", InventoryWindow._style(C_BTN_HOVER, C_BORDER, 8, 2))
+	_preview_drop.add_theme_stylebox_override("pressed", InventoryWindow._style(C_BTN, C_SLOT_EDGE, 8, 2))
 	_preview_drop.can_drop_func = func(data: Dictionary, _t: DragSlot) -> bool:
 		return String(data.get("kind", "")) == "inventory"
 	_preview_drop.drop_func = func(data: Dictionary, _t: DragSlot) -> bool:
@@ -436,8 +444,8 @@ func _style_tab(b: Button, active: bool) -> void:
 	if b == null:
 		return
 	b.add_theme_stylebox_override("normal",
-		InventoryWindow._style(C_SLOT_SEL if active else Color("#efdfbc"),
-			Color("#d19a2f") if active else C_SLOT_EDGE, 8, 4))
+		InventoryWindow._style(C_SLOT_SEL if active else C_BTN,
+			C_SEL_EDGE if active else C_SLOT_EDGE, 8, 4))
 
 
 # =========================================================
@@ -512,7 +520,8 @@ const FLAT_NAMES := {"atk": "ATK", "def": "DEF", "matk": "MATK", "mdef": "MDEF",
 	"str": "STR", "agi": "AGI", "vit": "VIT", "int": "INT", "dex": "DEX", "luk": "LUK"}
 const PCT_NAMES := {"damage_percent": "ดาเมจ", "def_percent": "DEF", "max_hp_percent": "HP", "max_sp_percent": "SP",
 	"hp_drain_percent": "ดูดเลือด", "sp_drain_percent": "ดูดมานา", "atk_percent": "ATK", "matk_percent": "MATK",
-	"aspd_percent": "ASPD", "move_speed_percent": "SPEED", "crit_damage_percent": "ดาเมจคริ"}
+	"aspd_percent": "ASPD", "move_speed_percent": "SPEED", "crit_damage_percent": "ดาเมจคริ",
+	"cooldown_reduction_percent": "ลดคูลดาวน์"}
 
 
 func refresh() -> void:
@@ -593,6 +602,11 @@ func refresh() -> void:
 	_set_derived(&"flee", str(s.flee), flat.has(&"flee"))
 	_set_derived(&"crit", "%.1f%%" % s.crit, flat.has(&"crit"))
 	_set_derived(&"aspd", "%.2f/s" % s.aspd, flat.has(&"aspd_percent") or pct.has(&"aspd_percent"))
+	# ★ รอบ 50 — ช่องกระเป๋าจาก STR · ลดคูลดาวน์จาก DEX ★
+	var bag_total: int = PlayerState.inventory.size if PlayerState.inventory != null else 0
+	_set_derived(&"bag", "%d (+%d)" % [bag_total, s.bag_bonus_slots], s.bag_bonus_slots > 0)
+	_set_derived(&"cdr", "%.0f%%" % s.cooldown_reduction,
+		pct.has(&"cooldown_reduction_percent") or s.cooldown_reduction > 0.0)
 	_set_derived(&"max_hp", str(s.max_hp), flat.has(&"max_hp") or pct.has(&"max_hp_percent"))
 	_set_derived(&"max_sp", str(s.max_sp), flat.has(&"max_sp") or pct.has(&"max_sp_percent"))
 	_set_derived(&"regen", "%.1f/s" % s.hp_regen, false)

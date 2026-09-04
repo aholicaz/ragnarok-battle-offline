@@ -35,9 +35,15 @@ const INT_SP_REGEN := 0.12
 ## DEX 1 = HIT +1.5 (HIT_PER_DEX) · ATK +0.2 · ASPD +0.4%
 const DEX_ATK := 0.2
 const DEX_ASPD := 0.004
+## ★ รอบ 50 ★ DEX ทุก ๆ เท่านี้แต้ม = ลดคูลดาวน์สกิล 1% (0 = ปิดผล)
+const DEX_PER_COOLDOWN := 5
+## ลดคูลดาวน์ได้มากสุดกี่ % (กันสกิลร่ายรัวไม่มีคูลดาวน์)
+const MAX_COOLDOWN_REDUCTION := 50.0
 ## LUK 1 = CRIT +0.3% · ATK +0.33
 const LUK_CRIT := 0.3
 const LUK_ATK := 1.0 / 3.0
+## ★ รอบ 50 ★ STR ทุก ๆ เท่านี้แต้ม = ช่องกระเป๋า +1 (0 = ปิดผล)
+const STR_PER_BAG_SLOT := 5
 
 # =========================================================
 # ค่าที่เซฟ
@@ -98,6 +104,9 @@ var sp_regen: float = 0.5
 var damage_percent: float = 0.0
 var hp_drain_percent: float = 0.0
 var sp_drain_percent: float = 0.0
+## ★ รอบ 50 ★ ช่องกระเป๋าที่ได้เพิ่มจาก STR · ลดคูลดาวน์สกิล (%) จาก DEX + ของสวมใส่
+var bag_bonus_slots: int = 0
+var cooldown_reduction: float = 0.0
 
 
 func job() -> JobData:
@@ -176,6 +185,12 @@ func recalculate(keep_ratio: bool = false) -> void:
 	hp_regen = 1.0 + max_hp / 200.0 + total_vit * VIT_HP_REGEN
 	# ★ รอบ 45: INT เพิ่มอัตราฟื้น SP ชัดขึ้น (0.03 → INT_SP_REGEN) ★
 	sp_regen = 0.5 + max_sp / 300.0 + total_int * INT_SP_REGEN
+
+	# ---------- ★ รอบ 50 — STR = ช่องกระเป๋า · DEX = ลดคูลดาวน์ ★ ----------
+	bag_bonus_slots = 0 if STR_PER_BAG_SLOT <= 0 else floori(float(total_str) / STR_PER_BAG_SLOT)
+	var cd_from_dex := 0.0 if DEX_PER_COOLDOWN <= 0 else floorf(float(total_dex) / DEX_PER_COOLDOWN)
+	cooldown_reduction = clampf(cd_from_dex + _pct(&"cooldown_reduction_percent"),
+		0.0, MAX_COOLDOWN_REDUCTION)
 
 	# ★ รอบ 45 — ค่า % จากของสวมใส่/การ์ด ★
 	damage_percent = _pct(&"damage_percent")

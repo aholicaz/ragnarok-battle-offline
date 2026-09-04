@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
 [ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="SpriteFrames" path="res://data/sprites/monsters/hornet_frames.tres" id="frames_hornet"]
 
 [sub_resource type="Resource" id="Drop_hornet_0"]
 script = ExtResource("2_drop")
@@ -42,11 +43,13 @@ chance = 0.5
 script = ExtResource("1_monster")
 id = &"hornet"
 display_name = "ฮอร์เน็ต"
+sprite_frames = ExtResource("frames_hornet")
 hitbox_size = Vector2(24, 22)
 hp_bar_offset_y = -42.0
-display_height = 80.0
-level = 9
-max_hp = 165
+display_height = 150.0
+flying = true
+level = 13
+max_hp = 265
 atk_min = 26
 atk_max = 34
 def = 4
@@ -57,7 +60,7 @@ race = 4
 size = 0
 ai_type = 1
 move_speed = 175.0
-jump_force = -220.0
+jump_force = -110.0
 detect_range = 340.0
 attack_range = 62.0
 wander_speed = 95.0

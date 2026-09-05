@@ -1,19 +1,18 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene format=3 uid="uid://xbpewolg4spa"]
 
-[ext_resource type="Script" path="res://scripts/world/map_base.gd" id="map_base"]
-[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="player"]
-[ext_resource type="PackedScene" path="res://scenes/monsters/monster.tscn" id="monster_scene"]
-[ext_resource type="Script" path="res://scripts/world/map_spawner.gd" id="map_spawner"]
-[ext_resource type="Script" path="res://scripts/world/monster_spawner.gd" id="spawner"]
-[ext_resource type="Script" path="res://scripts/resources/monster_data.gd" id="monster_data"]
-[ext_resource type="PackedScene" path="res://scenes/world/portal.tscn" id="portal"]
-[ext_resource type="PackedScene" path="res://scenes/npc/npc.tscn" id="npc"]
+[ext_resource type="Texture2D" uid="uid://d3ng1misv08qj" path="res://Sprites/map/generated/dark_forest_2_bg.png" id="bg38"]
 [ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore"]
-[ext_resource type="Resource" path="res://data/monsters/munak.tres" id="md_munak"]
-[ext_resource type="Resource" path="res://data/monsters/orc_warrior.tres" id="md_orc_warrior"]
-[ext_resource type="Resource" path="res://data/monsters/baphomet_jr.tres" id="md_baphomet_jr"]
-[ext_resource type="Resource" path="res://data/monsters/baphomet.tres" id="md_baphomet"]
-[ext_resource type="Texture2D" path="res://Sprites/map/generated/dark_forest_2_bg.png" id="bg38"]
+[ext_resource type="Script" uid="uid://cj52mis2ydm4e" path="res://scripts/world/map_base.gd" id="map_base"]
+[ext_resource type="Script" uid="uid://cwutmh7bygsgm" path="res://scripts/world/map_spawner.gd" id="map_spawner"]
+[ext_resource type="Resource" uid="uid://13phq5jcelit" path="res://data/monsters/baphomet.tres" id="md_baphomet"]
+[ext_resource type="Resource" uid="uid://dgsfob2sq00bs" path="res://data/monsters/baphomet_jr.tres" id="md_baphomet_jr"]
+[ext_resource type="Resource" uid="uid://4r34mu13twir" path="res://data/monsters/munak.tres" id="md_munak"]
+[ext_resource type="Resource" uid="uid://ceqyi7tlmk7pe" path="res://data/monsters/orc_warrior.tres" id="md_orc_warrior"]
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="monster_data"]
+[ext_resource type="PackedScene" uid="uid://ce4i2xgacms7p" path="res://scenes/monsters/monster.tscn" id="monster_scene"]
+[ext_resource type="PackedScene" uid="uid://bhp7c8ti14pnn" path="res://scenes/player/player.tscn" id="player"]
+[ext_resource type="PackedScene" uid="uid://d3v8kjt45bnvr" path="res://scenes/world/portal.tscn" id="portal"]
+[ext_resource type="Script" uid="uid://c2no85difcfo6" path="res://scripts/world/monster_spawner.gd" id="spawner"]
 
 [sub_resource type="RectangleShape2D" id="Rect_ground"]
 size = Vector2(4600, 240)
@@ -27,108 +26,106 @@ size = Vector2(300, 32)
 [sub_resource type="RectangleShape2D" id="Rect_p2"]
 size = Vector2(340, 32)
 
-[node name="Map" type="Node2D"]
+[node name="Map" type="Node2D" unique_id=1565650474]
 script = ExtResource("map_base")
 map_id = &"dark_forest_2"
 display_name = "ป่าเงาลึกชั้นใน"
-chapter = 1
-region = "มิดการ์ด"
 map_bounds = Rect2(-100, -200, 4400, 1300)
 player_scene = ExtResource("player")
 
-[node name="Background" type="Node2D" parent="."]
+[node name="Background" type="Node2D" parent="." unique_id=2017925133]
 
-[node name="Sky" type="Polygon2D" parent="Background"]
+[node name="Sky" type="Polygon2D" parent="Background" unique_id=1202893480]
 z_index = -100
 position = Vector2(-100, -200)
-color = Color(1, 1, 1, 1)
 texture = ExtResource("bg38")
 polygon = PackedVector2Array(0, 0, 4400, 0, 4400, 1300, 0, 1300)
 uv = PackedVector2Array(0, 0, 2100, 0, 2100, 650, 0, 650)
 
-[node name="FarLayer" type="Polygon2D" parent="Background"]
+[node name="FarLayer" type="Polygon2D" parent="Background" unique_id=1090341459]
 visible = false
 z_index = -90
 position = Vector2(-100, 520)
 color = Color(0.12, 0.1, 0.16, 1)
 polygon = PackedVector2Array(0, 0, 4400, 0, 4400, 360, 0, 360)
 
-[node name="Art" type="Sprite2D" parent="Background"]
+[node name="Art" type="Sprite2D" parent="Background" unique_id=2052291012]
 z_index = -80
 position = Vector2(2100, 550)
 
-[node name="Terrain" type="Node2D" parent="."]
+[node name="Terrain" type="Node2D" parent="." unique_id=1702082960]
 
-[node name="Ground" type="StaticBody2D" parent="Terrain"]
+[node name="Ground" type="StaticBody2D" parent="Terrain" unique_id=2005749063]
 position = Vector2(2100, 1000)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Shape" type="CollisionShape2D" parent="Terrain/Ground"]
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Ground" unique_id=710093021]
 shape = SubResource("Rect_ground")
 
-[node name="Visual" type="Polygon2D" parent="Terrain/Ground"]
+[node name="Visual" type="Polygon2D" parent="Terrain/Ground" unique_id=211481550]
 visible = false
 color = Color(0.17, 0.15, 0.2, 1)
 polygon = PackedVector2Array(-2300, -120, 2300, -120, 2300, 120, -2300, 120)
 
-[node name="Plat0" type="StaticBody2D" parent="Terrain"]
+[node name="Plat0" type="StaticBody2D" parent="Terrain" unique_id=662796805]
 position = Vector2(1200, 700)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat0"]
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat0" unique_id=1223038395]
+position = Vector2(79, 685)
 shape = SubResource("Rect_p0")
 
-[node name="Visual" type="Polygon2D" parent="Terrain/Plat0"]
+[node name="Visual" type="Polygon2D" parent="Terrain/Plat0" unique_id=667591433]
 color = Color(0.17, 0.15, 0.2, 1)
-polygon = PackedVector2Array(-160, -16, 160, -16, 160, 16, -160, 16)
+polygon = PackedVector2Array(-160, -16, 155, 658, 160, -16, 160, 16, 41.102234, 16, -160, 16)
 
-[node name="Plat1" type="StaticBody2D" parent="Terrain"]
+[node name="Plat1" type="StaticBody2D" parent="Terrain" unique_id=1676298062]
 position = Vector2(2300, 640)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat1"]
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat1" unique_id=883619533]
+position = Vector2(-60, 759)
 shape = SubResource("Rect_p1")
 
-[node name="Visual" type="Polygon2D" parent="Terrain/Plat1"]
+[node name="Visual" type="Polygon2D" parent="Terrain/Plat1" unique_id=1556115801]
+position = Vector2(-61, 613)
 color = Color(0.17, 0.15, 0.2, 1)
 polygon = PackedVector2Array(-150, -16, 150, -16, 150, 16, -150, 16)
 
-[node name="Plat2" type="StaticBody2D" parent="Terrain"]
+[node name="Plat2" type="StaticBody2D" parent="Terrain" unique_id=1367762021]
 position = Vector2(3100, 700)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat2"]
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat2" unique_id=818831426]
+position = Vector2(274, 668)
 shape = SubResource("Rect_p2")
 
-[node name="Visual" type="Polygon2D" parent="Terrain/Plat2"]
+[node name="Visual" type="Polygon2D" parent="Terrain/Plat2" unique_id=1459138695]
+position = Vector2(-94, 535)
 color = Color(0.17, 0.15, 0.2, 1)
 polygon = PackedVector2Array(-170, -16, 170, -16, 170, 16, -170, 16)
 
-[node name="SpawnPoints" type="Node2D" parent="."]
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=755573984]
 
-[node name="default" type="Marker2D" parent="SpawnPoints"]
+[node name="default" type="Marker2D" parent="SpawnPoints" unique_id=1782874803]
 position = Vector2(200, 820)
 
-[node name="from_dark_forest" type="Marker2D" parent="SpawnPoints"]
+[node name="from_dark_forest" type="Marker2D" parent="SpawnPoints" unique_id=1739067476]
 position = Vector2(200, 820)
 
-[node name="from_iron_road" type="Marker2D" parent="SpawnPoints"]
+[node name="from_iron_road" type="Marker2D" parent="SpawnPoints" unique_id=1797784484]
 position = Vector2(3980, 820)
 
-[node name="Spawners" type="Node2D" parent="."]
+[node name="Spawners" type="Node2D" parent="." unique_id=1246635382]
 
-[node name="MapSpawner" type="Node2D" parent="Spawners"]
+[node name="MapSpawner" type="Node2D" parent="Spawners" unique_id=1022435623]
 script = ExtResource("map_spawner")
 monster_types = Array[ExtResource("monster_data")]([ExtResource("md_munak"), ExtResource("md_orc_warrior"), ExtResource("md_baphomet_jr")])
 count_per_type = 4
 monster_scene = ExtResource("monster_scene")
 max_spawn_distance = 1700.0
 
-[node name="Boss_baphomet" type="Node2D" parent="Spawners"]
+[node name="Boss_baphomet" type="Node2D" parent="Spawners" unique_id=546515102]
 position = Vector2(3880, 850)
 script = ExtResource("spawner")
 monster_types = Array[ExtResource("monster_data")]([ExtResource("md_baphomet")])
@@ -136,16 +133,16 @@ monster_scene = ExtResource("monster_scene")
 max_alive = 1
 spawn_width = 160
 
-[node name="Portals" type="Node2D" parent="."]
+[node name="Portals" type="Node2D" parent="." unique_id=771676892]
 
-[node name="ToDarkForest" parent="Portals" instance=ExtResource("portal")]
+[node name="ToDarkForest" parent="Portals" unique_id=593534440 instance=ExtResource("portal")]
 position = Vector2(60, 880)
 target_map = &"dark_forest"
 target_spawn_point = &"from_dark_forest_2"
 label_text = "← ป่าเงาลึก"
 destination_name = "ป่าเงาลึก"
 
-[node name="ToIronRoad" parent="Portals" instance=ExtResource("portal")]
+[node name="ToIronRoad" parent="Portals" unique_id=1080945976 instance=ExtResource("portal")]
 position = Vector2(4140, 880)
 target_map = &"iron_road"
 target_spawn_point = &"from_forest"
@@ -154,9 +151,9 @@ destination_name = "ทางเหล็ก (บทที่ 2)"
 required_flag = &"chapter2_open"
 locked_text = "ทางเดินแคบ ๆ ลงไปใต้ดิน... มืดเกินกว่าจะไปต่อโดยไม่มีแผนที่"
 
-[node name="Lore" type="Node2D" parent="."]
+[node name="Lore" type="Node2D" parent="." unique_id=780031934]
 
-[node name="AltarStone" parent="Lore" instance=ExtResource("lore")]
+[node name="AltarStone" parent="Lore" unique_id=65716978 instance=ExtResource("lore")]
 position = Vector2(2700, 790)
 lore_id = &"dark_altar"
 title = "แท่นบูชาหินดำ"

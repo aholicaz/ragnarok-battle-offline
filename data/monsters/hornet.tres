@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
 [ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
-[ext_resource type="SpriteFrames" path="res://data/sprites/monsters/hornet_frames.tres" id="frames_hornet"]
+[ext_resource type="SpriteFrames" uid="uid://dqoghbph1ap3l" path="res://data/sprites/monsters/hornet_frames.tres" id="frames_hornet"]
 
 [sub_resource type="Resource" id="Drop_hornet_0"]
 script = ExtResource("2_drop")

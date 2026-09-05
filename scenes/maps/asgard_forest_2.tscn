@@ -124,7 +124,7 @@ destination_name = "ป่าเงาลึก"
 [node name="Lore38" type="Node2D" parent="." unique_id=25258121]
 
 [node name="DeadMonster" parent="Lore38" unique_id=1904920064 instance=ExtResource("lore38")]
-position = Vector2(1665, 405)
+position = Vector2(1667, 376)
 lore_id = &"dead_monster"
 title = "ซากมอนสเตอร์"
 text = "ซากชอนชอนนอนแน่นิ่งอยู่หลายตัว
@@ -136,7 +136,7 @@ label_text = "ซากมอนสเตอร์"
 prompt_text = "กด F เพื่อตรวจดู"
 
 [node name="BurntBark" parent="Lore38" unique_id=1816746572 instance=ExtResource("lore38")]
-position = Vector2(2279, 360)
+position = Vector2(2676, 439)
 lore_id = &"burnt_bark"
 title = "ต้นไม้ไหม้เกรียม"
 text = "เปลือกไม้มีรอยไหม้เป็นเส้นตรงหลายเส้น

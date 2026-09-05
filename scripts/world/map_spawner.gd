@@ -337,6 +337,10 @@ func _spawn_one(data: MonsterData) -> bool:
 	if monster_scene == null:
 		return false
 
+	# ★ รอบ 56 — ยังติดคูลดาวน์เกิดใหม่ข้ามแมพ (บอส) ★
+	if data.uses_persistent_respawn() and not PlayerState.can_respawn(data.id):
+		return false
+
 	var point := _find_ground()
 	if point == Vector2.INF:
 		return false
@@ -357,6 +361,8 @@ func _spawn_one(data: MonsterData) -> bool:
 
 
 func _on_monster_died(_monster: Node, data: MonsterData) -> void:
+	if data.uses_persistent_respawn():
+		return                      # ★ รอบ 56 — คูลดาวน์อยู่ในเซฟแล้ว (monster_base ล็อกไว้) ★
 	_pending += 1
 	await get_tree().create_timer(data.respawn_time).timeout
 	_pending -= 1

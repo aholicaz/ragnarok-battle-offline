@@ -1,22 +1,20 @@
-[gd_resource type="Resource" script_class="QuestData" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://htb1kherp4ao"]
 
-[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" uid="uid://c4xmy7ydx32wc" path="res://scripts/resources/objective_data.gd" id="1_5jtrw"]
+[ext_resource type="Script" uid="uid://dhdswhfgnyl3i" path="res://scripts/resources/quest_data.gd" id="1_quest"]
 
 [resource]
 script = ExtResource("1_quest")
 id = &"tony_fabre"
 title = "กระสอบที่ถูกกัด"
-description = "แฟเบรแอบกัดกระสอบสินค้าของโทนี่จนเสียหาย ช่วยจัดการให้หน่อย"
+description = "หมาป่าแอบกัดกระสอบสินค้าของโทนี่จนเสียหาย ช่วยจัดการให้หน่อย"
 giver_name = "พ่อค้าโทนี่"
-dialog_offer = "เจ้าหนอนแฟเบรมันกัดกระสอบสินค้าข้าพังหมดเลย ช่วยล่าให้หน่อยสิ จ่ายดี"
-dialog_progress = "ยังไม่ครบร้อยตัวนะ ข้ารอสินค้าอยู่"
+dialog_offer = "เจ้าหมาป่ามันกัดกระสอบสินค้าข้าพังหมดเลย ช่วยล่าให้หน่อยสิ จ่ายดี"
+dialog_progress = "ยังไม่ครบ50ตัวนะ ข้ารอสินค้าอยู่"
 dialog_complete = "สุดยอด! นี่ค่าจ้างตามที่ตกลงกันไว้"
-kill_monster_id = &"fabre"
-kill_count = 100
-required_level = 1
-required_quests = Array[StringName]([&"hans_poring"])
-reward_item_id = &""
-reward_item_count = 0
-reward_zeny = 3000
-reward_exp = 800
-repeatable = false
+kill_monster_id = &"wolf"
+kill_count = 20
+reward_item_id = &"orange_potion"
+reward_item_count = 20
+reward_zeny = 5000
+reward_exp = 1500

@@ -787,6 +787,11 @@ func _die() -> void:
 	if _hp_bar != null:
 		_hp_bar.hide()
 
+	# ★ รอบ 56 — บอส/มอนที่ตั้ง Respawn Persistent: จำเวลาตายไว้ในเซฟ ★
+	# ออกแมพแล้วเข้าใหม่ก็ยังต้องรอจนครบ (กันวนออก-เข้าเพื่อฟาร์มบอสรัว ๆ)
+	if data.uses_persistent_respawn():
+		PlayerState.lock_respawn(data.id, data.persistent_respawn_seconds())
+
 	# --- รางวัล ---
 	var job_exp := data.job_exp()
 	PlayerState.gain_exp(data.exp_reward, job_exp)

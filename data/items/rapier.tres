@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cojpybtdbvyox"]
 
-[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1_item"]
-[ext_resource type="Texture2D" path="res://Sprites/items/placeholder/rapier.png" id="2_icon"]
-[ext_resource type="SpriteFrames" path="res://data/sprites/equip_sword_idle.tres" id="equipframes"]
+[ext_resource type="Script" uid="uid://dbdwo63bn67r7" path="res://scripts/resources/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" uid="uid://d308668xeq645" path="res://Sprites/items/placeholder/rapier.png" id="2_icon"]
+[ext_resource type="SpriteFrames" uid="uid://c04ucofe3wjxi" path="res://data/sprites/equip_sword_idle.tres" id="equipframes"]
 
 [resource]
 script = ExtResource("1_item")
@@ -10,21 +10,21 @@ id = &"rapier"
 display_name = "เรเปียร์"
 description = "ดาบเรียวปลายแหลม แทงแม่นและเข้าจุดตาย"
 icon = ExtResource("2_icon")
-required_level = 8
+required_level = 23
 type = 1
-metadata/price_base_r47_sell = 1440
-metadata/price_base_r47_buy = 1800
 slot = 1
 weapon_type = &"sword"
-attack_animation = &"Attack_Blade"
-card_slots = 1
-max_stack = 1
-buy_price = 9000
-sell_price = 720
-metadata/sell_price_base_r44 = 720
-atk = 34
-hit = 8
-crit = 3
-refinable = true
-refine_atk_per_level = 2
 equip_sprite_frames = ExtResource("equipframes")
+attack_animation = &"Attack_Blade"
+card_slots = 2
+max_stack = 1
+buy_price = 56000
+sell_price = 720
+atk = 44
+aspd_percent = 12.0
+bonus_agi = 5
+refinable = true
+refine_def_per_level = 0
+metadata/price_base_r47_sell = 1440
+metadata/price_base_r47_buy = 1800
+metadata/sell_price_base_r44 = 720

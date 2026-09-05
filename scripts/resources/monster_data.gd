@@ -253,6 +253,13 @@ enum AIType {
 @export_group("Respawn")
 ## ตายแล้วอีกกี่วินาทีเกิดใหม่ (spawner เป็นคนใช้ค่านี้)
 @export var respawn_time: float = 8.0
+## ★★ รอบ 56 — คูลดาวน์เกิดใหม่ "ข้ามแมพ/ข้ามเซฟ" ★★
+## ปกติเวลานับถอยหลังอยู่ในฉากแมพ — เดินออกแมพแล้วกลับเข้ามา ฉากถูกสร้างใหม่ = เกิดทันที
+## ติ๊กอันนี้ = จำเวลาตายไว้ในเซฟ ออกแมพ/ปิดเกมแล้วกลับมาก็ยังต้องรอจนครบ
+## ★ บอส (Is Boss) เปิดให้อัตโนมัติอยู่แล้ว ไม่ต้องติ๊ก ★
+@export var respawn_persistent: bool = false
+## เวลารอเกิดใหม่ตอนใช้คูลดาวน์ข้ามแมพ (วินาที) · 0 = ใช้ค่า Respawn Time ด้านบน
+@export var respawn_time_persistent: float = 0.0
 
 
 ## ระยะจากจุดกำเนิดลงไปถึงพื้นเท้า (= ครึ่งหนึ่งของความสูงกล่องชน)
@@ -261,6 +268,16 @@ func foot_offset() -> float:
 
 
 ## สุ่มพลังโจมตี 1 ครั้ง
+## ต้องจำคูลดาวน์ข้ามแมพไหม (บอสจำเสมอ)
+func uses_persistent_respawn() -> bool:
+	return respawn_persistent or is_boss
+
+
+## รอกี่วินาทีถึงจะเกิดใหม่ได้ (แบบข้ามแมพ)
+func persistent_respawn_seconds() -> float:
+	return respawn_time_persistent if respawn_time_persistent > 0.0 else respawn_time
+
+
 func roll_attack() -> int:
 	return randi_range(atk_min, max(atk_min, atk_max))
 

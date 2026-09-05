@@ -51,17 +51,23 @@ func _player_near() -> bool:
 
 
 func _fill() -> void:
+	# ★ รอบ 56 ★ _spawn_one คืน false ได้ (เช่นบอสยังติดคูลดาวน์) — ต้องหยุดวน ไม่งั้นค้างทั้งเกม
 	while _alive.size() + _pending < max_alive:
-		_spawn_one()
+		if not _spawn_one():
+			return
 
 
-func _spawn_one() -> void:
+func _spawn_one() -> bool:
 	if monster_scene == null or monster_types.is_empty():
-		return
+		return false
 
 	var data: MonsterData = monster_types.pick_random()
 	if data == null:
-		return
+		return false
+
+	# ★ รอบ 56 — ยังติดคูลดาวน์เกิดใหม่ (บอส) ★ ข้ามไปก่อน เดี๋ยว _process เรียกมาใหม่เอง
+	if data.uses_persistent_respawn() and not PlayerState.can_respawn(data.id):
+		return false
 
 	var monster := monster_scene.instantiate()
 	monster.data = data
@@ -81,9 +87,14 @@ func _spawn_one() -> void:
 		monster.died.connect(_on_monster_died)
 
 	_alive.append(monster)
+	return true
 
 
 func _on_monster_died(_monster: Node, data: MonsterData) -> void:
+	# บอส/มอนที่ใช้คูลดาวน์ข้ามแมพ: monster_base ล็อกเวลาไว้ในเซฟแล้ว
+	# ตรงนี้แค่กันไม่ให้เกิดทันทีในแมพเดิม (เช็คซ้ำอีกชั้นตอน _spawn_one)
+	if data.uses_persistent_respawn():
+		return
 	var wait: float = respawn_override if respawn_override > 0.0 else data.respawn_time
 	_pending += 1
 	await get_tree().create_timer(wait).timeout

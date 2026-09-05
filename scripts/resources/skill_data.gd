@@ -55,6 +55,11 @@ enum SkillType {
 @export var range_y: float = 80.0
 ## จำนวนเป้าหมายสูงสุด (สำหรับ AOE) 0 = ไม่จำกัด
 @export var max_targets: int = 1
+## ★ รอบ 56 — จำนวนเป้าหมายตาม "เลเวลสกิล" ★
+## ใส่เป็น { เลเวลสกิล: จำนวนตัว } เช่น {1: 3, 5: 4, 8: 5}
+##   = เลเวล 1-4 โดน 3 ตัว · เลเวล 5-7 โดน 4 ตัว · เลเวล 8 ขึ้นไปโดน 5 ตัว
+## เว้นว่าง = ใช้ค่า Max Targets ด้านบนทุกเลเวล
+@export var max_targets_by_level: Dictionary = {}
 
 # =========================================================
 # ★ สกิลพุ่ง (ACTIVE_DASH) ★
@@ -155,6 +160,20 @@ enum SkillType {
 
 func sp_cost(skill_lv: int) -> int:
 	return int(sp_cost_base + sp_cost_per_level * (skill_lv - 1))
+
+
+## จำนวนเป้าหมายสูงสุดที่เลเวลสกิลนี้ (0 = ไม่จำกัด)
+func max_targets_at(level: int) -> int:
+	if max_targets_by_level.is_empty():
+		return max_targets
+	var best_key := -1
+	var best_val: int = max_targets
+	for k in max_targets_by_level.keys():
+		var need := int(k)
+		if level >= need and need > best_key:
+			best_key = need
+			best_val = int(max_targets_by_level[k])
+	return best_val if best_key >= 0 else max_targets
 
 
 func damage_mult(skill_lv: int) -> float:

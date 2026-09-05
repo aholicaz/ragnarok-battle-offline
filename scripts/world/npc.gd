@@ -47,6 +47,8 @@ enum NPCType { DIALOG, SHOP, REFINER, HEALER, SAVE_POINT, QUEST }
 @export var heal_price: int = 100
 ## ★ รอบ 45 — NPC ประเภทอื่น (เช่นนักบวช) ก็มีร้านได้ ★ ติ๊กแล้วเมนู "ซื้อขาย" จะโผล่ (ใช้ Shop Items ข้างบน)
 @export var has_shop: bool = false
+## ★ รอบ 56 ★ มีเมนู "เจาะรูการ์ด" ไหม (ช่างตีเหล็ก REFINER มีให้อัตโนมัติอยู่แล้ว)
+@export var has_socket: bool = false
 ## ★ รอบ 45 — ประโยคทักตอนเปิดเมนู พูดคุย / ซื้อขาย / ไม่คุย ★
 @export var greeting: String = "มีอะไรให้ช่วยไหม"
 
@@ -226,6 +228,8 @@ func interact() -> void:
 	var options: Array = [MENU_TALK]
 	if has_shop_menu():
 		options.append(MENU_SHOP)
+	if has_socket_menu():
+		options.append(MENU_SOCKET)
 	options.append(MENU_LEAVE)
 	var pick: int = await UI.talk([line(greeting, "", options)])
 	if not is_instance_valid(self) or pick < 0 or pick >= options.size():
@@ -235,6 +239,9 @@ func interact() -> void:
 		return
 	if chosen == MENU_SHOP:
 		open_shop()
+		return
+	if chosen == MENU_SOCKET:
+		Events.socket_npc_opened.emit()
 		return
 
 	# ---- พูดคุย: เรื่องเควสมาก่อน แล้วค่อยบริการ/บทพูด ----
@@ -272,12 +279,18 @@ func interact() -> void:
 
 const MENU_TALK := "พูดคุย"
 const MENU_SHOP := "ซื้อขาย"
+const MENU_SOCKET := "เจาะรูการ์ด"
 const MENU_LEAVE := "ไม่คุย"
 
 
 ## มีเมนูซื้อขายไหม — ร้านค้า หรือ NPC ที่ติ๊ก Has Shop
 func has_shop_menu() -> bool:
 	return type == NPCType.SHOP or has_shop
+
+
+## มีเมนูเจาะรูการ์ดไหม — ช่างตีเหล็ก (REFINER) มีให้เลย หรือ NPC ที่ติ๊ก Has Socket
+func has_socket_menu() -> bool:
+	return type == NPCType.REFINER or has_socket
 
 
 func open_shop() -> void:

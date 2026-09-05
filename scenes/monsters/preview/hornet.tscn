@@ -1,14 +1,15 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://cx7gvrp37n8xi"]
 
-[ext_resource type="SpriteFrames" path="res://data/sprites/monsters/hornet_frames.tres" id="1_frames"]
-[ext_resource type="Script" path="res://scripts/tools/monster_preview.gd" id="2_script"]
+[ext_resource type="SpriteFrames" uid="uid://dqoghbph1ap3l" path="res://data/sprites/monsters/hornet_frames.tres" id="1_frames"]
+[ext_resource type="Script" uid="uid://b8af3x852vd4o" path="res://scripts/tools/monster_preview.gd" id="2_script"]
 
-[node name="hornet_preview" type="Node2D"]
+[node name="hornet_preview" type="Node2D" unique_id=237546415]
 script = ExtResource("2_script")
-monster_id = &"hornet"
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1167353971]
 position = Vector2(0, -120)
 sprite_frames = ExtResource("1_frames")
-animation = &"Idle"
+animation = &"Hit"
 autoplay = "Idle"
+frame = 1
+frame_progress = 0.55112195

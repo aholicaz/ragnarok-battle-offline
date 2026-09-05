@@ -766,9 +766,51 @@ func sell_slot(inv_index: int, count: int = 1) -> bool:
 # =========================================================
 # เซฟ / โหลด
 # =========================================================
+# =========================================================
+# ★★ คูลดาวน์เกิดใหม่ของบอส (รอบ 56) ★★
+#
+# เดิม: เวลานับถอยหลังอยู่ในฉากแมพ — ออกแมพแล้วเข้าใหม่ ฉากถูกสร้างใหม่
+#       บอสจึงเกิดทันที ผู้เล่นวนออก-เข้าเพื่อฟาร์มบอสรัว ๆ ได้
+# ตอนนี้: จำ "เวลาที่เกิดใหม่ได้" ต่อ id มอน ไว้ในเซฟ (นาฬิกาเครื่อง)
+#         ออกแมพ ปิดเกม โหลดเซฟ ก็ยังต้องรอจนครบ
+# =========================================================
+var respawn_locks: Dictionary = {}     ## id มอน -> unix time ที่เกิดใหม่ได้
+
+
+## ล็อกไม่ให้มอน id นี้เกิดใหม่อีก seconds วินาที
+func lock_respawn(monster_id: StringName, seconds: float) -> void:
+	if seconds <= 0.0:
+		return
+	respawn_locks[monster_id] = Time.get_unix_time_from_system() + seconds
+
+
+## เหลืออีกกี่วินาทีถึงจะเกิดใหม่ได้ (0 = เกิดได้เลย)
+func respawn_remaining(monster_id: StringName) -> float:
+	if not respawn_locks.has(monster_id):
+		return 0.0
+	var left: float = float(respawn_locks[monster_id]) - Time.get_unix_time_from_system()
+	if left <= 0.0:
+		respawn_locks.erase(monster_id)
+		return 0.0
+	return left
+
+
+## เกิดใหม่ได้หรือยัง
+func can_respawn(monster_id: StringName) -> bool:
+	return respawn_remaining(monster_id) <= 0.0
+
+
+func _respawn_locks_to_dict() -> Dictionary:
+	var out: Dictionary = {}
+	for k in respawn_locks.keys():
+		out[String(k)] = float(respawn_locks[k])
+	return out
+
+
 func to_dict() -> Dictionary:
 	return {
 		"version": 1,
+		"respawn_locks": _respawn_locks_to_dict(),
 		"stats": stats.to_dict(),
 		"inventory": inventory.to_array(),
 		"equipment": equipment.to_dict(),
@@ -809,6 +851,12 @@ func from_dict(d: Dictionary) -> void:
 	for i in range(mini(ih.size(), ITEM_HOTKEY_COUNT)):
 		item_hotkeys[i] = StringName(ih[i])
 	current_map_id = StringName(d.get("map", "prontera_field"))
+
+	respawn_locks.clear()
+	var rl = d.get("respawn_locks", {})
+	if rl is Dictionary:
+		for k in rl.keys():
+			respawn_locks[StringName(k)] = float(rl[k])
 
 	story_flags.clear()
 	var fl = d.get("flags", {})

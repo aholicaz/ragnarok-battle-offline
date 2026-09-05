@@ -420,6 +420,26 @@ func _show_popup() -> void:
 		UITheme.ACCENT if lv > 0 else UITheme.TEXT, actions)
 
 
+## ★ รอบ 56 ★ บรรทัด "โดนกี่ตัว" + บอกว่าเลเวลไหนจะเพิ่มอีก
+static func _targets_line(s: SkillData, lv: int, unlimited_text: String) -> String:
+	var n: int = s.max_targets_at(lv)
+	var text: String = unlimited_text if n <= 0 else "โดนสูงสุด %d ตัว" % n
+	if s.max_targets_by_level.is_empty():
+		return text
+	# หาเลเวลถัดไปที่จำนวนตัวเพิ่มขึ้น
+	var next_level := -1
+	var next_count := n
+	for k in s.max_targets_by_level.keys():
+		var need := int(k)
+		if need > lv and int(s.max_targets_by_level[k]) > n:
+			if next_level < 0 or need < next_level:
+				next_level = need
+				next_count = int(s.max_targets_by_level[k])
+	if next_level > 0:
+		text += "  (เลเวล %d → %d ตัว)" % [next_level, next_count]
+	return text
+
+
 ## ข้อความรายละเอียดสกิล (BBCode เหมือนกล่องไอเทม)
 static func describe(s: SkillData, learned_level: int) -> String:
 	var lv: int = maxi(1, learned_level)
@@ -454,11 +474,13 @@ static func describe(s: SkillData, learned_level: int) -> String:
 		SkillData.SkillType.ACTIVE_DASH:
 			stats_lines.append("ดาเมจ %.0f%% ต่อตัว" % (s.damage_mult(lv) * 100.0))
 			stats_lines.append("พุ่งไกล %.0f px" % s.dash_range(lv))
-			stats_lines.append("โดนทุกตัวที่ขวางทาง (ตัวละ 1 ครั้ง)")
+			stats_lines.append(_targets_line(s, lv, "โดนทุกตัวที่ขวางทาง (ตัวละ 1 ครั้ง)"))
 		_:
 			stats_lines.append("ดาเมจ %.0f%%%s"
 				% [s.damage_mult(lv) * 100.0,
 					"  x%d ครั้ง" % s.hit_count if s.hit_count > 1 else ""])
+			if s.max_targets_at(lv) > 0 or not s.max_targets_by_level.is_empty():
+				stats_lines.append(_targets_line(s, lv, ""))
 	if not stats_lines.is_empty():
 		var head: String = "ค่าตอนนี้" if learned_level > 0 else "ค่าที่เลเวล 1"
 		lines.append("[color=#9aa7bd]%s :[/color]" % head)

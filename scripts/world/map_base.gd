@@ -45,6 +45,18 @@ extends Node2D
 ## ลึกเลยขอบล่างลงไปเท่าไหร่ (กันช่องว่างระหว่างกำแพงกับพื้น)
 @export var edge_wall_extra_bottom: float = 600.0
 
+# ---------------------------------------------------------
+# ★★ รอบ 55 — ไม่ให้เดินเลย "ขอบภาพฉาก" ★★
+# ปัญหาเดิม: กำแพงอยู่ที่ขอบ Map Bounds ซึ่ง "กว้างกว่าภาพพื้นหลัง" อยู่หลายร้อยพิกเซล
+# (เช่นทุ่งวิหาร ภาพจบที่ x 5648 แต่ Map Bounds ถึง 5870) → เดินออกไปยืนบนที่ว่างดำ ๆ ได้
+# ตอนนี้ระบบวัดขอบของ "ภาพฉาก" เอง แล้วหุบ Map Bounds เข้ามาให้ (กล้องก็หยุดตามด้วย)
+# ★ หุบเข้าอย่างเดียว ไม่ขยายออก ★ แมพที่ภาพกว้างกว่าขอบเขตอยู่แล้ว ไม่มีอะไรเปลี่ยน
+# ---------------------------------------------------------
+## หุบขอบแมพให้ไม่เกินภาพฉาก (ปิดได้ถ้าแมพไหนตั้งใจให้เดินเลยภาพ)
+@export var clamp_bounds_to_art: bool = true
+## เว้นจากขอบภาพเข้ามาอีกกี่พิกเซล (กันตัวละครยื่นพ้นภาพครึ่งตัว)
+@export var art_edge_margin: float = 40.0
+
 @export_group("")
 @export var player_scene: PackedScene
 @export var camera_zoom: Vector2 = Vector2.ONE
@@ -63,6 +75,8 @@ func _ready() -> void:
 	if auto_fit_bounds:
 		map_bounds = _measure_bounds()
 		print("[Map] %s ขนาดแมพที่วัดได้: %s" % [map_id, str(map_bounds)])
+	if clamp_bounds_to_art:
+		_clamp_bounds_to_art()
 	_ensure_floating_text_layer()
 	_build_edge_walls()
 	_spawn_player()
@@ -123,6 +137,109 @@ func _rect_of(node: Node) -> Rect2:
 	return Rect2()
 
 
+# =========================================================
+# ★ รอบ 55 — หุบขอบแมพให้พอดีกับภาพฉาก ★
+# =========================================================
+## ขอบซ้าย-ขวาของ "ภาพฉาก" ในพิกัดโลก — คืน Vector2(ซ้าย, ขวา) · คืน Vector2.ZERO ถ้าหาไม่เจอ
+##
+## นับเฉพาะภาพที่ "กว้างพอจะเป็นฉาก" (>= 25% ของความกว้างแมพ) เพื่อไม่ให้ก้อนหิน/ป้าย/มอน
+## ไปดึงขอบให้กว้างเกินจริง · ข้ามภาพที่ซ่อนอยู่ และตัวละคร/มอน/NPC/ของตก
+func art_span() -> Vector2:
+	var min_w: float = map_bounds.size.x * 0.25
+	var left := INF
+	var right := -INF
+	for node in _all_descendants(self):
+		if not (node is Sprite2D or node is TextureRect or node is Polygon2D):
+			continue
+		var item := node as CanvasItem
+		if not item.is_visible_in_tree():
+			continue
+		if _is_actor(node):
+			continue
+		var r: Rect2 = _canvas_item_rect(item)
+		if r.size.x < min_w:
+			continue
+		left = minf(left, r.position.x)
+		right = maxf(right, r.position.x + r.size.x)
+	if left == INF or right <= left:
+		return Vector2.ZERO
+	return Vector2(left, right)
+
+
+## เป็นตัวละคร/มอน/NPC/ของตก ไหม (ไล่ดูตัวเองและพ่อแม่ขึ้นไป)
+func _is_actor(node: Node) -> bool:
+	var n: Node = node
+	while n != null and n != self:
+		if n.is_in_group("player") or n.is_in_group("enemy") or n.is_in_group("npc") \
+				or n.is_in_group("dropped_item") or n.is_in_group("portal"):
+			return true
+		n = n.get_parent()
+	return false
+
+
+## กรอบของภาพในพิกัดโลก (คิด scale/หมุนแล้ว)
+func _canvas_item_rect(item: CanvasItem) -> Rect2:
+	var local := Rect2()
+	if item is Sprite2D:
+		local = (item as Sprite2D).get_rect()
+	elif item is TextureRect:
+		local = Rect2(Vector2.ZERO, (item as TextureRect).size)
+	elif item is Polygon2D:
+		var poly: PackedVector2Array = (item as Polygon2D).polygon
+		if poly.size() < 2:
+			return Rect2()
+		local = Rect2(poly[0], Vector2.ZERO)
+		for i in range(1, poly.size()):
+			local = local.expand(poly[i])
+		local.position += (item as Polygon2D).offset
+	else:
+		return Rect2()
+	if local.size == Vector2.ZERO:
+		return Rect2()
+	var xf := item.get_global_transform()
+	var out := Rect2(xf * local.position, Vector2.ZERO)
+	for corner in [local.position + Vector2(local.size.x, 0.0),
+			local.position + local.size, local.position + Vector2(0.0, local.size.y)]:
+		out = out.expand(xf * corner)
+	return out
+
+
+## หุบ Map Bounds ซ้าย-ขวาให้ไม่เกินภาพฉาก (ไม่ขยายออก) — แต่ไม่หุบจนบังประตู/จุดเกิด
+func _clamp_bounds_to_art() -> void:
+	var span := art_span()
+	if span == Vector2.ZERO:
+		return
+	var left: float = maxf(map_bounds.position.x, span.x + art_edge_margin)
+	var right: float = minf(map_bounds.position.x + map_bounds.size.x, span.y - art_edge_margin)
+
+	# ★ กันหุบจนประตู/จุดเกิดอยู่นอกกำแพง ★ (เข้าแมพแล้วติดกำแพง/ออกประตูไม่ได้)
+	var keep: float = KEEP_INSIDE_MARGIN
+	for node in _all_descendants(self):
+		var p: Vector2
+		if node is Marker2D and node.get_parent() != null and node.get_parent().name == "SpawnPoints":
+			p = (node as Marker2D).global_position
+		elif node.is_in_group("portal") and node is Node2D:
+			p = (node as Node2D).global_position
+		else:
+			continue
+		left = minf(left, p.x - keep)
+		right = maxf(right, p.x + keep)
+
+	if right - left < 200.0:
+		push_warning("[Map] %s หุบขอบตามภาพแล้วแคบเกินไป — ข้าม" % map_id)
+		return
+	var before := map_bounds
+	map_bounds = Rect2(left, map_bounds.position.y, right - left, map_bounds.size.y)
+	if before.is_equal_approx(map_bounds):
+		return
+	print("[Map] %s หุบขอบตามภาพฉาก: x %.0f..%.0f → %.0f..%.0f" % [
+		map_id, before.position.x, before.position.x + before.size.x, left, right])
+	# หุบเยอะผิดปกติ = ภาพฉากสั้นกว่าแมพจริง ๆ (ควรขยายภาพ ไม่ใช่ปล่อยให้เดินไปที่ว่าง)
+	var cut: float = maxf(left - before.position.x, (before.position.x + before.size.x) - right)
+	if cut > BIG_CLAMP_WARN:
+		push_warning("[Map] %s ภาพฉากสั้นกว่าขอบเขตแมพ %.0f px — หุบให้แล้ว (อยากเดินได้กว้างเท่าเดิม ต้องขยายภาพฉาก)" % [map_id, cut])
+
+
 func _all_descendants(root: Node) -> Array[Node]:
 	var out: Array[Node] = []
 	for child in root.get_children():
@@ -141,6 +258,12 @@ func _all_descendants(root: Node) -> Array[Node]:
 #
 # กำแพงอยู่นอก Map Bounds พอดี — ประตูกับจุดเกิดทุกแมพห่างจากขอบ ≥ 40 px จึงไม่โดนบัง
 # =========================================================
+## ประตู/จุดเกิด ต้องอยู่ในขอบแมพอย่างน้อยเท่านี้ (พิกเซล)
+const KEEP_INSIDE_MARGIN := 90.0
+## หุบเกินกี่พิกเซลถึงจะเตือนใน Output (แปลว่าภาพฉากสั้นกว่าแมพมาก)
+const BIG_CLAMP_WARN := 300.0
+
+
 func _build_edge_walls() -> void:
 	if not edge_walls or get_node_or_null("EdgeWalls") != null:
 		return

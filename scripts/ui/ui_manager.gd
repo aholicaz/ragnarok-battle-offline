@@ -59,6 +59,7 @@ func _ready() -> void:
 	_add_window(&"skills", SkillWindow.new(), Vector2(60, 110))
 	_add_window(&"shop", ShopWindow.new(), Vector2(500, 70))
 	_add_window(&"refine", RefineWindow.new(), Vector2(500, 70))
+	_add_window(&"socket", SocketWindow.new(), Vector2(520, 90))
 	_add_window(&"cards", CardAlbumWindow.new(), Vector2(300, 60))
 	_add_window(&"system", SystemWindow.new(), Vector2(420, 140))
 	_add_window(&"quests", QuestWindow.new(), Vector2(340, 100))
@@ -98,6 +99,7 @@ func _ready() -> void:
 
 	Events.shop_opened.connect(_on_shop_opened)
 	Events.refine_npc_opened.connect(_on_refine_opened)
+	Events.socket_npc_opened.connect(_on_socket_opened)
 	Events.toggle_window.connect(toggle)
 
 
@@ -285,6 +287,10 @@ func _on_shop_opened(item_ids: Array) -> void:
 
 func _on_refine_opened() -> void:
 	open(&"refine")
+
+
+func _on_socket_opened() -> void:
+	open(&"socket")
 
 
 # =========================================================

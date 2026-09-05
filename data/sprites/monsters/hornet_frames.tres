@@ -1,6 +1,8 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://dqoghbph1ap3l"]
 
 [ext_resource type="Texture2D" uid="uid://dalvjxsbyqvwt" path="res://Sprites/monster/bee attack.png" id="1_8wa3d"]
+[ext_resource type="Texture2D" uid="uid://cdwwsk6m48hoe" path="res://Sprites/monster/bee die.png" id="2_tdla5"]
+[ext_resource type="Texture2D" uid="uid://rprdjv5pvubo" path="res://Sprites/monster/sprites hornet hit.png" id="3_jvhk8"]
 [ext_resource type="Texture2D" uid="uid://c37a4dqrt3lqi" path="res://Sprites/monster/bee run.png" id="3_kuyrh"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nvqkt"]
@@ -22,6 +24,42 @@ region = Rect2(512, 0, 512, 489)
 [sub_resource type="AtlasTexture" id="AtlasTexture_1rc1g"]
 atlas = ExtResource("1_8wa3d")
 region = Rect2(1024, 0, 512, 489)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kt56c"]
+atlas = ExtResource("2_tdla5")
+region = Rect2(271, 241, 271, 241)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7c206"]
+atlas = ExtResource("2_tdla5")
+region = Rect2(542, 241, 271, 241)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sqgfq"]
+atlas = ExtResource("2_tdla5")
+region = Rect2(813, 241, 271, 241)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_if1hn"]
+atlas = ExtResource("2_tdla5")
+region = Rect2(1084, 241, 271, 241)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lqe0i"]
+atlas = ExtResource("2_tdla5")
+region = Rect2(1355, 241, 271, 241)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k2wwt"]
+atlas = ExtResource("2_tdla5")
+region = Rect2(1626, 241, 271, 241)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jgu5v"]
+atlas = ExtResource("2_tdla5")
+region = Rect2(1897, 241, 271, 241)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s55ei"]
+atlas = ExtResource("3_jvhk8")
+region = Rect2(0, 0, 512, 489)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2j1os"]
+atlas = ExtResource("3_jvhk8")
+region = Rect2(512, 0, 512, 489)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_egv71"]
 atlas = ExtResource("3_kuyrh")
@@ -79,6 +117,43 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_kt56c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7c206")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sqgfq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_if1hn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lqe0i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k2wwt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jgu5v")
+}],
+"loop": 1,
+"name": &"Die",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s55ei")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2j1os")
+}],
+"loop": 1,
+"name": &"Hit",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_egv71")
 }, {
 "duration": 1.0,
@@ -104,5 +179,5 @@ animations = [{
 }],
 "loop": 1,
 "name": &"Idle",
-"speed": 20.0
+"speed": 16.0
 }]

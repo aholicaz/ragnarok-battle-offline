@@ -227,6 +227,13 @@ var _dash_max_targets := 0
 var _dash_stop_on_wall := true
 var _dash_hits: Array = []     # มอนที่โดนไปแล้วในการพุ่งครั้งนี้
 
+# ★★ รอบ 56 — ตาข่ายกันตกแมพ ★★
+# ถ้าหลุดออกไปใต้แมพ (พุ่งข้ามหน้าผา · ทะลุพื้น · ตำแหน่งเพี้ยน) จะถูกพากลับ
+# ที่ยืนล่าสุดที่ปลอดภัยแทนที่จะร่วงไปเรื่อย ๆ จนต้องปิดเกม
+var _safe_pos: Vector2 = Vector2.ZERO      # ที่ยืนล่าสุดที่ปลอดภัย
+var _safe_timer := 0.0
+var _rescue_cd := 0.0
+
 # คลิกเมาส์ที่รับมาแล้วรอให้ _handle_input() เอาไปใช้ในเฟรมถัดไป
 var _click_attack := false
 var _click_skill := false
@@ -260,6 +267,7 @@ func _physics_process(delta: float) -> void:
 			sprite.modulate = Color.WHITE
 
 	_tick_jump_timers(delta)
+	_track_safe_ground(delta)
 
 	if _dodge_cd > 0.0:
 		_dodge_cd -= delta
@@ -813,6 +821,73 @@ func _sync_collision() -> void:
 	col.shape = cap
 
 
+# =========================================================
+# ★★ ตาข่ายกันตกแมพ (รอบ 56) ★★
+#
+# ปัญหา: ใช้สกิลพุ่ง (Slash) แล้วพุ่งข้ามขอบพื้น/ตกร่อง = ร่วงลงไปเรื่อย ๆ
+# ไม่ตาย ไม่หยุด กล้องตามไม่ทัน เล่นต่อไม่ได้
+#
+# ตอนนี้: จำ "ที่ยืนล่าสุดที่ปลอดภัย" ไว้ตลอด ถ้าร่วงต่ำกว่าขอบล่างของแมพ
+# จะพากลับมาที่นั่นให้เอง (ไม่เสียเลือด แค่เตือน)
+# =========================================================
+## ร่วงต่ำกว่าขอบล่างของแมพเท่านี้ = ถือว่าตกแมพ (พิกเซล)
+const FALL_RESCUE_MARGIN := 260.0
+## เก็บจุดปลอดภัยทุกกี่วินาที
+const SAFE_POINT_INTERVAL := 0.35
+## กันช่วยซ้ำถี่ ๆ (วินาที)
+const RESCUE_COOLDOWN := 0.6
+
+
+func _track_safe_ground(delta: float) -> void:
+	if _rescue_cd > 0.0:
+		_rescue_cd -= delta
+
+	var map_rect := _map_bounds()
+	# ---------- จำที่ยืนล่าสุดที่ปลอดภัย ----------
+	_safe_timer -= delta
+	if is_on_floor() and _dash_time <= 0.0 and _dodge_time <= 0.0 and _safe_timer <= 0.0:
+		if map_rect.size == Vector2.ZERO or map_rect.has_point(global_position):
+			_safe_pos = global_position
+			_safe_timer = SAFE_POINT_INTERVAL
+
+	# ---------- ตกแมพหรือยัง ----------
+	if map_rect.size == Vector2.ZERO:
+		return
+	var limit: float = map_rect.position.y + map_rect.size.y + FALL_RESCUE_MARGIN
+	if global_position.y > limit and _rescue_cd <= 0.0:
+		_rescue_from_fall(map_rect)
+
+
+func _rescue_from_fall(map_rect: Rect2) -> void:
+	_rescue_cd = RESCUE_COOLDOWN
+	_dash_time = 0.0
+	_dodge_time = 0.0
+	velocity = Vector2.ZERO
+	knockback = Vector2.ZERO
+
+	var target := _safe_pos
+	if target == Vector2.ZERO or not map_rect.has_point(target):
+		# ไม่มีที่ปลอดภัยที่จำไว้ → กลับจุดเกิดของแมพ
+		var map := get_tree().get_first_node_in_group("map")
+		if map != null and map.has_method("_find_spawn_position"):
+			target = map._find_spawn_position()
+		else:
+			target = map_rect.position + Vector2(map_rect.size.x * 0.5, map_rect.size.y * 0.4)
+	global_position = target
+	_safe_pos = target
+	Events.floating_text(global_position + Vector2(0, -170),
+		"พากลับขึ้นมาแล้ว", Color("#8ad6ff"), 20, 0)
+	push_warning("[Player] ตกแมพ — พากลับที่ %s" % str(target))
+
+
+## ขอบเขตแมพตอนนี้ (คืน Rect2() ถ้าหาไม่เจอ)
+func _map_bounds() -> Rect2:
+	var map := get_tree().get_first_node_in_group("map")
+	if map != null and "map_bounds" in map:
+		return map.map_bounds
+	return Rect2()
+
+
 ## ตำแหน่งเท้าในโลก — ใช้เทียบระนาบกับมอนสเตอร์
 func foot_position() -> Vector2:
 	return global_position + Vector2(0.0, _feet_y())
@@ -1010,7 +1085,7 @@ func use_skill(skill_id: StringName) -> void:
 						return
 					var all_dir := s.type == SkillData.SkillType.ACTIVE_AOE
 					_deal_damage(s.range_x, s.range_y, s.damage_mult(lv), s.use_matk,
-						s.max_targets, all_dir)
+						s.max_targets_at(lv), all_dir)
 			else:
 				# รอให้ท่าร่ายเล่นจบพอ ๆ กับแบบเดิม (เอฟเฟกต์ทำดาเมจไปเองแล้ว)
 				await get_tree().create_timer(s.cast_windup).timeout
@@ -1074,7 +1149,7 @@ func _start_dash(s: SkillData, lv: int) -> void:
 	_dash_range_y = s.dash_range_y
 	_dash_mult = s.damage_mult(lv)
 	_dash_use_matk = s.use_matk
-	_dash_max_targets = s.max_targets
+	_dash_max_targets = s.max_targets_at(lv)
 	_dash_stop_on_wall = s.dash_stop_on_wall
 	_dash_hits.clear()
 	if not s.dash_hit_once:

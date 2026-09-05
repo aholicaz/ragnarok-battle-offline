@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="QuestData" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://dfku48ye7q3mf"]
 
-[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" uid="uid://dhdswhfgnyl3i" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" uid="uid://c4xmy7ydx32wc" path="res://scripts/resources/objective_data.gd" id="1_v4fts"]
 
 [resource]
 script = ExtResource("1_quest")
@@ -12,11 +13,8 @@ dialog_offer = "เจ้าโพริงพวกนั้นเต็มท�
 dialog_progress = "ยังไม่ครบร้อยตัวนะ อดทนอีกนิด"
 dialog_complete = "โอ้ เก่งมาก! นี่ฟราคอนที่ข้าเก็บไว้ เอาไปตีบวกอาวุธได้เลย"
 kill_monster_id = &"poring"
-kill_count = 100
-required_level = 1
+kill_count = 50
 required_quests = Array[StringName]([&"m2_oath"])
 reward_item_id = &"phracon"
 reward_item_count = 3
-reward_zeny = 0
 reward_exp = 500
-repeatable = false

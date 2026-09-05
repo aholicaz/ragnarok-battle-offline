@@ -49,6 +49,9 @@ signal quest_changed
 signal toggle_window(window_name: StringName)
 signal shop_opened(shop_item_ids: Array)
 signal refine_npc_opened
+## ★ รอบ 56 ★ เปิดหน้าเจาะรูการ์ด / ผลการเจาะ
+signal socket_npc_opened
+signal socket_result(success: bool, item_name: String, new_slots: int)
 signal notice(message: String)
 
 

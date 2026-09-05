@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c1w80xyngg4sh"]
 
-[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1_item"]
-[ext_resource type="Texture2D" path="res://Sprites/items/placeholder/ribbon.png" id="2_icon"]
+[ext_resource type="Script" uid="uid://dbdwo63bn67r7" path="res://scripts/resources/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" uid="uid://dsubxkqqhqym8" path="res://Sprites/items/placeholder/ribbon.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_item")
@@ -10,14 +10,16 @@ display_name = "ริบบิ้น"
 description = "ริบบิ้นผูกผมสีสด"
 icon = ExtResource("2_icon")
 type = 2
-metadata/price_base_r47_sell = 200
-metadata/price_base_r47_buy = 250
 slot = 3
 card_slots = 1
 max_stack = 1
 buy_price = 1250
 sell_price = 100
-metadata/sell_price_base_r44 = 100
 def = 1
-bonus_int = 1
+sp_drain_percent = 0.1
+cooldown_reduction_percent = 2.0
+bonus_int = 2
 refinable = true
+metadata/price_base_r47_sell = 200
+metadata/price_base_r47_buy = 250
+metadata/sell_price_base_r44 = 100

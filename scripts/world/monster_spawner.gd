@@ -20,6 +20,8 @@ extends Node2D
 ## เกิดเฉพาะตอนผู้เล่นเข้าใกล้ (ช่วยประหยัดเครื่องในแมพใหญ่)
 @export var only_spawn_when_player_near: bool = false
 @export var activation_range: float = 1200.0
+## ★ รอบ 59 ★ บอสยังติดคูลดาวน์ → เกิดเป็น "ศพ" ค้างเฟรมสุดท้าย + ป้ายนับถอยหลัง (ปิด = ว่างเปล่าจนกว่าจะครบเวลา)
+@export var spawn_corpse_while_locked: bool = true
 
 var _alive: Array = []
 var _pending := 0
@@ -65,8 +67,11 @@ func _spawn_one() -> bool:
 	if data == null:
 		return false
 
-	# ★ รอบ 56 — ยังติดคูลดาวน์เกิดใหม่ (บอส) ★ ข้ามไปก่อน เดี๋ยว _process เรียกมาใหม่เอง
-	if data.uses_persistent_respawn() and not PlayerState.can_respawn(data.id):
+	# ★ รอบ 56/59 — ยังติดคูลดาวน์เกิดใหม่ (บอส) ★
+	# รอบ 59: เกิดมาเป็น "ศพ" ค้างเฟรมสุดท้าย + ป้ายนับถอยหลังแทน (ผู้เล่นเห็นว่าอีกกี่วิจะเกิด)
+	# ศพนับเป็น _alive ด้วย → สปอว์นเนอร์ไม่พยายามเกิดซ้ำ · ศพลบตัวเองตอนครบเวลา แล้ว _process เกิดตัวจริงให้
+	var as_corpse: bool = data.uses_persistent_respawn() and not PlayerState.can_respawn(data.id)
+	if as_corpse and not spawn_corpse_while_locked:
 		return false
 
 	var monster := monster_scene.instantiate()
@@ -77,6 +82,10 @@ func _spawn_one() -> bool:
 		randf_range(-spawn_width * 0.5, spawn_width * 0.5),
 		randf_range(-spawn_height, 0.0)
 	)
+	if as_corpse and monster.has_method("spawn_as_corpse"):
+		monster.spawn_as_corpse()
+		_alive.append(monster)
+		return true
 
 	# สำคัญ: ต้องบอกจุดเกิดหลังวางตำแหน่งเสร็จ
 	# ไม่งั้นมอนจะคิดว่าบ้านอยู่ที่ (0,0) แล้วเดินกลับบ้านตลอดเวลา

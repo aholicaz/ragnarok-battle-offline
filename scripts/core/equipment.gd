@@ -89,7 +89,8 @@ func collect_bonus() -> Dictionary:
 			continue
 
 		# อาวุธคิด ATK แยกผ่าน weapon_atk() ไม่นับซ้ำตรงนี้
-		_add_item_bonus(b, d, slot != EquipSlot.WEAPON)
+		# ★ รอบ 57 ★ ของดรอปได้โบนัส 5-30% — คูณเฉพาะค่าของ "ตัวไอเทม" ไม่รวมการ์ด/ตีบวก
+		_add_item_bonus(b, d, slot != EquipSlot.WEAPON, inst.bonus_multiplier())
 		# โบนัสจากตีบวก (อาวุธคิด ATK ผ่าน weapon_atk แล้ว / เกราะเท่านั้นที่ได้ DEF)
 		if slot != EquipSlot.WEAPON:
 			_add(b, &"atk", inst.refine * d.refine_atk_per_level)
@@ -139,25 +140,33 @@ static func _add(b: Dictionary, key: StringName, value) -> void:
 
 
 ## เอาค่าโบนัสจาก ItemData (ใช้ได้ทั้งอุปกรณ์และการ์ด เพราะ CardData สืบทอดมา)
-static func _add_item_bonus(b: Dictionary, d: ItemData, include_atk: bool) -> void:
+## mult = ตัวคูณโบนัสของดรอป (1.0 = ปกติ) — ปัดขึ้นทีละช่องเหมือน ItemInstance.boosted()
+static func _add_item_bonus(b: Dictionary, d: ItemData, include_atk: bool, mult: float = 1.0) -> void:
 	if include_atk:
-		_add(b, &"atk", d.atk)
-	_add(b, &"def", d.def)
-	_add(b, &"matk", d.matk)
-	_add(b, &"mdef", d.mdef)
-	_add(b, &"hit", d.hit)
-	_add(b, &"flee", d.flee)
-	_add(b, &"crit", d.crit)
-	_add(b, &"max_hp", d.max_hp)
-	_add(b, &"max_sp", d.max_sp)
+		_add(b, &"atk", _scaled(d.atk, mult))
+	_add(b, &"def", _scaled(d.def, mult))
+	_add(b, &"matk", _scaled(d.matk, mult))
+	_add(b, &"mdef", _scaled(d.mdef, mult))
+	_add(b, &"hit", _scaled(d.hit, mult))
+	_add(b, &"flee", _scaled(d.flee, mult))
+	_add(b, &"crit", _scaled(d.crit, mult))
+	_add(b, &"max_hp", _scaled(d.max_hp, mult))
+	_add(b, &"max_sp", _scaled(d.max_sp, mult))
 	_add(b, &"aspd_percent", d.aspd_percent)
 
-	_add(b, &"str", d.bonus_str)
-	_add(b, &"agi", d.bonus_agi)
-	_add(b, &"vit", d.bonus_vit)
-	_add(b, &"int", d.bonus_int)
-	_add(b, &"dex", d.bonus_dex)
-	_add(b, &"luk", d.bonus_luk)
+	_add(b, &"str", _scaled(d.bonus_str, mult))
+	_add(b, &"agi", _scaled(d.bonus_agi, mult))
+	_add(b, &"vit", _scaled(d.bonus_vit, mult))
+	_add(b, &"int", _scaled(d.bonus_int, mult))
+	_add(b, &"dex", _scaled(d.bonus_dex, mult))
+	_add(b, &"luk", _scaled(d.bonus_luk, mult))
+
+
+## คูณโบนัสแล้วปัดขึ้น (ค่า 1 ที่ +5% ยังได้ 2 — ของดรอปดีกว่าของร้านเสมอ)
+static func _scaled(value: int, mult: float) -> int:
+	if value == 0 or is_equal_approx(mult, 1.0):
+		return value
+	return int(ceilf(absf(value) * mult)) * (1 if value > 0 else -1)
 
 
 func to_dict() -> Dictionary:

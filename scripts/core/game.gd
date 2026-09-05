@@ -24,6 +24,48 @@ const MAPS := {
 	&"dark_forest_2": "res://scenes/maps/dark_forest_2.tscn",
 }
 
+## ★ รอบ 57 ★ ชื่อไทยของแมพ (ใช้ในเสาวาป/มินิแมพ) — ไม่มีในนี้จะใช้ id แทน
+const MAP_NAMES := {
+	&"prontera_town": "เมืองพรอนเทรา",
+	&"prontera_field": "ทุ่งวิหาร",
+	&"asgard_forest_2": "ป่าแอสการ์ด 2",
+	&"dark_forest": "ป่าเงาลึก",
+	&"dark_forest_2": "ป่าเงาลึกชั้นใน",
+	&"thunder_scar": "รอยสายฟ้า",
+	&"iron_road": "ถนนเหล็ก",
+	&"nidavellir_town": "เมืองนิดาเวลลีร์",
+	&"ember_mine": "เหมืองถ่านไฟ",
+	&"hall_of_silence": "ห้องโถงแห่งความเงียบ",
+	&"cold_forge": "เตาหลอมเย็น",
+}
+
+
+## ★ รอบ 60 ★ แมพไหนนับเป็น "เมือง" (ใช้กับปีกแห่งวาลคีรี · จุดเกิดใหม่ตอนตาย)
+## เพิ่มเมืองใหม่ = เพิ่ม id ตรงนี้บรรทัดเดียว
+const TOWNS := [&"prontera_town", &"nidavellir_town"]
+
+
+## ชื่อแมพที่เอาไว้โชว์ให้ผู้เล่นอ่าน
+func map_display_name(map_id: StringName) -> String:
+	return String(MAP_NAMES.get(map_id, String(map_id)))
+
+
+func is_town(map_id: StringName) -> bool:
+	return TOWNS.has(map_id)
+
+
+## ★ วาปกลับเมือง ★ กลับ "เมืองล่าสุดที่เคยเข้า" (ไม่เคยเข้าเมืองไหนเลย = พรอนเทรา)
+## ใช้โดยปีกแห่งวาลคีรี — คืน false ถ้าวาปไม่ได้ (อยู่ในเมืองอยู่แล้ว / กำลังเปลี่ยนแมพ)
+func warp_to_town(spawn_point: StringName = &"default") -> bool:
+	if _is_changing:
+		return false
+	var town := PlayerState.home_town()
+	if is_town(PlayerState.current_map_id):
+		return false
+	change_map(town, spawn_point)
+	return true
+
+
 var _spawn_point_name: StringName = &"default"
 var _is_changing := false
 var _fade: ColorRect
@@ -40,6 +82,10 @@ var _cache_order: Array[String] = []
 
 ## ★ รอบ 52 — เพลงประจำแมพ ★ เรียกใช้ผ่าน Game.music (ดู scripts/core/music_player.gd)
 var music: MusicPlayer
+## ★ รอบ 57 — เสียงเอฟเฟกต์ ★ เรียกใช้ผ่าน Game.sfx.play("attack_blade")
+var sfx: SfxPlayer
+## ★ รอบ 59 — เสียงพากย์ NPC ★ วางไฟล์ Sprites/voice/<voice_id>/<key>.ogg → Game.voice.play("hans", "greeting")
+var voice: VoicePlayer
 
 
 func _ready() -> void:
@@ -48,6 +94,10 @@ func _ready() -> void:
 	_build_fade()
 	music = MusicPlayer.new()
 	add_child(music)
+	sfx = SfxPlayer.new()
+	add_child(sfx)
+	voice = VoicePlayer.new()
+	add_child(voice)
 	var loading_root := Node.new()
 	loading_root.name = "Loading"
 	_loading_scene = PackedScene.new()

@@ -287,18 +287,24 @@ static func describe(d: ItemData, inst: ItemInstance = null, extra: String = "")
 		stats.append("[color=#9aa7bd]พลังโจมตี :[/color] %+d" % atk)
 	if def_v != 0:
 		stats.append("[color=#9aa7bd]พลังป้องกัน :[/color] %d" % def_v)
-	if d.matk != 0: stats.append("MATK %+d" % d.matk)
-	if d.mdef != 0: stats.append("MDEF %+d" % d.mdef)
-	if d.hit != 0: stats.append("HIT %+d" % d.hit)
-	if d.flee != 0: stats.append("FLEE %+d" % d.flee)
-	if d.crit != 0: stats.append("CRIT %+d" % d.crit)
-	if d.max_hp != 0: stats.append("MaxHP %+d" % d.max_hp)
-	if d.max_sp != 0: stats.append("MaxSP %+d" % d.max_sp)
+	# ★ รอบ 57 ★ ของดรอปมีโบนัส — โชว์ค่าที่คูณแล้ว (ของร้าน bonus = 0 จึงเท่าเดิม)
+	var bp: float = inst.bonus_percent if inst != null else 0.0
+	var bst := func(v: int) -> int: return inst.boosted(v) if inst != null else v
+	if d.matk != 0: stats.append("MATK %+d" % bst.call(d.matk))
+	if d.mdef != 0: stats.append("MDEF %+d" % bst.call(d.mdef))
+	if d.hit != 0: stats.append("HIT %+d" % bst.call(d.hit))
+	if d.flee != 0: stats.append("FLEE %+d" % bst.call(d.flee))
+	if d.crit != 0: stats.append("CRIT %+d" % bst.call(d.crit))
+	if d.max_hp != 0: stats.append("MaxHP %+d" % bst.call(d.max_hp))
+	if d.max_sp != 0: stats.append("MaxSP %+d" % bst.call(d.max_sp))
 	if d.aspd_percent != 0.0: stats.append("ASPD %+.0f%%" % d.aspd_percent)
 	for pair in [["STR", d.bonus_str], ["AGI", d.bonus_agi], ["VIT", d.bonus_vit],
 			["INT", d.bonus_int], ["DEX", d.bonus_dex], ["LUK", d.bonus_luk]]:
 		if int(pair[1]) != 0:
-			stats.append("%s %+d" % [pair[0], int(pair[1])])
+			stats.append("%s %+d" % [pair[0], bst.call(int(pair[1]))])
+	if bp > 0.0:
+		stats.append("[color=#ffd54a]★ ของดรอป : ค่าพลังดีกว่าของร้าน +%s%%[/color]"
+			% ItemInstance._pct_text(bp))
 	if d.heal_hp != 0 or d.heal_hp_percent != 0.0:
 		stats.append("ฟื้น HP %d (+%.0f%%)" % [d.heal_hp, d.heal_hp_percent])
 	if d.heal_sp != 0 or d.heal_sp_percent != 0.0:
@@ -319,6 +325,8 @@ static func describe(d: ItemData, inst: ItemInstance = null, extra: String = "")
 		stats.append("ใช้แล้วรีเซ็ตสกิลทั้งหมด (คืนแต้มสกิล)")
 	elif d.special_effect == &"reset_stats":
 		stats.append("ใช้แล้วรีเซ็ตสเตตัสทั้งหมด (คืนแต้มสเตตัส)")
+	elif d.special_effect == &"warp_town":
+		stats.append("ใช้แล้ววาปกลับ%s (ใช้ในเมืองไม่ได้)" % Game.map_display_name(PlayerState.home_town()))
 	if not stats.is_empty():
 		lines.append("[color=#7dffa8]%s[/color]" % "\n".join(stats))
 

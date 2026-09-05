@@ -199,6 +199,8 @@ func _fit_frames(anim: StringName) -> Dictionary:
 func _process(delta: float) -> void:
 	_apply_fit()
 	_apply_hover(delta)
+	if _is_corpse:
+		_process_corpse(delta)
 
 
 # =========================================================
@@ -838,12 +840,111 @@ func _die() -> void:
 		return
 	sprite.pause()
 
+	# ★ รอบ 59 — บอส (คูลดาวน์ข้ามแมพ): ค้าง "เฟรมสุดท้ายของท่าตาย" ไว้ + นับถอยหลังเกิดใหม่ ★
+	# เช่น คิงโพริงตายเหลือมงกุฎตกอยู่กับพื้น แล้วมีป้ายบอกว่าอีกกี่วินาทีจะเกิด
+	if data.uses_persistent_respawn():
+		_become_corpse(played)
+		return
+
 	# จาง ๆ หายไป
 	if data.death_fade > 0.0:
 		var tween := create_tween()
 		tween.tween_property(sprite, "modulate:a", 0.0, data.death_fade)
 		await tween.finished
 	queue_free()
+
+
+# =========================================================
+# ★★ ศพบอส + นับถอยหลังเกิดใหม่ (รอบ 59) ★★
+#
+# บอสตายแล้วไม่หายไป — ค้างเฟรมสุดท้ายของท่าตายไว้ (คิงโพริง = มงกุฎบนพื้น)
+# พร้อมป้าย "เกิดใหม่ใน m:ss" ที่นับจาก PlayerState.respawn_locks (เวลาเดียวกับที่สปอว์นเนอร์ใช้)
+# ครบเวลา → ศพจางหาย → สปอว์นเนอร์เกิดตัวใหม่ให้เอง
+# เข้าแมพใหม่ตอนบอสยังตาย → สปอว์นเนอร์เรียก spawn_as_corpse() ให้ศพโผล่พร้อมป้ายเหมือนเดิม
+# =========================================================
+## ป้ายนับถอยหลังอยู่สูงกว่าหลอดเลือดเท่าไหร่
+const CORPSE_LABEL_LIFT := 10.0
+## ศพจางหายใช้เวลากี่วินาที
+const CORPSE_FADE := 0.8
+
+var _is_corpse := false
+var _corpse_label: Label
+
+
+## เข้าโหมดศพ (เรียกหลังท่าตายเล่นจบ) — played = ชื่อท่าตายที่เล่นไป ("" = ไม่มี)
+func _become_corpse(played: String) -> void:
+	_is_corpse = true
+	remove_from_group("enemy")          # ไม่ให้ดาบ/สกิล/AI นับศพเป็นศัตรู
+	set_physics_process(false)
+	collision.set_deferred("disabled", true)
+	if _hp_bar != null:
+		_hp_bar.hide()
+	sprite.modulate = Color.WHITE
+	# ค้างที่เฟรมสุดท้ายของท่าตายเสมอ (กันท่าตั้ง loop หรือ death_time สั้นกว่าท่า)
+	if played != "" and sprite.sprite_frames != null and sprite.sprite_frames.has_animation(played):
+		var n := sprite.sprite_frames.get_frame_count(played)
+		if sprite.animation != played:
+			sprite.animation = played
+		sprite.frame = maxi(0, n - 1)
+	sprite.pause()
+	_build_corpse_label()
+
+
+## ★ ให้สปอว์นเนอร์เรียกตอนเข้าแมพแล้วบอสยังติดคูลดาวน์ ★ — เกิดมาเป็นศพเลย ไม่ให้ของ ไม่ให้ EXP
+func spawn_as_corpse() -> void:
+	if data == null:
+		return
+	state = State.DEAD
+	hp = 0
+	velocity = Vector2.ZERO
+	var played := _play("Death")
+	_become_corpse(played)
+
+
+func is_corpse() -> bool:
+	return _is_corpse
+
+
+func _build_corpse_label() -> void:
+	if _corpse_label != null:
+		return
+	_corpse_label = Label.new()
+	_corpse_label.name = "RespawnLabel"
+	_corpse_label.add_theme_font_size_override("font_size", 15)
+	_corpse_label.add_theme_color_override("font_color", Color("#ffd54a"))
+	_corpse_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	_corpse_label.add_theme_constant_override("outline_size", 5)
+	_corpse_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_corpse_label.z_index = 100
+	add_child(_corpse_label)
+	_update_corpse_label()
+
+
+func _update_corpse_label() -> void:
+	if _corpse_label == null:
+		return
+	var left: float = PlayerState.respawn_remaining(data.id)
+	var secs := int(ceilf(left))
+	_corpse_label.text = "%s เกิดใหม่ใน %d:%02d" % [data.display_name, secs / 60, secs % 60]
+	_corpse_label.reset_size()
+	_corpse_label.position = Vector2(-_corpse_label.size.x * 0.5,
+		data.hp_bar_offset_y - CORPSE_LABEL_LIFT - _corpse_label.size.y + sprite.position.y)
+
+
+func _process_corpse(_delta: float) -> void:
+	_update_corpse_label()
+	if PlayerState.respawn_remaining(data.id) > 0.0:
+		return
+	# ครบเวลา → จางหาย แล้วสปอว์นเนอร์เกิดตัวใหม่ให้
+	_is_corpse = false
+	set_process(false)
+	var tween := create_tween()
+	tween.tween_property(sprite, "modulate:a", 0.0, CORPSE_FADE)
+	if _corpse_label != null:
+		tween.parallel().tween_property(_corpse_label, "modulate:a", 0.0, CORPSE_FADE)
+	await tween.finished
+	if is_instance_valid(self):
+		queue_free()
 
 
 func _spawn_drops() -> void:

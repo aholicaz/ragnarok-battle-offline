@@ -1,20 +1,18 @@
-[gd_resource type="Resource" script_class="QuestData" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://8rwikwqy0ba7"]
 
-[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
-[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+[ext_resource type="Script" uid="uid://dhdswhfgnyl3i" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" uid="uid://c4xmy7ydx32wc" path="res://scripts/resources/objective_data.gd" id="2_obj"]
 
 [sub_resource type="Resource" id="Obj_0"]
 script = ExtResource("2_obj")
 kind = 4
 target = &"burnt_bark"
-count = 1
 text = "ตรวจต้นไม้ที่มีรอยไหม้"
 
 [sub_resource type="Resource" id="Obj_1"]
 script = ExtResource("2_obj")
 kind = 1
 target = &"burnt_bark_piece"
-count = 1
 text = "เก็บเศษเปลือกไม้ไหม้ไปให้วาลเดอร์"
 
 [resource]
@@ -27,9 +25,7 @@ dialog_offer = "เอริครายงานเรื่องในป่�
 dialog_progress = "ต้นไม้ที่มีรอยไหม้อยู่ลึกเข้าไปในป่าสนธยา"
 dialog_complete = "อืม... รอยไหม้แบบนี้ข้าเคยเห็นในตำราเก่า ตัวอย่างนี้ข้าเก็บไว้ศึกษาเอง เจ้าไม่ต้องยุ่งกับเรื่องนี้อีก เข้าใจไหม"
 objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0"), SubResource("Obj_1")])
-kill_monster_id = &""
 required_level = 8
 required_quests = Array[StringName]([&"m7_silent_forest"])
 set_flag_on_complete = &"valder_kept_bark"
-reward_zeny = 0
 reward_exp = 1500

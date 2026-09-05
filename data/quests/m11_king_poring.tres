@@ -1,19 +1,16 @@
-[gd_resource type="Resource" script_class="QuestData" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://dbh6jy878j11h"]
 
-[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
-[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+[ext_resource type="Script" uid="uid://dhdswhfgnyl3i" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" uid="uid://c4xmy7ydx32wc" path="res://scripts/resources/objective_data.gd" id="2_obj"]
 
 [sub_resource type="Resource" id="Obj_0"]
 script = ExtResource("2_obj")
-kind = 0
 target = &"king_poring"
-count = 1
 
 [sub_resource type="Resource" id="Obj_1"]
 script = ExtResource("2_obj")
 kind = 1
 target = &"glow_shard"
-count = 1
 text = "เก็บของประหลาดจากคิงโพริง"
 consume = false
 
@@ -27,7 +24,6 @@ dialog_offer = "โพริงยักษ์อาละวาดในป่�
 dialog_progress = "คิงโพริงอยู่ลึกสุดของป่าสนธยา ระวังลูกน้องมันด้วย"
 dialog_complete = "เศษแก้วเรืองแสง...? ในตัวโพริงเนี่ยนะ... ข้าอยู่มาสี่สิบปีไม่เคยเห็นของแบบนี้ เก็บไว้ให้ดี แล้วอย่าเอาให้ใครเห็นพร่ำเพรื่อ"
 objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0"), SubResource("Obj_1")])
-kill_monster_id = &""
 required_level = 12
 required_quests = Array[StringName]([&"m10_hunter_journal"])
 reward_zeny = 2000

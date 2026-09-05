@@ -15,6 +15,7 @@
 ##   side     0 = รูปอยู่ซ้าย · 1 = รูปอยู่ขวา  (ฝั่งที่ไม่ได้พูดจะหรี่ลง)
 ##   info     ข้อความเสริมตัวเล็ก (เงื่อนไข/รางวัล) ขึ้นใต้ข้อความหลัก
 ##   choices  รายชื่อปุ่มตัวเลือก — มีเมื่อไหร่จะรอให้ผู้เล่นเลือกก่อนถึงไปต่อ
+##   voice    ★ รอบ 59 ★ เสียงพากย์ของบรรทัดนี้ — "hans/greeting" หรือ path เต็ม (ขึ้นบรรทัด = เล่น · ปิดกล่อง = หยุด)
 ##
 ## รูปตัวละคร: ตัดครึ่งท่อนบน (หัวถึงเอว) พื้นหลังโปร่งใส สูงประมาณ 400-500 px
 class_name DialogueBox
@@ -239,8 +240,20 @@ func play(script: Array) -> int:
 	return await finished
 
 
+## เล่นเสียงพากย์ของบรรทัดนี้ (ไม่มีไฟล์/ไม่มี Game.voice = เงียบ)
+func _play_voice(rel: String) -> void:
+	var g := get_node_or_null("/root/Game")
+	if g == null or not ("voice" in g) or g.voice == null:
+		return
+	if rel == "":
+		g.voice.stop()           # บรรทัดที่ไม่มีเสียง = ตัดเสียงบรรทัดก่อนทิ้ง (ไม่ให้พูดค้าง)
+	else:
+		g.voice.play_path(rel)
+
+
 func close() -> void:
 	_open = false
+	_play_voice("")              # ปิดกล่อง = หยุดพากย์
 	visible = false
 	_revealing = false
 	_waiting_choice = false
@@ -316,6 +329,9 @@ func _show_line() -> void:
 
 	var line: Dictionary = _script[_index]
 	var side: int = clampi(int(line.get("side", 0)), 0, 1)
+
+	# ---------- ★ เสียงพากย์ (รอบ 59) ★ ----------
+	_play_voice(String(line.get("voice", "")))
 
 	# ---------- รูปตัวละคร ----------
 	if line.has("portrait"):

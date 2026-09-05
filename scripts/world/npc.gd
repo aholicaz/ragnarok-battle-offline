@@ -7,6 +7,7 @@
 ##   └── Label   (ชื่อ NPC — ไม่ใส่ก็ได้)
 extends Area2D
 
+## ★ รอบ 57 ★ SAVE_POINT กลายเป็น "เสาวาป" แล้ว (วาปข้ามแมพ + บันทึกเกม)
 enum NPCType { DIALOG, SHOP, REFINER, HEALER, SAVE_POINT, QUEST }
 
 @export var npc_name: String = "พ่อค้า"
@@ -49,8 +50,36 @@ enum NPCType { DIALOG, SHOP, REFINER, HEALER, SAVE_POINT, QUEST }
 @export var has_shop: bool = false
 ## ★ รอบ 56 ★ มีเมนู "เจาะรูการ์ด" ไหม (ช่างตีเหล็ก REFINER มีให้อัตโนมัติอยู่แล้ว)
 @export var has_socket: bool = false
+## ★ รอบ 57 ★ มีเมนู "ตีบวก" ไหม (ช่างตีเหล็ก REFINER มีให้อัตโนมัติอยู่แล้ว)
+@export var has_refine: bool = false
+
+# =========================================================
+# ★★ เสาวาป (รอบ 57) ★★ — ใช้กับ NPC ชนิด SAVE_POINT
+# ปลายทางเพิ่มทีหลังแค่เติม id แมพในลิสต์ (ต้องมีใน Game.MAPS)
+# ถ้าอยากให้ปลายทางไหน "ปลดล็อกก่อนถึงไปได้" ใส่ธงเนื้อเรื่องใน Warp Flags
+# =========================================================
+@export_group("เสาวาป")
+## แมพปลายทางที่วาปไปได้ (เรียงตามลำดับที่อยากให้โชว์)
+@export var warp_targets: Array[StringName] = [&"asgard_forest_2"]
+## ปลายทางไหนต้องปลดล็อกก่อน — { map_id: ธงเนื้อเรื่อง } (ไม่ใส่ = ไปได้เลย)
+@export var warp_flags: Dictionary = {}
+## จุดเกิดที่จะไปโผล่ในแมพปลายทาง (ไม่มีชื่อนี้ในแมพ ระบบใช้ default ให้เอง)
+@export var warp_spawn_point: StringName = &"default"
+## เสาวาปนี้บันทึกเกมให้ด้วยไหม (เดิม SavePoint ทำหน้าที่นี้)
+@export var warp_saves_game: bool = true
 ## ★ รอบ 45 — ประโยคทักตอนเปิดเมนู พูดคุย / ซื้อขาย / ไม่คุย ★
 @export var greeting: String = "มีอะไรให้ช่วยไหม"
+
+# =========================================================
+# ★★ เสียงพากย์ (รอบ 59) ★★
+# วางไฟล์  Sprites/voice/<Voice Id>/<ประโยค>.ogg  แล้วระบบเล่นให้เองตอนขึ้นบรรทัดนั้นในกล่องสนทนา
+# ชื่อประโยค: greeting · dialog_1.. · <ธง>_1.. · <เควส>_offer_1.. · <เควส>_offer_ask · <เควส>_progress
+#            · <เควส>_complete · <เควส>_choice · <เควส>_cutscene_1.. · heal_full · heal_poor · heal_done
+# ดูรายการทั้งหมดพร้อมคำพูด:  python3 dump_npc_lines.py
+# =========================================================
+@export_group("เสียงพากย์")
+## โฟลเดอร์เสียงของตัวละครนี้ (ว่าง = ไม่มีเสียงพากย์) เช่น hans · tony · maria
+@export var voice_id: String = ""
 
 ## ★ เควสที่ NPC คนนี้เป็นคนให้ ★ (ใส่ id ของเควสจาก data/quests/)
 ## ใส่ได้กับ NPC ทุกแบบ ไม่ใช่แค่แบบ QUEST — คุยแล้วจะถามเรื่องเควสก่อน แล้วค่อยเปิดร้าน
@@ -179,7 +208,7 @@ func portrait_texture() -> Texture2D:
 
 
 ## บทพูดของ NPC คนนี้ 1 บรรทัด (ใส่ชื่อ + รูป + ฝั่งให้อัตโนมัติ)
-func line(text: String, info: String = "", choices: Array = []) -> Dictionary:
+func line(text: String, info: String = "", choices: Array = [], voice_key: String = "") -> Dictionary:
 	var d := {
 		"name": npc_name,
 		"portrait": portrait_texture(),
@@ -190,7 +219,25 @@ func line(text: String, info: String = "", choices: Array = []) -> Dictionary:
 		d["info"] = info
 	if not choices.is_empty():
 		d["choices"] = choices
+	var v := voice_path(voice_key)
+	if v != "":
+		d["voice"] = v
 	return d
+
+
+## ★ รอบ 59 ★ "voice_id/key" ของประโยคนี้ ("" = NPC ไม่มีเสียงพากย์ หรือไม่ได้ระบุประโยค)
+func voice_path(key: String) -> String:
+	if voice_id == "" or key == "":
+		return ""
+	return voice_id + "/" + key
+
+
+## เล่นเสียงพากย์ทันที (ใช้กับประโยคที่ไม่ได้ผ่านกล่องสนทนา เช่นหมอรักษา)
+func say_voice(key: String) -> void:
+	var v := voice_path(key)
+	if v == "" or Game.voice == null:
+		return
+	Game.voice.play_path(v)
 
 
 func _on_body_entered(body: Node2D) -> void:
@@ -219,19 +266,21 @@ func interact() -> void:
 	if PlayerState.quests != null:
 		PlayerState.quests.on_talked_to(npc_name)
 
-	# ศิลาเซฟไม่ใช่คน — ไม่มีเมนู
+	# ★ รอบ 57 — เสาวาป ★ (เดิมเป็นศิลาเซฟ กดแล้วเซฟทันที ตอนนี้มีเมนูให้เลือกปลายทาง)
 	if type == NPCType.SAVE_POINT:
-		SaveManager.save_game(0)
+		await open_warp_menu()
 		return
 
 	# ★★ รอบ 45 — เมนูก่อนคุย: พูดคุย / ซื้อขาย / ไม่คุย ★★
 	var options: Array = [MENU_TALK]
 	if has_shop_menu():
 		options.append(MENU_SHOP)
+	if has_refine_menu():
+		options.append(MENU_REFINE)
 	if has_socket_menu():
 		options.append(MENU_SOCKET)
 	options.append(MENU_LEAVE)
-	var pick: int = await UI.talk([line(greeting, "", options)])
+	var pick: int = await UI.talk([line(greeting, "", options, "greeting")])
 	if not is_instance_valid(self) or pick < 0 or pick >= options.size():
 		return
 	var chosen: String = options[pick]
@@ -239,6 +288,9 @@ func interact() -> void:
 		return
 	if chosen == MENU_SHOP:
 		open_shop()
+		return
+	if chosen == MENU_REFINE:
+		Events.refine_npc_opened.emit()
 		return
 	if chosen == MENU_SOCKET:
 		Events.socket_npc_opened.emit()
@@ -250,37 +302,40 @@ func interact() -> void:
 		return
 
 	match type:
-		NPCType.REFINER:
-			Events.refine_npc_opened.emit()
-
 		NPCType.HEALER:
 			if PlayerState.stats.hp >= PlayerState.stats.max_hp \
 					and PlayerState.stats.sp >= PlayerState.stats.max_sp:
 				Events.say("%s: เลือดกับพลังเต็มอยู่แล้วนะ" % npc_name)
+				say_voice("heal_full")
 			elif PlayerState.zeny < heal_price:
 				Events.say("%s: ค่ารักษา %d ซีนี ซีนีไม่พอนะ" % [npc_name, heal_price])
+				say_voice("heal_poor")
 			else:
 				PlayerState.add_zeny(-heal_price)
 				PlayerState.heal_hp(PlayerState.stats.max_hp)
 				PlayerState.restore_sp(PlayerState.stats.max_sp)
 				Events.say("%s: หายดีแล้ว!" % npc_name)
+				say_voice("heal_done")
 
 		_:
 			# ★ คุยผ่านกล่องสนทนา ★ เว้นบรรทัดว่าง = ขึ้นหน้าใหม่
 			var pages: Array = []
+			var vkey := current_dialog_key()       # dialog / ชื่อธง → ไฟล์เสียง <vkey>_1, _2 ...
 			for part in current_dialog().split("\n\n", false):
 				var t := String(part).strip_edges()
 				if t != "":
-					pages.append(line(t))
+					pages.append(line(t, "", [], "%s_%d" % [vkey, pages.size() + 1]))
 			if pages.is_empty():
-				pages.append(line(current_dialog()))
+				pages.append(line(current_dialog(), "", [], vkey + "_1"))
 			await UI.talk(pages)
 
 
 const MENU_TALK := "พูดคุย"
 const MENU_SHOP := "ซื้อขาย"
+const MENU_REFINE := "ตีบวก"
 const MENU_SOCKET := "เจาะรูการ์ด"
 const MENU_LEAVE := "ไม่คุย"
+const MENU_SAVE := "บันทึกเกม"
 
 
 ## มีเมนูซื้อขายไหม — ร้านค้า หรือ NPC ที่ติ๊ก Has Shop
@@ -293,6 +348,59 @@ func has_socket_menu() -> bool:
 	return type == NPCType.REFINER or has_socket
 
 
+## มีเมนูตีบวกไหม — ช่างตีเหล็ก (REFINER) มีให้เลย หรือ NPC ที่ติ๊ก Has Refine
+func has_refine_menu() -> bool:
+	return type == NPCType.REFINER or has_refine
+
+
+# =========================================================
+# ★★ เสาวาป (รอบ 57) ★★
+# =========================================================
+## ปลายทางที่ "เปิดให้ไปได้ตอนนี้" — คืน Array ของ { "id": StringName, "name": String }
+func warp_options() -> Array:
+	var out: Array = []
+	for mid in warp_targets:
+		var id := StringName(mid)
+		if not Game.MAPS.has(id):
+			push_warning("[เสาวาป] ไม่รู้จักแมพ %s" % id)
+			continue
+		if id == PlayerState.current_map_id:
+			continue                      # อยู่แมพนี้อยู่แล้ว ไม่ต้องโชว์
+		if warp_flags.has(id) and not PlayerState.has_flag(StringName(warp_flags[id])):
+			continue                      # ยังไม่ปลดล็อก
+		out.append({"id": id, "name": Game.map_display_name(id)})
+	return out
+
+
+## เปิดเมนูเสาวาป
+func open_warp_menu() -> void:
+	var targets := warp_options()
+	var options: Array = []
+	for t in targets:
+		options.append("ไป %s" % String(t["name"]))
+	if warp_saves_game:
+		options.append(MENU_SAVE)
+	options.append(MENU_LEAVE)
+
+	var head: String = current_dialog()
+	if targets.is_empty():
+		head = "%s
+(ยังไม่มีปลายทางให้ไป)" % head
+	var pick: int = await UI.talk([line(head, "", options)])
+	if not is_instance_valid(self) or pick < 0 or pick >= options.size():
+		return
+	var chosen: String = options[pick]
+	if chosen == MENU_LEAVE:
+		return
+	if chosen == MENU_SAVE:
+		SaveManager.save_game(0)
+		return
+	if pick < targets.size():
+		var dest: StringName = targets[pick]["id"]
+		Events.say("กำลังวาปไป %s..." % String(targets[pick]["name"]))
+		await Game.change_map(dest, warp_spawn_point)
+
+
 func open_shop() -> void:
 	var ids: Array = []
 	for id in shop_items:
@@ -303,6 +411,15 @@ func open_shop() -> void:
 ## ★ บทพูดที่ควรใช้ตอนนี้ ★ ดูจากธงเนื้อเรื่องที่ตั้งไว้แล้ว
 ## ไล่จากท้ายลิสต์ขึ้นมา — ธงตัวหลังชนะตัวหน้า (เขียนเรียงตามลำดับเนื้อเรื่องได้เลย)
 func current_dialog() -> String:
+	var k := current_dialog_key()
+	if k != "dialog":
+		return String(dialog_by_flag[k]).strip_edges()
+	return dialog
+
+
+## ★ รอบ 59 ★ บทพูดชุดไหนกำลังใช้อยู่ — "dialog" (ปกติ) หรือชื่อธงใน dialog_by_flag
+## ใช้เป็นชื่อไฟล์เสียงพากย์ด้วย: <key>_1.ogg, <key>_2.ogg ...
+func current_dialog_key() -> String:
 	if not dialog_by_flag.is_empty() and PlayerState != null:
 		var keys: Array = dialog_by_flag.keys()
 		for i in range(keys.size() - 1, -1, -1):
@@ -310,8 +427,8 @@ func current_dialog() -> String:
 			if PlayerState.has_flag(flag):
 				var t := String(dialog_by_flag[keys[i]]).strip_edges()
 				if t != "":
-					return t
-	return dialog
+					return String(keys[i])
+	return "dialog"
 
 
 # =========================================================
@@ -338,7 +455,7 @@ func _handle_quests() -> bool:
 			if q == null:
 				continue
 			await UI.talk([line(q.dialog_progress,
-				"ความคืบหน้า: %s" % q.objective_text(log.count_of(qid)))])
+				"ความคืบหน้า: %s" % q.objective_text(log.count_of(qid)), [], String(qid) + "_progress")])
 			return true
 
 	# 3) มีเควสใหม่ให้รับ -> ถามว่ารับไหม
@@ -354,17 +471,28 @@ func _handle_quests() -> bool:
 func _ask_accept(q: QuestData) -> void:
 	if q == null:
 		return
-	var script: Array = [line(q.dialog_offer)]
+	var qk := String(q.id)
+	var script: Array = []
+	# บทชวน (เว้นบรรทัดว่าง = ขึ้นหน้าใหม่) → เสียง <เควส>_offer_1, _offer_2 ...
+	for part in q.dialog_offer.split("\n\n", false):
+		var t := String(part).strip_edges()
+		if t != "":
+			script.append(line(t, "", [], "%s_offer_%d" % [qk, script.size() + 1]))
+	if script.is_empty():
+		script.append(line(q.dialog_offer, "", [], qk + "_offer_1"))
 	if q.description != "" and q.description != q.dialog_offer:
-		script.append(line(q.description))
+		script.append(line(q.description, "", [], "%s_offer_%d" % [qk, script.size() + 1]))
 	script.append(line("เอาไงล่ะ รับงานนี้มั้ย",
 		"[ %s ]  เงื่อนไข: %s\nรางวัล: %s" % [q.title, q.objective_text(0), q.reward_text()],
-		["รับเควส", "ไว้ก่อน"]))
+		["รับเควส", "ไว้ก่อน"], qk + "_offer_ask"))
 
 	var pick: int = await UI.talk(script)
 	if pick == 0 and is_instance_valid(self):
 		PlayerState.quests.accept(q.id)
 		Events.say("[รับเควส] %s — %s" % [q.title, q.objective_text(0)])
+		# ★ รอบ 59 — วิดีโอคัทซีนตอนรับเควส ★
+		if q.video_on_accept != "":
+			await UI.play_video(q.video_on_accept)
 
 
 func _ask_turn_in(q: QuestData) -> void:
@@ -373,10 +501,15 @@ func _ask_turn_in(q: QuestData) -> void:
 	var pick: int = await UI.talk([
 		line(q.dialog_complete,
 			"[ %s ]  รางวัล: %s" % [q.title, q.reward_text()],
-			["รับรางวัล", "ไว้ก่อน"]),
+			["รับรางวัล", "ไว้ก่อน"], String(q.id) + "_complete"),
 	])
 	if pick == 0 and is_instance_valid(self):
 		PlayerState.turn_in_quest(q.id)
+		# ★ รอบ 59 — วิดีโอคัทซีนตอนส่งเควส (ก่อนตัวเลือก/แพนกล้อง) ★
+		if q.video_on_complete != "":
+			await UI.play_video(q.video_on_complete)
+		if not is_instance_valid(self):
+			return
 		await _after_turn_in(q)
 
 
@@ -384,7 +517,7 @@ func _ask_turn_in(q: QuestData) -> void:
 func _after_turn_in(q: QuestData) -> void:
 	# ---------- ตัวเลือกที่เกมจะจำไว้ (เช่น M2 สาบาน/เงียบ) ----------
 	if q.choice_prompt != "" and not q.choice_options.is_empty():
-		var choice: int = await UI.talk([line(q.choice_prompt, "", q.choice_options)])
+		var choice: int = await UI.talk([line(q.choice_prompt, "", q.choice_options, String(q.id) + "_choice")])
 		if not is_instance_valid(self):
 			return
 		if choice >= 0 and choice < q.choice_flags.size() and q.choice_flags[choice] != &"":
@@ -398,11 +531,18 @@ func _after_turn_in(q: QuestData) -> void:
 		if n != self and "npc_name" in n and String(n.npc_name) == q.cutscene_pan_npc:
 			target = n
 			break
+	# เสียงพากย์ฉากนี้ใช้ voice_id ของ NPC ที่กล้องแพนไปหา (ไม่มีก็ใช้ของคนให้เควส)
+	var cut_voice: String = voice_id
+	if target != null and "voice_id" in target and String(target.voice_id) != "":
+		cut_voice = String(target.voice_id)
 	var pages: Array = []
 	for part in q.cutscene_text.split("\n\n", false):
 		var t := String(part).strip_edges()
 		if t != "":
-			pages.append({"name": q.cutscene_pan_npc, "side": 1, "text": t})
+			var pg := {"name": q.cutscene_pan_npc, "side": 1, "text": t}
+			if cut_voice != "":
+				pg["voice"] = "%s/%s_cutscene_%d" % [cut_voice, String(q.id), pages.size() + 1]
+			pages.append(pg)
 	var player := get_tree().get_first_node_in_group("player")
 	var cam: Camera2D = player.get_node_or_null("Camera2D") if player != null else null
 	if target == null or cam == null:

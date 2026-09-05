@@ -480,12 +480,13 @@ autoplay = "Idle"
 [node name="Merchant" parent="NPCs" unique_id=1565733649 instance=ExtResource("npc")]
 position = Vector2(-70, 590)
 npc_name = "พ่อค้าโทนี่"
+voice_id = "tony"
 dialog = "มีของดีมาขายนะ
 
 ...ถึงจะไม่ค่อยมีของใหม่ก็เถอะ ของจากทางเหนือไม่ได้ส่งมาสามเดือนแล้ว
 ไม่มีใครบอกว่าทำไม"
 portrait = ExtResource("6_ia7j7")
-shop_items = Array[StringName]([&"red_potion", &"orange_potion", &"blue_potion", &"meat", &"wooden_sword", &"novice_sword", &"short_sword", &"rapier", &"falchion", &"wooden_shield", &"guard", &"ribbon", &"cap", &"leather_cap", &"cotton_shirt", &"leather_jacket", &"hood", &"muffler", &"sandals", &"leather_shoes", &"necklace", &"earring", &"brooch", &"phracon", &"emveretarcon"])
+shop_items = Array[StringName]([&"red_potion", &"orange_potion", &"blue_potion", &"meat", &"wooden_sword", &"novice_sword", &"short_sword", &"rapier", &"falchion", &"wooden_shield", &"guard", &"ribbon", &"cap", &"leather_cap", &"cotton_shirt", &"leather_jacket", &"hood", &"muffler", &"sandals", &"leather_shoes", &"necklace", &"earring", &"brooch", &"wing_of_valkyrie", &"phracon", &"emveretarcon"])
 quest_ids = Array[StringName]([&"tony_fabre"])
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/Merchant" unique_id=36482936]
@@ -497,6 +498,7 @@ autoplay = "default"
 [node name="Blacksmith" parent="NPCs" unique_id=1359939436 instance=ExtResource("npc")]
 position = Vector2(453, 575)
 npc_name = "ช่างตีเหล็กฮันส์"
+voice_id = "hans"
 type = 2
 dialog = "อยากให้อาวุธแกร่งขึ้นไหม
 
@@ -516,6 +518,7 @@ frame_progress = 0.46044508
 [node name="Healer" parent="NPCs" unique_id=981804629 instance=ExtResource("npc")]
 position = Vector2(1099, 590)
 npc_name = "นักบวชหญิงมาเรีย"
+voice_id = "maria"
 type = 3
 dialog = "บาดแผลของเจ้าจะหายดี จงขอบคุณธอร์เถิด"
 portrait = ExtResource("9_put8n")
@@ -530,9 +533,10 @@ frame_progress = 0.21823835
 
 [node name="SavePoint" parent="NPCs" unique_id=1149238899 instance=ExtResource("npc")]
 position = Vector2(1650, 590)
-npc_name = "ศิลาสลักแห่งธอร์"
+npc_name = "เสาวาปแห่งธอร์"
 type = 4
-dialog = "ศิลาสลักตราค้อน · สัมผัสเพื่อบันทึกการเดินทาง"
+dialog = "เสาวาปโบราณ · เลือกปลายทางแล้วก้าวเข้าไปได้เลย"
+warp_targets = Array[StringName]([&"asgard_forest_2"])
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/SavePoint" unique_id=1114171629]
 position = Vector2(12, -88)
@@ -545,6 +549,7 @@ frame_progress = 0.12460094
 [node name="Guide" parent="NPCs" unique_id=1727980527 instance=ExtResource("npc")]
 position = Vector2(1988, 571)
 npc_name = "ทหารยามเอริค"
+voice_id = "erik"
 type = 0
 dialog = "เด็กใหม่สินะ ข้าเอริค ยามประตูเมืองนี้
 
@@ -567,6 +572,7 @@ frame_progress = 0.0011229648
 [node name="HighPriest" parent="NPCs" unique_id=1318346366 instance=ExtResource("npc")]
 position = Vector2(1380, 590)
 npc_name = "นักบวชสูงสุดวาลเดอร์"
+voice_id = "valder"
 type = 0
 dialog = "เจ้ามาถูกที่แล้ว ลูกเอ๋ย
 
@@ -594,6 +600,7 @@ frame_progress = 0.6362185
 [node name="OldMan" parent="NPCs" unique_id=1084804787 instance=ExtResource("npc")]
 position = Vector2(-330, 590)
 npc_name = "ตาแก่กุนนาร์"
+voice_id = "gunnar"
 type = 0
 dialog = "เด็กใหม่สินะ...
 
@@ -630,6 +637,7 @@ autoplay = "Idle"
 [node name="Ingrid" parent="NPCs" unique_id=1434718339 instance=ExtResource("npc")]
 position = Vector2(830, 590)
 npc_name = "อิงกริด"
+voice_id = "ingrid"
 type = 0
 dialog = "พ่อของข้าเข้าป่าไปเมื่อสิบวันก่อน
 
@@ -648,6 +656,7 @@ frame_progress = 0.03712349
 [node name="GuildMaster" parent="NPCs" unique_id=907818509 instance=ExtResource("npc")]
 position = Vector2(-800, 582)
 npc_name = "หัวหน้ากิลด์บียอร์น"
+voice_id = "bjorn"
 type = 0
 dialog = "กิลด์นักผจญภัยพรอนเทรา ยินดีต้อนรับ
 

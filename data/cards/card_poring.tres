@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CardData" format=3 uid="uid://blfiplueggegy"]
 
 [ext_resource type="Script" uid="uid://b3076eptxjrrr" path="res://scripts/resources/card_data.gd" id="1_card"]
-[ext_resource type="Texture2D" uid="uid://dayviivxbk5ni" path="res://Sprites/ChatGPT Image 27 ส.ค. 2569 11_49_17.png" id="1_mxpej"]
+[ext_resource type="Texture2D" path="res://Sprites/items/card_poring.png" id="1_mxpej"]
 
 [resource]
 script = ExtResource("1_card")

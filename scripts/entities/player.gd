@@ -940,6 +940,82 @@ func clear_fit_cache() -> void:
 
 
 # =========================================================
+# ★★ เสียงเอฟเฟกต์ตอนโจมตี (รอบ 57) ★★
+#
+# วางไฟล์เสียงที่ Sprites/sfx/<ชื่อ>.ogg แล้วมันเล่นเอง (ไม่มีไฟล์ = เงียบ ไม่ error)
+# ไล่หาจาก "เฉพาะเจาะจง → ทั่วไป":
+#   ท่า Attack_Katana → attack_katana → attack_blade → attack
+# ★ เลยใส่แค่ attack_blade ไฟล์เดียว ดาบทุกเล่มก็มีเสียงครบ ★
+# =========================================================
+## เสียงสำรองตัวสุดท้าย (ดาบทุกเล่มใช้ร่วมกัน)
+const SFX_ATTACK_FALLBACK := ["attack_blade", "attack"]
+
+
+## ไล่ชื่อไฟล์เสียงจากชื่อท่า เช่น "Attack_Blade_bash" → [attack_blade_bash, attack_blade, attack]
+func _sfx_keys_for_anim(anim: String) -> Array:
+	var keys: Array = []
+	var low := anim.to_lower()
+	if low != "":
+		keys.append(low)
+		var parts := low.split("_", false)
+		if parts.size() > 2:
+			keys.append("%s_%s" % [parts[0], parts[1]])       # attack_blade
+	for k in SFX_ATTACK_FALLBACK:
+		if not keys.has(k):
+			keys.append(k)
+	return keys
+
+
+func _play_attack_sfx(anim: String) -> void:
+	if Game.sfx == null:
+		return
+	Game.sfx.play_first(_sfx_keys_for_anim(anim))
+
+
+## ★ รอบ 58 ★ ลำดับหาไฟล์เสียงของสกิล (แยกตามสกิล ไม่ปนกับเสียงฟันธรรมดา)
+##   1) ช่อง Sound ในไฟล์สกิล (ถ้าตั้งไว้)
+##   2) attack_<อาวุธ>_<สกิล>  เช่น attack_blade_slash   ← เสียงเฉพาะ "อาวุธนี้ + สกิลนี้"
+##   3) skill_<สกิล>            เช่น skill_slash          ← เสียงของสกิลนี้ ใช้ได้ทุกอาวุธ
+##   4) เสียงฟันของอาวุธ (attack_blade → attack)          ← สำรองสุดท้าย ไม่ให้เงียบ
+func skill_sfx_keys(skill_id: StringName) -> Array:
+	var s := GameData.get_skill(skill_id)
+	var keys: Array = []
+	if s != null and s.sound.strip_edges() != "":
+		keys.append(s.sound.strip_edges().to_lower())
+	var anim := skill_animation(skill_id).to_lower()
+	var parts := anim.split("_", false)
+	# ท่าสกิลเฉพาะอาวุธ (Attack_Blade_slash) — ถ้าท่าที่ได้เป็นแค่ท่าฟันธรรมดา ไม่นับเป็นเสียงสกิล
+	if parts.size() > 2:
+		keys.append(anim)
+	keys.append("skill_%s" % String(skill_id).to_lower())
+	if parts.size() >= 2:
+		keys.append("%s_%s" % [parts[0], parts[1]])        # attack_blade
+	for k in SFX_ATTACK_FALLBACK:
+		if not keys.has(k):
+			keys.append(k)
+	return keys
+
+
+func _play_skill_sfx(skill_id: StringName) -> void:
+	if Game.sfx == null:
+		return
+	Game.sfx.play_first(skill_sfx_keys(skill_id))
+
+
+## เสียงสกิลที่ไม่ใช่ท่าฟัน (บัฟ/ฮีล) — ไม่มีไฟล์ = เงียบ ไม่ถอยไปใช้เสียงดาบ
+func _play_support_sfx(skill_id: StringName, kind: String) -> void:
+	if Game.sfx == null:
+		return
+	var s := GameData.get_skill(skill_id)
+	var keys: Array = []
+	if s != null and s.sound.strip_edges() != "":
+		keys.append(s.sound.strip_edges().to_lower())
+	keys.append("skill_%s" % String(skill_id).to_lower())
+	keys.append("skill_%s" % kind)                          # skill_heal / skill_buff
+	Game.sfx.play_first(keys)
+
+
+# =========================================================
 # ท่าโจมตี
 # =========================================================
 ## ชื่อท่าโจมตีที่ควรเล่นตอนนี้ (ดูจากอาวุธที่ถืออยู่)
@@ -1008,6 +1084,7 @@ func start_attack() -> void:
 	_jump_anim = ""
 	_play(attack_animation())
 	_spawn_attack_effect()
+	_play_attack_sfx(attack_animation())
 
 	await get_tree().create_timer(attack_windup).timeout
 	if not is_instance_valid(self) or _dead:
@@ -1041,10 +1118,12 @@ func use_skill(skill_id: StringName) -> void:
 			var amount := s.heal_amount(lv, PlayerState.stats.total_int)
 			PlayerState.heal_hp(amount)
 			Events.floating_text(global_position, s.display_name, Color("#7ef0ff"), 20, 0)
+			_play_support_sfx(skill_id, "heal")
 
 		SkillData.SkillType.BUFF:
 			PlayerState.apply_buff(skill_id)
 			Events.floating_text(global_position, s.display_name, Color("#ffd54a"), 20, 0)
+			_play_support_sfx(skill_id, "buff")
 
 		SkillData.SkillType.ACTIVE_DASH:
 			# ★ สกิลพุ่ง ★ ออกตัวไปข้างหน้าแล้วฟันทุกตัวที่ขวางทาง
@@ -1054,6 +1133,7 @@ func use_skill(skill_id: StringName) -> void:
 			_play(skill_animation(skill_id))
 			Events.floating_text(global_position, s.display_name, Color("#ffd54a"), 18, 0)
 			_spawn_skill_effect(s, s.damage_mult(lv))
+			_play_skill_sfx(skill_id)
 
 			await get_tree().create_timer(s.cast_windup).timeout
 			if not is_instance_valid(self) or _dead:
@@ -1075,6 +1155,7 @@ func use_skill(skill_id: StringName) -> void:
 			_play(skill_animation(skill_id))
 			Events.floating_text(global_position, s.display_name, Color("#ffd54a"), 18, 0)
 			_spawn_skill_effect(s, s.damage_mult(lv))
+			_play_skill_sfx(skill_id)
 
 			# ★ เปิด Effect Damage ไว้ = ตัวเอฟเฟกต์เป็นคนทำดาเมจเอง ★
 			# ไม่ต้องคิดดาเมจแบบกรอบรอบตัวซ้ำอีก ไม่งั้นมอนจะโดน 2 เด้ง

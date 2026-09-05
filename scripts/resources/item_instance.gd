@@ -10,6 +10,14 @@ extends Resource
 @export var cards: Array[StringName] = []
 ## ★ ช่องการ์ดของ "ชิ้นนี้" ★ ของร้านค้า = 0 เสมอ · ของที่ดรอปจากมอนถึงจะมีช่อง
 @export var slots: int = 0
+## ★★ รอบ 57 — โบนัสของดรอป ★★
+## ของที่ดรอปจากมอน/บอส "ค่าพลังดีกว่าของร้าน" กี่ % (สุ่มตอนดรอป · ของร้าน = 0)
+## คูณกับ ATK/DEF/MATK/MDEF/HIT/FLEE/CRIT/MaxHP/MaxSP และค่าสเตตัสของชิ้นนั้น
+@export var bonus_percent: float = 0.0
+
+## ★ ช่วงโบนัสของที่ดรอป (%) ★ อยากให้ของดรอปแรงขึ้น/ลง แก้ 2 ค่านี้ที่เดียว
+const DROP_BONUS_MIN := 5.0
+const DROP_BONUS_MAX := 30.0
 
 
 static func create(p_item_id: StringName, p_count: int = 1, p_refine: int = 0,
@@ -23,10 +31,14 @@ static func create(p_item_id: StringName, p_count: int = 1, p_refine: int = 0,
 
 
 ## สร้างของแบบ "ดรอปจากมอน" — ได้ช่องการ์ดติดมาตามที่ตั้งไว้ใน ItemData
+## ★ รอบ 57 ★ ถ้าเป็นของสวมใส่ จะสุ่มโบนัสค่าพลัง 5-30% ให้ด้วย (ดีกว่าของที่ซื้อจากร้านเสมอ)
 static func create_drop(p_item_id: StringName, p_count: int = 1, p_refine: int = 0) -> ItemInstance:
 	var d := GameData.get_item(p_item_id)
 	var n: int = d.card_slots if d != null else 0
-	return create(p_item_id, p_count, p_refine, n)
+	var inst := create(p_item_id, p_count, p_refine, n)
+	if d != null and d.is_equipment():
+		inst.bonus_percent = roundf(randf_range(DROP_BONUS_MIN, DROP_BONUS_MAX) * 10.0) / 10.0
+	return inst
 
 
 func data() -> ItemData:
@@ -42,7 +54,26 @@ func display_name() -> String:
 		text = "+%d %s" % [refine, text]
 	if slots > 0:
 		text += " [%d]" % slots
+	if bonus_percent > 0.0:
+		text += " (+%s%%)" % _pct_text(bonus_percent)
 	return text
+
+
+## ข้อความ % แบบสั้น (12.5 → "12.5" · 20.0 → "20")
+static func _pct_text(v: float) -> String:
+	return "%.1f" % v if absf(v - roundf(v)) > 0.05 else "%d" % int(roundf(v))
+
+
+## ★ รอบ 57 ★ ตัวคูณค่าพลังของชิ้นนี้ (1.0 = ของร้านปกติ · 1.3 = ของดรอปที่ได้ +30%)
+func bonus_multiplier() -> float:
+	return 1.0 + maxf(0.0, bonus_percent) / 100.0
+
+
+## ค่าพลัง 1 ช่องของชิ้นนี้ หลังคูณโบนัสของดรอปแล้ว (ปัดขึ้นถ้ามีเศษ)
+func boosted(value: float) -> int:
+	if value == 0.0 or bonus_percent <= 0.0:
+		return int(value)
+	return int(ceilf(absf(value) * bonus_multiplier())) * (1 if value > 0.0 else -1)
 
 
 # =========================================================
@@ -96,14 +127,14 @@ func total_atk() -> int:
 	var d := data()
 	if d == null:
 		return 0
-	return d.atk + refine * d.refine_atk_per_level
+	return boosted(d.atk) + refine * d.refine_atk_per_level
 
 
 func total_def() -> int:
 	var d := data()
 	if d == null:
 		return 0
-	return d.def + refine * d.refine_def_per_level
+	return boosted(d.def) + refine * d.refine_def_per_level
 
 
 ## ราคาขาย รวมมูลค่าจากการตีบวก
@@ -118,14 +149,16 @@ func sell_value() -> int:
 
 
 func duplicate_instance() -> ItemInstance:
-	var inst := ItemInstance.create(item_id, count, refine)
+	var inst := ItemInstance.create(item_id, count, refine, slots)
 	inst.cards = cards.duplicate()
+	inst.bonus_percent = bonus_percent
 	return inst
 
 
 func same_kind_as(other: ItemInstance) -> bool:
 	return other != null and other.item_id == item_id \
-		and other.refine == refine and other.cards == cards
+		and other.refine == refine and other.cards == cards \
+		and is_equal_approx(other.bonus_percent, bonus_percent)
 
 
 func to_dict() -> Dictionary:
@@ -133,7 +166,7 @@ func to_dict() -> Dictionary:
 	for c in cards:
 		card_ids.append(String(c))
 	return {"item_id": String(item_id), "count": count, "refine": refine,
-		"cards": card_ids, "slots": slots}
+		"cards": card_ids, "slots": slots, "bonus_percent": bonus_percent}
 
 
 static func from_dict(d: Dictionary) -> ItemInstance:
@@ -143,6 +176,7 @@ static func from_dict(d: Dictionary) -> ItemInstance:
 		int(d.get("refine", 0))
 	)
 	inst.slots = int(d.get("slots", 0))
+	inst.bonus_percent = float(d.get("bonus_percent", 0.0))
 	for c in d.get("cards", []):
 		inst.cards.append(StringName(c))
 	# เซฟเก่าที่ยังไม่มีช่อง slots — เดาจากจำนวนการ์ดที่ใส่ไว้ จะได้ไม่หลุด

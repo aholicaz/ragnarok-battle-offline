@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dayviivxbk5ni"
-path="res://.godot/imported/ChatGPT Image 27 ส.ค. 2569 11_49_17.png-8eee0fe2bae0938e641dbddf59d0b740.ctex"
+uid="uid://b31rj1ogxga3w"
+path="res://.godot/imported/undead_bone.png-3a8ab9b7c08d58967562e62dab49d62c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/ChatGPT Image 27 ส.ค. 2569 11_49_17.png"
-dest_files=["res://.godot/imported/ChatGPT Image 27 ส.ค. 2569 11_49_17.png-8eee0fe2bae0938e641dbddf59d0b740.ctex"]
+source_file="res://Sprites/items/placeholder/undead_bone.png"
+dest_files=["res://.godot/imported/undead_bone.png-3a8ab9b7c08d58967562e62dab49d62c.ctex"]
 
 [params]
 

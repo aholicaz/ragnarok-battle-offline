@@ -1,20 +1,18 @@
-[gd_resource type="Resource" script_class="QuestData" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="QuestData" format=3 uid="uid://cbappq6fj38ie"]
 
-[ext_resource type="Script" path="res://scripts/resources/quest_data.gd" id="1_quest"]
-[ext_resource type="Script" path="res://scripts/resources/objective_data.gd" id="2_obj"]
+[ext_resource type="Script" uid="uid://dhdswhfgnyl3i" path="res://scripts/resources/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" uid="uid://c4xmy7ydx32wc" path="res://scripts/resources/objective_data.gd" id="2_obj"]
 
 [sub_resource type="Resource" id="Obj_0"]
 script = ExtResource("2_obj")
 kind = 3
 target = &"asgard_forest_2"
-count = 1
 text = "ไปที่ป่าสนธยา"
 
 [sub_resource type="Resource" id="Obj_1"]
 script = ExtResource("2_obj")
 kind = 4
 target = &"dead_monster"
-count = 1
 text = "ตรวจดูซากมอนสเตอร์ในป่าสนธยา"
 
 [resource]
@@ -27,7 +25,6 @@ dialog_offer = "พวกลาดตระเวนบอกว่าป่า�
 dialog_progress = "ในป่าสนธยา ลองเดินลึกเข้าไปหน่อย มีบางอย่างให้ตรวจแน่ ๆ"
 dialog_complete = "ตายโดยไม่มีบาดแผล...? ...อย่าเพิ่งเล่าเรื่องนี้ให้ชาวเมืองฟัง เดี๋ยวคนแตกตื่น ข้าจะรายงานท่านวาลเดอร์เอง"
 objectives = Array[ExtResource("2_obj")]([SubResource("Obj_0"), SubResource("Obj_1")])
-kill_monster_id = &""
 required_level = 7
 required_quests = Array[StringName]([&"m6_ceremony"])
 reward_zeny = 400

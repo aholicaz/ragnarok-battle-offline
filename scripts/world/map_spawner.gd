@@ -44,6 +44,9 @@ extends Node2D
 @export var spawn_interval: float = 0.6
 ## เกิดใหม่ที่จุดสุ่มใหม่ (ปิด = เกิดที่เดิม)
 @export var respawn_at_random_spot: bool = true
+## ★ รอบ 59 — บอสที่ยังติดคูลดาวน์ให้เกิดเป็น "ศพ" (ค้างท่าตาย + นับถอยหลัง) ไหม
+## ปิด = ไม่เกิดอะไรเลยจนกว่าจะครบเวลา (แบบรอบ 56)
+@export var spawn_corpse_while_locked: bool = true
 ## เกิดเฉพาะตอนผู้เล่นอยู่ในแมพ
 @export var only_when_player_exists: bool = true
 
@@ -89,8 +92,9 @@ func _process(delta: float) -> void:
 		return
 	# ตัวที่ตายแล้ว (กำลังเล่นท่าตายอยู่) ไม่นับเป็นตัวเป็น ๆ
 	# ไม่งั้นระหว่างเล่นท่าตาย ระบบจะคิดว่ามอนยังครบ แล้วไม่ยอมเกิดตัวใหม่
+	# ★ รอบ 59: "ศพบอส" (ค้างท่าตาย + นับถอยหลัง) ยังนับว่าอยู่ → ไม่เกิดศพซ้อนศพ · ศพลบตัวเองตอนครบเวลา
 	_alive = _alive.filter(func(m):
-		return is_instance_valid(m) and not (m.has_method("is_dead") and m.is_dead()))
+		return is_instance_valid(m) and (_is_corpse(m) or not (m.has_method("is_dead") and m.is_dead())))
 	_cull_far_monsters()
 	if _alive.size() + _pending >= _total_wanted():
 		_dry_time = 0.0
@@ -107,6 +111,10 @@ func _process(delta: float) -> void:
 	_fill()
 
 
+static func _is_corpse(m) -> bool:
+	return m.has_method("is_corpse") and m.is_corpse()
+
+
 ## เก็บมอนที่อยู่ไกลลิบ (ผู้เล่นเดินผ่านไปไกลแล้ว) กลับเข้าคิว
 ## เพื่อให้ไปเกิดใหม่ข้างหน้า — เดินเปิดแมพไปเรื่อย ๆ ก็จะเจอมอนเรื่อย ๆ
 func _cull_far_monsters() -> void:
@@ -120,6 +128,9 @@ func _cull_far_monsters() -> void:
 		if not is_instance_valid(m):
 			continue
 		var dead: bool = m.has_method("is_dead") and m.is_dead()
+		if _is_corpse(m):
+			keep.append(m)          # ศพบอสไม่โดนเก็บกลับ (ให้ป้ายนับถอยหลังอยู่ที่เดิม)
+			continue
 		if not dead and absf(m.global_position.x - player.global_position.x) > despawn_distance:
 			m.queue_free()
 			continue
@@ -337,8 +348,10 @@ func _spawn_one(data: MonsterData) -> bool:
 	if monster_scene == null:
 		return false
 
-	# ★ รอบ 56 — ยังติดคูลดาวน์เกิดใหม่ข้ามแมพ (บอส) ★
-	if data.uses_persistent_respawn() and not PlayerState.can_respawn(data.id):
+	# ★ รอบ 56/59 — ยังติดคูลดาวน์เกิดใหม่ข้ามแมพ (บอส) ★
+	# รอบ 59: เกิดมาเป็น "ศพ" (เฟรมสุดท้ายของท่าตาย + ป้ายนับถอยหลัง) แทนที่จะไม่เกิดเลย
+	var as_corpse: bool = data.uses_persistent_respawn() and not PlayerState.can_respawn(data.id)
+	if as_corpse and not spawn_corpse_while_locked:
 		return false
 
 	var point := _find_ground()
@@ -350,6 +363,10 @@ func _spawn_one(data: MonsterData) -> bool:
 	get_parent().add_child(monster)
 	# วางให้ "เท้า" อยู่บนพื้นพอดี
 	monster.global_position = point - Vector2(0.0, data.foot_offset())
+	if as_corpse and monster.has_method("spawn_as_corpse"):
+		monster.spawn_as_corpse()
+		_alive.append(monster)      # ศพนับเป็นตัวที่อยู่ในแมพ → ไม่เกิดซ้ำ · ศพลบตัวเองตอนครบเวลา
+		return true
 
 	if monster.has_method("set_home"):
 		monster.set_home(monster.global_position)

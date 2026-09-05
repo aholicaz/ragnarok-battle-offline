@@ -561,9 +561,21 @@ func use_item(inv_index: int) -> bool:
 		Events.say("ไอเทมนี้ใช้ไม่ได้")
 		return false
 
-	# ★ รอบ 45 — ไอเทมพิเศษ: รีสกิล / รีสเตตัส ★
+	# ★ รอบ 45 — ไอเทมพิเศษ: รีสกิล / รีสเตตัส · รอบ 60 — ปีกวาปกลับเมือง ★
 	if data.special_effect != &"":
 		match data.special_effect:
+			&"warp_town":
+				if Game.is_town(current_map_id):
+					Events.say("อยู่ในเมืองอยู่แล้ว")
+					return false
+				if Game._is_changing:
+					return false
+				inventory.take_from_slot(inv_index, 1)
+				refresh()
+				Events.say("%s — กลับสู่%s" % [data.display_name, Game.map_display_name(home_town())])
+				Events.item_used.emit(data.id)
+				Game.warp_to_town()
+				return true
 			&"reset_skills":
 				var before := stats.skill_points
 				skills.reset(stats)
@@ -776,6 +788,22 @@ func sell_slot(inv_index: int, count: int = 1) -> bool:
 # =========================================================
 var respawn_locks: Dictionary = {}     ## id มอน -> unix time ที่เกิดใหม่ได้
 
+## ★ รอบ 60 ★ เมืองล่าสุดที่ผู้เล่นเดินเข้าไป (ปีกแห่งวาลคีรีวาปกลับที่นี่)
+## MapBase ตั้งให้เองตอนเข้าแมพที่อยู่ในลิสต์ Game.TOWNS
+var last_town: StringName = &"prontera_town"
+
+
+## เมืองที่จะวาปกลับ (กันค่าเพี้ยน/แมพถูกลบ = ถอยไปพรอนเทรา)
+func home_town() -> StringName:
+	if last_town != &"" and Game.MAPS.has(last_town):
+		return last_town
+	return &"prontera_town"
+
+
+func set_last_town(map_id: StringName) -> void:
+	if Game.is_town(map_id):
+		last_town = map_id
+
 
 ## ล็อกไม่ให้มอน id นี้เกิดใหม่อีก seconds วินาที
 func lock_respawn(monster_id: StringName, seconds: float) -> void:
@@ -811,6 +839,7 @@ func to_dict() -> Dictionary:
 	return {
 		"version": 1,
 		"respawn_locks": _respawn_locks_to_dict(),
+		"last_town": String(last_town),
 		"stats": stats.to_dict(),
 		"inventory": inventory.to_array(),
 		"equipment": equipment.to_dict(),
@@ -852,6 +881,7 @@ func from_dict(d: Dictionary) -> void:
 		item_hotkeys[i] = StringName(ih[i])
 	current_map_id = StringName(d.get("map", "prontera_field"))
 
+	last_town = StringName(String(d.get("last_town", "prontera_town")))
 	respawn_locks.clear()
 	var rl = d.get("respawn_locks", {})
 	if rl is Dictionary:

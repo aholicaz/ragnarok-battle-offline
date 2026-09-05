@@ -10,6 +10,12 @@ var _touch_btn: Button
 var _music_slider: HSlider
 var _music_label: Label
 var _music_btn: Button
+var _sfx_slider: HSlider
+var _sfx_label: Label
+var _sfx_btn: Button
+var _voice_slider: HSlider
+var _voice_label: Label
+var _voice_btn: Button
 
 
 func _ready() -> void:
@@ -99,6 +105,62 @@ func _build_content() -> void:
 
 	content.add_child(UITheme.make_label(
 		"เพลงเปลี่ยนตามแมพเอง — วางไฟล์ Sprites/music/<ชื่อแมพ>.mp3 แล้วเล่นได้เลย",
+		11, UITheme.TEXT_DIM))
+
+	# ---------- ★ รอบ 57 — เสียงเอฟเฟกต์ ★ ----------
+	var sfx_row := HBoxContainer.new()
+	sfx_row.add_theme_constant_override("separation", 6)
+	content.add_child(sfx_row)
+
+	_sfx_label = UITheme.make_label("เสียงเอฟเฟกต์", 13, UITheme.TEXT)
+	_sfx_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sfx_row.add_child(_sfx_label)
+
+	_sfx_slider = HSlider.new()
+	_sfx_slider.min_value = 0.0
+	_sfx_slider.max_value = 100.0
+	_sfx_slider.step = 5.0
+	_sfx_slider.custom_minimum_size = Vector2(150, 20)
+	_sfx_slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_sfx_slider.value_changed.connect(_on_sfx_volume)
+	sfx_row.add_child(_sfx_slider)
+
+	_sfx_btn = UITheme.make_button("", 70)
+	_sfx_btn.pressed.connect(_toggle_sfx)
+	sfx_row.add_child(_sfx_btn)
+	_refresh_sfx()
+	visibility_changed.connect(_refresh_sfx)
+
+	content.add_child(UITheme.make_label(
+		"เสียงฟันดาบ/สกิล — วางไฟล์ Sprites/sfx/<ชื่อ>.ogg (attack_blade = ดาบทุกเล่ม)",
+		11, UITheme.TEXT_DIM))
+
+	# ---------- ★ รอบ 59 — เสียงพากย์ NPC ★ ----------
+	var voice_row := HBoxContainer.new()
+	voice_row.add_theme_constant_override("separation", 6)
+	content.add_child(voice_row)
+
+	_voice_label = UITheme.make_label("เสียงพากย์ NPC", 13, UITheme.TEXT)
+	_voice_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	voice_row.add_child(_voice_label)
+
+	_voice_slider = HSlider.new()
+	_voice_slider.min_value = 0.0
+	_voice_slider.max_value = 100.0
+	_voice_slider.step = 5.0
+	_voice_slider.custom_minimum_size = Vector2(150, 20)
+	_voice_slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_voice_slider.value_changed.connect(_on_voice_volume)
+	voice_row.add_child(_voice_slider)
+
+	_voice_btn = UITheme.make_button("", 70)
+	_voice_btn.pressed.connect(_toggle_voice)
+	voice_row.add_child(_voice_btn)
+	_refresh_voice()
+	visibility_changed.connect(_refresh_voice)
+
+	content.add_child(UITheme.make_label(
+		"เสียงพากย์ — วางไฟล์ Sprites/voice/<voice_id>/<ประโยค>.ogg (ดูรายชื่อใน dump_npc_lines.py)",
 		11, UITheme.TEXT_DIM))
 
 	content.add_child(UITheme.separator())
@@ -230,6 +292,53 @@ func _toggle_music() -> void:
 		return
 	Game.music.set_enabled(not Game.music.enabled)
 	_refresh_music()
+
+
+func _on_sfx_volume(v: float) -> void:
+	if Game.sfx != null:
+		Game.sfx.set_volume(v / 100.0)
+		Game.sfx.play_first(["attack_blade", "attack"])     # ให้ได้ยินตัวอย่างทันที
+	_refresh_sfx()
+
+
+func _toggle_sfx() -> void:
+	if Game.sfx != null:
+		Game.sfx.set_enabled(not Game.sfx.enabled)
+	_refresh_sfx()
+
+
+func _on_voice_volume(v: float) -> void:
+	if Game.voice != null:
+		Game.voice.set_volume(v / 100.0)
+	_refresh_voice()
+
+
+func _toggle_voice() -> void:
+	if Game.voice != null:
+		Game.voice.set_enabled(not Game.voice.enabled)
+	_refresh_voice()
+
+
+func _refresh_voice() -> void:
+	if Game.voice == null or _voice_slider == null:
+		return
+	_voice_slider.set_block_signals(true)
+	_voice_slider.value = Game.voice.volume_percent()
+	_voice_slider.set_block_signals(false)
+	_voice_btn.text = "เปิด" if Game.voice.enabled else "ปิด"
+	_voice_label.text = "เสียงพากย์ NPC  %d%%" % Game.voice.volume_percent()
+
+
+func _refresh_sfx() -> void:
+	if Game.sfx == null or _sfx_slider == null:
+		return
+	_sfx_slider.set_block_signals(true)
+	_sfx_slider.value = Game.sfx.volume_percent()
+	_sfx_slider.set_block_signals(false)
+	_sfx_btn.text = "เปิด" if Game.sfx.enabled else "ปิด"
+	_sfx_label.text = "เสียงเอฟเฟกต์  %d%%" % Game.sfx.volume_percent()
+	if not Game.sfx.has_sound("attack_blade"):
+		_sfx_label.text += "   (ยังไม่มีไฟล์เสียง)"
 
 
 func _refresh_music() -> void:

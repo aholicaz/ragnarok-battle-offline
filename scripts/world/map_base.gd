@@ -57,6 +57,17 @@ extends Node2D
 ## เว้นจากขอบภาพเข้ามาอีกกี่พิกเซล (กันตัวละครยื่นพ้นภาพครึ่งตัว)
 @export var art_edge_margin: float = 40.0
 
+# =========================================================
+# ★★ วิดีโอตอนเข้าแมพ (รอบ 59) ★★  เช่น เดินเข้ารอยสายฟ้าครั้งแรก / ประตูนิดาเวลลิร์
+# เล่นครั้งเดียว (จำด้วยธง seen_map_<map_id> ในเซฟ) เว้นแต่ปิด Intro Video Once
+# =========================================================
+@export_group("วิดีโอตอนเข้าแมพ")
+@export_file("*.ogv") var intro_video: String = ""
+## true = เล่นแค่ครั้งแรกที่เข้าแมพนี้ · false = เล่นทุกครั้ง
+@export var intro_video_once: bool = true
+## ต้องมีธงนี้ก่อนถึงจะเล่น (ว่าง = ไม่ต้อง) เช่น chapter2_open
+@export var intro_video_flag: StringName = &""
+
 @export_group("")
 @export var player_scene: PackedScene
 @export var camera_zoom: Vector2 = Vector2.ONE
@@ -72,6 +83,7 @@ var camera: Camera2D
 func _ready() -> void:
 	add_to_group("map")
 	PlayerState.current_map_id = map_id
+	PlayerState.set_last_town(map_id)      # ★ รอบ 60 — จำเมืองล่าสุดไว้ให้ปีกแห่งวาลคีรี ★
 	if auto_fit_bounds:
 		map_bounds = _measure_bounds()
 		print("[Map] %s ขนาดแมพที่วัดได้: %s" % [map_id, str(map_bounds)])
@@ -86,6 +98,20 @@ func _ready() -> void:
 	if Game.music != null:
 		Game.music.play_for_map(map_id)
 	Events.say(display_name)
+	_play_intro_video()
+
+
+## ★ รอบ 59 ★ วิดีโอตอนเข้าแมพ (ไม่มีไฟล์/ดูไปแล้ว = ไม่ทำอะไร)
+func _play_intro_video() -> void:
+	if intro_video == "" or not ResourceLoader.exists(intro_video):
+		return
+	if intro_video_flag != &"" and not PlayerState.has_flag(intro_video_flag):
+		return
+	var seen := StringName("seen_map_" + String(map_id))
+	if intro_video_once and PlayerState.has_flag(seen):
+		return
+	PlayerState.set_flag(seen)
+	UI.play_video.call_deferred(intro_video)      # รอให้แมพ/ผู้เล่นตั้งตัวก่อน 1 เฟรม
 
 
 # =========================================================

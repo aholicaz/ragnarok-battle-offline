@@ -93,6 +93,7 @@ destination_name = "เหมืองถ่านไฟ"
 [node name="Helga" parent="NPCs" instance=ExtResource("npc")]
 position = Vector2(350, 820)
 npc_name = "นายหน้าเฮลกา"
+voice_id = "helga"
 quest_ids = Array[StringName]([&"c2_1_unwelcome_gate", &"c2_2_toll"])
 type = 1
 dialog = "คนบนดินสินะ ของที่นี่แพงหน่อยนะ แต่ของดีทุกชิ้น\n\nอย่าถามว่าใครตี... ที่นี่ไม่ถามกัน"
@@ -101,6 +102,7 @@ shop_items = Array[StringName]([&"red_potion", &"orange_potion", &"white_potion"
 [node name="Dvalin" parent="NPCs" instance=ExtResource("npc")]
 position = Vector2(900, 820)
 npc_name = "ช่างเอกดวาลิน"
+voice_id = "dvalin"
 quest_ids = Array[StringName]([&"c2_5_hall_of_silence", &"c2_6_to_cold_forge", &"c2_7_forge_guardian"])
 type = 2
 dialog = "เอาของมาตีบวกก็วางตรงนี้\n\n...เจ้ามากับฮันส์ใช่ไหม บอกมันว่าข้ายังไม่ให้อภัย"
@@ -108,6 +110,7 @@ dialog = "เอาของมาตีบวกก็วางตรงนี�
 [node name="Brokk" parent="NPCs" instance=ExtResource("npc")]
 position = Vector2(1450, 820)
 npc_name = "บรอกก์"
+voice_id = "brokk"
 quest_ids = Array[StringName]([&"c2_8_hammer_truth"])
 type = 0
 dialog = "ข้าไม่พูดเรื่องเก่าแล้ว ไปเถอะ\n\n...ค้อนน่ะ? ค้อนอะไร"
@@ -117,19 +120,22 @@ dialog_by_flag = {
 
 [node name="SavePoint" parent="NPCs" instance=ExtResource("npc")]
 position = Vector2(1950, 820)
-npc_name = "ศิลาสลักโบราณ"
+npc_name = "เสาวาปแห่งธอร์"
 type = 4
 dialog = "ศิลาเก่าแก่ ตราค้อนที่สลักไว้ดูใหม่กว่าตัวหินมาก"
+warp_targets = Array[StringName]([&"asgard_forest_2"])
 
 [node name="Healer" parent="NPCs" instance=ExtResource("npc")]
 position = Vector2(2400, 820)
 npc_name = "หมอคนแคระเฮดิน"
+voice_id = "hedin"
 type = 3
 dialog = "เจ็บตรงไหน ให้ข้าดู\n\nที่นี่ไม่มีใครขอบคุณธอร์หรอกนะ อย่าแปลกใจ"
 
 [node name="Hans" parent="NPCs" instance=ExtResource("npc")]
 position = Vector2(2850, 820)
 npc_name = "ช่างตีเหล็กฮันส์"
+voice_id = "hans_c2"
 quest_ids = Array[StringName]([&"c2_3_forbidden_name", &"c2_4_nameless_grave"])
 type = 0
 dialog = "ข้าตามเจ้ามาถึงนี่แล้ว...\n\nสิบปีที่ไม่ได้กลับบ้าน ทุกคนยังจำหน้าข้าได้ แต่ไม่มีใครทัก"

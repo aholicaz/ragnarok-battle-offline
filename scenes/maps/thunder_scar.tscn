@@ -1,19 +1,17 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene format=3 uid="uid://bgvryened4bej"]
 
-[ext_resource type="Script" path="res://scripts/world/map_base.gd" id="map_base"]
-[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="player"]
-[ext_resource type="PackedScene" path="res://scenes/monsters/monster.tscn" id="monster_scene"]
-[ext_resource type="Script" path="res://scripts/world/map_spawner.gd" id="map_spawner"]
-[ext_resource type="Script" path="res://scripts/world/monster_spawner.gd" id="spawner"]
-[ext_resource type="Script" path="res://scripts/resources/monster_data.gd" id="monster_data"]
-[ext_resource type="PackedScene" path="res://scenes/world/portal.tscn" id="portal"]
-[ext_resource type="PackedScene" path="res://scenes/npc/npc.tscn" id="npc"]
+[ext_resource type="Texture2D" uid="uid://b1a7j4dyr7juj" path="res://Sprites/map/generated/thunder_scar_bg.png" id="bg38"]
 [ext_resource type="PackedScene" path="res://scenes/world/lore_object.tscn" id="lore"]
-[ext_resource type="Resource" path="res://data/monsters/stormscar.tres" id="md_stormscar"]
-[ext_resource type="Texture2D" path="res://Sprites/map/generated/thunder_scar_bg.png" id="bg38"]
+[ext_resource type="Script" uid="uid://cj52mis2ydm4e" path="res://scripts/world/map_base.gd" id="map_base"]
+[ext_resource type="Resource" uid="uid://cyum1hljnlamg" path="res://data/monsters/stormscar.tres" id="md_stormscar"]
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="monster_data"]
+[ext_resource type="PackedScene" uid="uid://ce4i2xgacms7p" path="res://scenes/monsters/monster.tscn" id="monster_scene"]
+[ext_resource type="PackedScene" uid="uid://bhp7c8ti14pnn" path="res://scenes/player/player.tscn" id="player"]
+[ext_resource type="PackedScene" uid="uid://d3v8kjt45bnvr" path="res://scenes/world/portal.tscn" id="portal"]
+[ext_resource type="Script" uid="uid://c2no85difcfo6" path="res://scripts/world/monster_spawner.gd" id="spawner"]
 
 [sub_resource type="RectangleShape2D" id="Rect_ground"]
-size = Vector2(3200, 240)
+size = Vector2(3200, 55)
 
 [sub_resource type="RectangleShape2D" id="Rect_p0"]
 size = Vector2(320, 32)
@@ -21,111 +19,110 @@ size = Vector2(320, 32)
 [sub_resource type="RectangleShape2D" id="Rect_p1"]
 size = Vector2(300, 32)
 
-[node name="Map" type="Node2D"]
+[node name="Map" type="Node2D" unique_id=1513842992]
 script = ExtResource("map_base")
 map_id = &"thunder_scar"
 display_name = "รอยสายฟ้า"
-chapter = 1
-region = "มิดการ์ด"
-map_bounds = Rect2(-100, -200, 3000, 1300)
+map_bounds = Rect2(-100, -151, 3000, 1299)
 player_scene = ExtResource("player")
 
-[node name="Background" type="Node2D" parent="."]
+[node name="Background" type="Node2D" parent="." unique_id=1484933660]
 
-[node name="Sky" type="Polygon2D" parent="Background"]
+[node name="Sky" type="Polygon2D" parent="Background" unique_id=896803395]
 z_index = -100
-position = Vector2(-100, -200)
-color = Color(1, 1, 1, 1)
+position = Vector2(-100, -151)
 texture = ExtResource("bg38")
-polygon = PackedVector2Array(0, 0, 3000, 0, 3000, 1300, 0, 1300)
-uv = PackedVector2Array(0, 0, 1500, 0, 1500, 650, 0, 650)
+polygon = PackedVector2Array(0, 0, 3000, 0, 3000, 1299, 0, 1299)
+uv = PackedVector2Array(0, 0, 1905, 0, 1905, 825, 0, 825)
 
-[node name="FarLayer" type="Polygon2D" parent="Background"]
+[node name="FarLayer" type="Polygon2D" parent="Background" unique_id=1799608517]
 visible = false
 z_index = -90
 position = Vector2(-100, 520)
 color = Color(0.14, 0.14, 0.22, 1)
 polygon = PackedVector2Array(0, 0, 3000, 0, 3000, 360, 0, 360)
 
-[node name="Art" type="Sprite2D" parent="Background"]
+[node name="Art" type="Sprite2D" parent="Background" unique_id=1323533121]
 z_index = -80
 position = Vector2(1400, 550)
 
-[node name="Terrain" type="Node2D" parent="."]
+[node name="Terrain" type="Node2D" parent="." unique_id=1578062849]
 
-[node name="Ground" type="StaticBody2D" parent="Terrain"]
+[node name="Ground" type="StaticBody2D" parent="Terrain" unique_id=895509302]
 position = Vector2(1400, 1000)
-collision_layer = 1
 collision_mask = 0
 
-[node name="Shape" type="CollisionShape2D" parent="Terrain/Ground"]
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Ground" unique_id=1205039409]
+position = Vector2(0, -196.5)
 shape = SubResource("Rect_ground")
 
-[node name="Visual" type="Polygon2D" parent="Terrain/Ground"]
+[node name="Visual" type="Polygon2D" parent="Terrain/Ground" unique_id=413531001]
 visible = false
 color = Color(0.2, 0.19, 0.23, 1)
 polygon = PackedVector2Array(-1600, -120, 1600, -120, 1600, 120, -1600, 120)
 
-[node name="Plat0" type="StaticBody2D" parent="Terrain"]
-position = Vector2(1100, 700)
-collision_layer = 1
+[node name="Plat0" type="StaticBody2D" parent="Terrain" unique_id=2102834827]
+visible = false
+position = Vector2(1103, 1358)
 collision_mask = 0
 
-[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat0"]
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat0" unique_id=1516936778]
+position = Vector2(-40, 735)
 shape = SubResource("Rect_p0")
 
-[node name="Visual" type="Polygon2D" parent="Terrain/Plat0"]
+[node name="Visual" type="Polygon2D" parent="Terrain/Plat0" unique_id=1165166252]
 color = Color(0.2, 0.19, 0.23, 1)
-polygon = PackedVector2Array(-160, -16, 160, -16, 160, 16, -160, 16)
+polygon = PackedVector2Array(-160, -16, 51, 158, 160, -16, 160, 16, -160, 16)
 
-[node name="Plat1" type="StaticBody2D" parent="Terrain"]
-position = Vector2(1750, 620)
-collision_layer = 1
+[node name="Plat1" type="StaticBody2D" parent="Terrain" unique_id=1978545640]
+visible = false
+position = Vector2(1595, 1323)
 collision_mask = 0
 
-[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat1"]
+[node name="Shape" type="CollisionShape2D" parent="Terrain/Plat1" unique_id=2075085871]
+position = Vector2(-144, 861)
 shape = SubResource("Rect_p1")
 
-[node name="Visual" type="Polygon2D" parent="Terrain/Plat1"]
+[node name="Visual" type="Polygon2D" parent="Terrain/Plat1" unique_id=2125448117]
 color = Color(0.2, 0.19, 0.23, 1)
-polygon = PackedVector2Array(-150, -16, 150, -16, 150, 16, -150, 16)
+polygon = PackedVector2Array(-150, -16, -41, 491, 150, -16, 150, 16, -81, 439, -150, 16)
 
-[node name="SpawnPoints" type="Node2D" parent="."]
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=1939802256]
 
-[node name="default" type="Marker2D" parent="SpawnPoints"]
-position = Vector2(200, 820)
+[node name="default" type="Marker2D" parent="SpawnPoints" unique_id=97542025]
+position = Vector2(230, 666)
 
-[node name="from_dark_forest" type="Marker2D" parent="SpawnPoints"]
-position = Vector2(200, 820)
+[node name="from_dark_forest" type="Marker2D" parent="SpawnPoints" unique_id=2124175496]
+position = Vector2(231, 668)
 
-[node name="Spawners" type="Node2D" parent="."]
+[node name="Spawners" type="Node2D" parent="." unique_id=1348220287]
 
-[node name="Boss_stormscar" type="Node2D" parent="Spawners"]
-position = Vector2(2300, 850)
+[node name="Boss_stormscar" type="Node2D" parent="Spawners" unique_id=865916805]
+position = Vector2(2112, 633)
 script = ExtResource("spawner")
 monster_types = Array[ExtResource("monster_data")]([ExtResource("md_stormscar")])
 monster_scene = ExtResource("monster_scene")
 max_alive = 1
 spawn_width = 160
 
-[node name="Portals" type="Node2D" parent="."]
+[node name="Portals" type="Node2D" parent="." unique_id=1920469522]
 
-[node name="ToDarkForest" parent="Portals" instance=ExtResource("portal")]
-position = Vector2(70, 880)
+[node name="ToDarkForest" parent="Portals" unique_id=1921414820 instance=ExtResource("portal")]
+position = Vector2(232, 658)
 target_map = &"dark_forest"
 target_spawn_point = &"from_thunder_scar"
 label_text = "← ป่าเงาลึก"
 destination_name = "ป่าเงาลึก"
 
-[node name="Lore" type="Node2D" parent="."]
+[node name="Lore" type="Node2D" parent="." unique_id=431706212]
 
-[node name="ScarCenter" parent="Lore" instance=ExtResource("lore")]
-position = Vector2(2300, 790)
+[node name="ScarCenter" parent="Lore" unique_id=658907719 instance=ExtResource("lore")]
+position = Vector2(2111, 627)
 lore_id = &"thunder_scar_center"
 title = "รอยแผลบนผืนดิน"
 text = "ดินตรงนี้ไหม้เป็นแนวยาว เหมือนโดนสายฟ้าฟาดซ้ำ ๆ นับร้อยครั้ง
 
 ตรงกลางรอยไหม้มีร่องเล็ก ๆ ...เหมือนมีบางอย่างไหลลงดินไปทางเหนือ"
-label_text = "รอยไหม้ประหลาด"
 required_flag = &"killed_stormscar"
 locked_text = "เสียงฟ้าคำรามดังจนเข้าใกล้ไม่ได้"
+label_text = "รอยไหม้ประหลาด"

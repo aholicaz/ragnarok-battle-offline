@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="MonsterData" load_steps=11 format=3]
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://23kkjqbhxvqx"]
 
-[ext_resource type="Script" path="res://scripts/resources/monster_data.gd" id="1_monster"]
-[ext_resource type="Script" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
 [ext_resource type="SpriteFrames" path="res://data/sprites/placeholder/forge_guardian_frames.tres" id="3_frames"]
 
 [sub_resource type="Resource" id="Drop_forge_guardian_0"]
@@ -43,9 +43,9 @@ chance = 2.12
 
 [resource]
 script = ExtResource("1_monster")
-sprite_frames = ExtResource("3_frames")
 id = &"forge_guardian"
 display_name = "ผู้พิทักษ์เตาหลอม"
+sprite_frames = ExtResource("3_frames")
 hitbox_size = Vector2(80, 90)
 hp_bar_offset_y = -121.6
 display_height = 320.0
@@ -59,7 +59,6 @@ hit = 70
 flee = 20
 crit = 2
 element = 1
-race = 0
 size = 2
 ai_type = 1
 move_speed = 85.0
@@ -70,12 +69,10 @@ attack_range = 150.0
 leash_range = 750.0
 wander_range = 260.0
 hop_while_wandering = false
-wander_pause_chance = 0.60
-wander_pause_min = 3.00
-wander_pause_max = 5.00
-wander_walk_min = 2.00
-wander_walk_max = 3.50
-wander_look_chance = 0.50
+wander_pause_chance = 0.6
+wander_walk_min = 2.0
+wander_walk_max = 3.5
+wander_look_chance = 0.5
 attack_windup = 0.4
 attack_duration = 0.5
 attack_cooldown = 1.8
@@ -85,7 +82,6 @@ job_exp_reward = 4200
 zeny_min = 2000
 zeny_max = 3500
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_forge_guardian_0"), SubResource("Drop_forge_guardian_1"), SubResource("Drop_forge_guardian_2"), SubResource("Drop_forge_guardian_3"), SubResource("Drop_forge_guardian_4"), SubResource("Drop_forge_guardian_5"), SubResource("Drop_forge_guardian_card")])
-respawn_time = 60.0
 is_boss = true
 boss_title = "ผู้พิทักษ์เตาหลอม"
 skill_name = "ค้อนเตาหลอม"
@@ -96,3 +92,4 @@ skill_radius_y = 200.0
 skill_damage_mult = 2.4
 skill_windup = 0.9
 skill_duration = 0.9
+respawn_time = 60.0

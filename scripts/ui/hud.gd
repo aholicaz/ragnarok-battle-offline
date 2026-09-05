@@ -385,6 +385,20 @@ func _make_slot(key_label: String, key_color: Color) -> Button:
 	count.add_theme_constant_override("outline_size", 4)
 	btn.add_child(count)
 
+	# ★ รอบ 65 — เลขนับถอยหลังคูลดาวน์ ★ ซ้อนกลางช่อง (ปกติซ่อนไว้)
+	var cd := Label.new()
+	cd.name = "SlotCD"
+	cd.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cd.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	cd.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	cd.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	cd.add_theme_font_size_override("font_size", 20)
+	cd.add_theme_color_override("font_color", Color("#ffe9a8"))
+	cd.add_theme_color_override("font_outline_color", Color.BLACK)
+	cd.add_theme_constant_override("outline_size", 6)
+	cd.visible = false
+	btn.add_child(cd)
+
 	return btn
 
 
@@ -487,6 +501,9 @@ func _process(delta: float) -> void:
 			continue
 		var cd := PlayerState.skill_cooldown_left(sid)
 		_hotkey_buttons[i].modulate = Color(0.55, 0.55, 0.55) if cd > 0.0 else Color.WHITE
+
+	# ★ รอบ 65 — คูลดาวน์ยา ★ หรี่ช่อง + นับถอยหลังเป็นวินาที
+	_update_potion_cooldowns()
 
 	# ★ ห้ามตั้ง .text ให้ปุ่มช่องลัด ★ ข้อความอยู่ที่ป้ายซ้อน (SlotName/SlotCount) แล้ว
 	# ตั้ง text เมื่อไหร่ Godot จะกันที่ให้ 1 บรรทัด ช่องเลยไม่เป็นจัตุรัส
@@ -600,6 +617,32 @@ func _refresh_potions() -> void:
 		count.add_theme_color_override("font_color",
 			Color.WHITE if have > 0 else Color("#ff8080"))
 		btn.tooltip_text = "%s\n%s (เหลือ %d)" % [slot_names[i], d.display_name, have]
+		# ★ รอบ 65 ★ บอกคูลดาวน์ของยาชิ้นนี้ไว้ในคำอธิบายช่องด้วย
+		var cd := PlayerState.potion_cooldown_of(d)
+		if cd > 0.0:
+			btn.tooltip_text += "\nคูลดาวน์ %.1f วินาที" % cd
+
+
+## ★ รอบ 65 — คูลดาวน์ยาบนช่อง Q/R ★
+## ติดคูลดาวน์ = ช่องหรี่ลง + มีเลขวินาทีนับถอยหลังตรงกลาง (ยาแรงยิ่งรอนาน)
+func _update_potion_cooldowns() -> void:
+	var buttons := [potion_button, sp_potion_button]
+	for i in range(PlayerState.ITEM_HOTKEY_COUNT):
+		if i >= buttons.size() or buttons[i] == null:
+			break
+		var btn: Button = buttons[i]
+		var cd_label: Label = btn.get_node_or_null("SlotCD")
+		if cd_label == null:
+			continue
+		var left := PlayerState.potion_cooldown_left_of_id(PlayerState.item_hotkey_at(i))
+		if left > 0.0:
+			cd_label.visible = true
+			# เหลือน้อยกว่า 1 วิ โชว์ทศนิยม 1 ตำแหน่ง (ให้เห็นว่าใกล้พร้อมแล้ว)
+			cd_label.text = ("%.1f" % left) if left < 1.0 else str(int(ceil(left)))
+			btn.modulate = Color(0.5, 0.5, 0.55)
+		else:
+			cd_label.visible = false
+			btn.modulate = Color.WHITE
 
 
 ## ตัดชื่อสกิลให้พอดีปุ่มเล็ก ๆ (ใช้ตอนสกิลนั้นยังไม่ได้ใส่ไอคอน)

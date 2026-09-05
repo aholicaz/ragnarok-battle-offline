@@ -120,6 +120,33 @@ enum AIType {
 ## ผู้เล่นโดนแล้วกระเด็นแรงแค่ไหน
 @export var knockback_force: float = 120.0
 
+## ★★ จับจังหวะให้ตรงกับภาพ (รอบ 66) ★★
+##
+## ปกติระบบยิงกระสุน/ทำดาเมจตาม "เวลา" (Attack Windup) ซึ่งไม่รู้ว่าภาพเล่นถึงไหนแล้ว
+## ถ้าท่าโจมตีมีจังหวะชัด ๆ (เช่น บาฟโฟเมทจูเนียร์ชาร์จลูกไฟ 12 เฟรมแล้วค่อยผลัก)
+## ใส่ "เฟรมที่ปล่อย" ตรงนี้แทน ระบบจะคำนวณเวลาจากจำนวนเฟรม/fps ให้เอง
+## → เปลี่ยน fps ของท่าเมื่อไหร่ จังหวะก็ยังตรงอยู่ ไม่ต้องมาแก้ Windup ใหม่
+## −1 = ใช้ Attack Windup แบบเดิม
+@export var attack_hit_frame: int = -1
+
+## ★★ ตีหลายทีในท่าเดียว (รอบ 69) ★★
+##
+## ใส่ "เฟรมที่โดน" ได้หลายเฟรม = ดาเมจออกหลายครั้งตามที่วาดไว้ในภาพ
+## เช่น อสูรสายฟ้าตะปบ 2 ที → ใส่ 13, 20 (เฟรมที่อุ้งเท้าฟาดลง)
+##
+## ★ วิธีหาเฟรม ★ ดูภาพชีทท่าโจมตี หาเฟรมที่ "อุ้งเท้า/อาวุธยื่นสุด" ของแต่ละครั้ง
+## เว้นว่าง = ใช้ Attack Hit Frame (ทีเดียว) · ถ้าอันนั้นเป็น −1 ด้วยก็ใช้ Attack Windup
+@export var attack_hit_frames: PackedInt32Array = PackedInt32Array()
+
+## ★ ตัวคูณดาเมจ "ต่อที" ★ ใช้เมื่อตีหลายที จะได้ไม่แรงเป็นเท่าตัวโดยไม่ตั้งใจ
+## 1.0 = แต่ละทีเต็มดาเมจ (ตี 2 ที = 2 เท่า)
+## 0.65 = ตี 2 ที รวมแล้ว 1.3 เท่า (แรงขึ้นแต่ไม่โหดเกิน)
+@export var attack_hit_damage_mult: float = 1.0
+
+## ★ ให้ท่าโจมตีเล่นจนจบก่อนกลับไปยืน ★ (ใช้แทน Attack Duration)
+## ท่ายาว ๆ อย่าง 17 เฟรม ถ้าไม่เปิดจะถูกตัดกลางคันแล้วเด้งกลับท่ายืน
+@export var attack_follow_anim: bool = false
+
 # =========================================================
 # รางวัล
 # =========================================================
@@ -206,8 +233,16 @@ enum AIType {
 
 @export_group("โจมตีระยะไกล — ยิงกระสุน (รอบ 36)")
 ## ★ ใส่รูปแล้วท่าโจมตีปกติจะ "ยิงกระสุน" ใส่ผู้เล่นแทนการตีติดตัว ★ (เช่น ลูนาติกยิงบอล)
-## ยิงตอน Attack Windup · ตั้ง Attack Range ให้ไกล ๆ (300+) มอนจะหยุดยิงจากระยะนั้น
+## ยิงตอน Attack Windup (หรือเฟรมที่ตั้งใน Attack Hit Frame)
 @export var projectile_texture: Texture2D
+
+## ★★ ยิงตั้งแต่เห็นตัว ไม่ต้องเดินเข้ามาประชิด (รอบ 66) ★★
+## เปิดไว้ = พอผู้เล่นเข้าระยะมองเห็น (Detect Range) มอนจะยืนอยู่กับที่แล้วยิงเลย
+## ปิด = พฤติกรรมเดิม (เดินเข้ามาจนถึง Attack Range ก่อนถึงจะยิง)
+## ★ มีผลเฉพาะมอนที่ใส่ Projectile Texture ไว้ ★ มอนตีติดตัวไม่กระทบ
+@export var ranged_attack: bool = true
+## ระยะที่ยิงได้ (0 = ใช้ Detect Range · ใส่เองถ้าอยากให้ยิงไกล/ใกล้กว่าที่มองเห็น)
+@export var ranged_attack_range: float = 0.0
 ## ความเร็วกระสุน (พิกเซล/วิ)
 @export var projectile_speed: float = 520.0
 ## ขนาดกระสุนบนจอ (ความสูง พิกเซล)
@@ -242,6 +277,42 @@ enum AIType {
 @export var skill_explosion_anim: StringName = &"burst"
 ## ขนาดเอฟเฟกต์ระเบิดบนจอ (สูง)
 @export var skill_explosion_height: float = 260.0
+
+# =========================================================
+# ★ สกิล — สายฟ้าฟาดเป็นแนว (รอบ 64) ★
+#
+# ใส่ Skill Bolt Count มากกว่า 0 = ตอนร่ายสกิล จะมีสายฟ้าฟาดลงพื้น
+# เรียงเป็นแนวออกไป "ข้างหน้าตามที่มอนหัน" ทีละเส้น
+# แต่ละเส้นมีวงเตือนบนพื้นก่อน (Telegraph) แล้วค่อยฟาด → ผู้เล่นหลบทัน
+# ดาเมจใช้ Skill Damage Mult ตามเดิม (หรือตั้งแยกที่ Skill Bolt Damage Mult)
+# =========================================================
+@export_group("สกิล — สายฟ้าฟาดเป็นแนว")
+## จำนวนเส้น (0 = ไม่ใช้ระบบนี้)
+@export var skill_bolt_count: int = 0
+## เส้นแรกห่างจากตัวมอนกี่พิกเซล
+@export var skill_bolt_start: float = 150.0
+## ระยะห่างระหว่างเส้น
+@export var skill_bolt_spacing: float = 150.0
+## เว้นกี่วินาทีระหว่างเส้น (ยิ่งน้อยยิ่งรัว)
+@export var skill_bolt_interval: float = 0.14
+## วงเตือนบนพื้นขึ้นก่อนฟาดกี่วินาที (0 = ฟาดทันที ไม่มีเตือน)
+@export var skill_bolt_telegraph: float = 0.3
+## หน่วงกี่วินาทีหลังเริ่มท่าสกิลถึงจะเริ่มฟาดเส้นแรก (ตั้งให้ตรงจังหวะคำราม)
+@export var skill_bolt_delay: float = 0.0
+## โซนที่โดนของแต่ละเส้น — ครึ่งความกว้าง / ครึ่งความสูงจากพื้น
+@export var skill_bolt_hit_width: float = 95.0
+@export var skill_bolt_hit_height: float = 260.0
+## ผู้เล่นโดนได้สูงสุดกี่เส้นต่อการร่าย 1 ครั้ง (0 = ไม่จำกัด)
+@export var skill_bolt_max_hits: int = 2
+## ตัวคูณดาเมจต่อเส้น (0 = ใช้ Skill Damage Mult)
+@export var skill_bolt_damage_mult: float = 0.0
+## ความสูงของภาพสายฟ้าบนจอ (พิกเซล)
+@export var skill_bolt_height: float = 560.0
+## SpriteFrames ของสายฟ้า (เว้นว่าง = ใช้ res://data/sprites/fx_lightning.tres)
+@export var skill_bolt_frames: SpriteFrames
+## ชื่อไฟล์เสียงตอนฟาด (ไม่มีไฟล์ = เงียบ) — วางที่ Sprites/sfx/<ชื่อ>.ogg
+@export var skill_bolt_sfx: String = "thunder_strike"
+@export var skill_bolt_z: int = 70
 
 @export_group("ท่าตาย")
 ## ★ ให้ท่าตายเล่นนานกี่วินาที ★ 0 = คิดจากจำนวนเฟรม/ความเร็วของอนิเมชันเอง
@@ -291,7 +362,40 @@ func job_exp() -> int:
 
 ## มอนตัวนี้มีสกิลไหม
 func has_skill() -> bool:
-	return skill_name != "" or skill_anim != &""
+	return skill_name != "" or skill_anim != &"" or skill_bolt_count > 0
+
+
+## ★ รอบ 69 ★ เฟรมที่ทำดาเมจทั้งหมด เรียงจากน้อยไปมาก
+## ว่าง = ไม่ได้ใช้ระบบจับเฟรม (ให้ไปใช้ Attack Windup แทน)
+func attack_hit_frame_list() -> Array[int]:
+	var out: Array[int] = []
+	for f in attack_hit_frames:
+		if f >= 0 and not out.has(int(f)):
+			out.append(int(f))
+	if out.is_empty() and attack_hit_frame >= 0:
+		out.append(attack_hit_frame)
+	out.sort()
+	return out
+
+
+## ตีท่านี้ออกดาเมจกี่ที
+func attack_hit_count() -> int:
+	return maxi(1, attack_hit_frame_list().size())
+
+
+## ★ รอบ 66 ★ มอนตัวนี้ "ยิงจากไกล" ไหม (ใส่รูปกระสุน + เปิด Ranged Attack)
+func is_ranged() -> bool:
+	return ranged_attack and projectile_texture != null
+
+
+## ระยะที่มอนยิงถึง — ใช้แทน Attack Range สำหรับมอนยิงไกล
+## Ranged Attack Range ว่าง (0) = ใช้ระยะมองเห็น (Detect Range) ตามที่ผู้เล่นขอ
+func ranged_reach() -> float:
+	if not is_ranged():
+		return attack_range
+	if ranged_attack_range > 0.0:
+		return ranged_attack_range
+	return maxf(detect_range, attack_range)
 
 
 func roll_zeny() -> int:

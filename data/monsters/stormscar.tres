@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="MonsterData" load_steps=7 format=3]
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://cyum1hljnlamg"]
 
-[ext_resource type="Script" path="res://scripts/resources/monster_data.gd" id="1_monster"]
-[ext_resource type="Script" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
-[ext_resource type="SpriteFrames" path="res://data/sprites/placeholder/stormscar_frames.tres" id="3_frames"]
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="SpriteFrames" uid="uid://cdsihiea4ukd1" path="res://data/sprites/placeholder/stormscar_frames.tres" id="3_frames"]
 
 [sub_resource type="Resource" id="Drop_stormscar_0"]
 script = ExtResource("2_drop")
@@ -19,18 +19,42 @@ script = ExtResource("2_drop")
 item_id = &"card_stormscar"
 chance = 2.31
 
+[sub_resource type="Resource" id="Resource_dwxqo"]
+script = ExtResource("2_drop")
+item_id = &"katana"
+chance = 5.0
+metadata/_custom_type_script = "uid://lfvvfifv5f84"
+
+[sub_resource type="Resource" id="Resource_4lp3a"]
+script = ExtResource("2_drop")
+item_id = &"ring"
+chance = 5.0
+metadata/_custom_type_script = "uid://lfvvfifv5f84"
+
+[sub_resource type="Resource" id="Resource_dwirs"]
+script = ExtResource("2_drop")
+item_id = &"boots"
+chance = 7.0
+metadata/_custom_type_script = "uid://lfvvfifv5f84"
+
+[sub_resource type="Resource" id="Resource_fjn7p"]
+script = ExtResource("2_drop")
+item_id = &"buckler"
+chance = 7.0
+metadata/_custom_type_script = "uid://lfvvfifv5f84"
+
 [resource]
 script = ExtResource("1_monster")
-sprite_frames = ExtResource("3_frames")
 id = &"stormscar"
 display_name = "อสูรสายฟ้า"
+sprite_frames = ExtResource("3_frames")
 hitbox_size = Vector2(90, 110)
 hp_bar_offset_y = -114.0
 display_height = 300.0
-level = 20
-max_hp = 4500
-atk_min = 85
-atk_max = 125
+level = 30
+max_hp = 6500
+atk_min = 97
+atk_max = 160
 def = 20
 mdef = 25
 hit = 55
@@ -40,7 +64,7 @@ element = 4
 race = 6
 size = 2
 ai_type = 1
-move_speed = 170.0
+move_speed = 390.0
 jump_force = 0.0
 jump_while_chasing = false
 detect_range = 420.0
@@ -48,23 +72,32 @@ attack_range = 160.0
 leash_range = 750.0
 wander_range = 260.0
 hop_while_wandering = false
-attack_windup = 0.4
+attack_windup = 0.54
 attack_duration = 0.5
 attack_cooldown = 1.8
 knockback_force = 260.0
+attack_hit_frames = PackedInt32Array(13, 20)
+attack_hit_damage_mult = 0.65
+attack_follow_anim = true
 exp_reward = 6000
 job_exp_reward = 4200
 zeny_min = 1500
 zeny_max = 2500
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_stormscar_0"), SubResource("Drop_stormscar_1"), SubResource("Drop_stormscar_card")])
-respawn_time = 60.0
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_stormscar_0"), SubResource("Drop_stormscar_1"), SubResource("Drop_stormscar_card"), SubResource("Resource_dwxqo"), SubResource("Resource_4lp3a"), SubResource("Resource_dwirs"), SubResource("Resource_fjn7p")])
 is_boss = true
 boss_title = "อสูรสายฟ้า — สิ่งที่ซุ่มอยู่ในรอยสายฟ้า"
 skill_name = "สายฟ้าคำราม"
-skill_anim = &"Attack"
-skill_range = 420.0
-skill_radius_x = 260.0
+skill_anim = &"Skill"
+skill_range = 520.0
+skill_radius_x = 360.0
 skill_radius_y = 200.0
 skill_damage_mult = 1.6
-skill_windup = 0.8
-skill_duration = 0.6
+skill_windup = 0.9
+skill_duration = 2.7
+skill_cooldown = 11.0
+skill_chance = 0.75
+skill_knockback = 340.0
+skill_bolt_count = 5
+skill_bolt_telegraph = 0.32
+skill_bolt_delay = 0.9
+respawn_time = 300.0

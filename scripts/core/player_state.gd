@@ -26,6 +26,34 @@ var active_buffs: Dictionary = {}
 ## คูลดาวน์สกิล: skill_id -> วินาทีที่เหลือ
 var cooldowns: Dictionary = {}
 
+# =========================================================
+# ★★ คูลดาวน์ยา (รอบ 65) ★★
+#
+# กินยาแล้วต้องรอถึงจะกินซ้ำได้ — ★ ยาฟื้นเยอะยิ่งรอนาน ★
+#   ยาแดง   ฟื้น 45        → 5.0 วิ
+#   ยาส้ม   ฟื้น 105       → ~5.6 วิ
+#   เนื้อย่าง ฟื้น 70+3%    → ~5.6-6 วิ
+#   ยาขาว   ฟื้น 325+5%    → ~9-10 วิ
+#   ยาน้ำเงิน ฟื้นมานา 40   → 5.0 วิ
+#
+# ★ แยกเป็น 2 สาย ★ ยาเลือด (hp) กับ ยามานา (sp) นับคนละอัน
+# กินยาเลือดแล้วยังกินยามานาต่อได้ทันที (เหมือน RO ที่แยกกลุ่มดีเลย์)
+# ยาที่ฟื้นทั้งเลือดและมานาจะติดคูลดาวน์ทั้งสองสาย
+#
+# ★ อยากปรับความยาว ★ แก้ 4 ค่าข้างล่างนี้ได้เลย ไม่ต้องแตะที่อื่น
+# =========================================================
+## คูลดาวน์สั้นสุด (ยาฟื้นน้อย ๆ)
+const POTION_CD_MIN := 5.0
+## คูลดาวน์ยาวสุด (ยาฟื้นเยอะ ๆ)
+const POTION_CD_MAX := 10.0
+## ฟื้นเท่านี้หรือน้อยกว่า = คูลดาวน์สั้นสุด
+const POTION_HEAL_LOW := 50.0
+## ฟื้นเท่านี้หรือมากกว่า = คูลดาวน์ยาวสุด
+const POTION_HEAL_HIGH := 400.0
+
+## สายคูลดาวน์ยา: &"hp" / &"sp" -> วินาทีที่เหลือ
+var potion_cooldowns: Dictionary = {}
+
 var _regen_timer := 0.0
 var _is_dead := false
 
@@ -141,6 +169,7 @@ func new_game() -> void:
 	zeny = 1000
 	active_buffs.clear()
 	cooldowns.clear()
+	potion_cooldowns.clear()
 	item_hotkeys = [&"red_potion", &"blue_potion"]
 	_is_dead = false
 	current_map_id = &"prontera_field"
@@ -234,6 +263,16 @@ func _process(delta: float) -> void:
 	for sid in finished_cd:
 		cooldowns.erase(sid)
 
+	# ★ คูลดาวน์ยา (รอบ 65) ★
+	var finished_pot: Array = []
+	for kind in potion_cooldowns.keys():
+		potion_cooldowns[kind] -= delta
+		if potion_cooldowns[kind] <= 0.0:
+			finished_pot.append(kind)
+	for kind in finished_pot:
+		potion_cooldowns.erase(kind)
+		Events.inventory_changed.emit()   # ให้ปุ่มยาสว่างกลับทันทีที่พร้อม
+
 	# บัฟหมดอายุ
 	var expired: Array = []
 	for sid in active_buffs.keys():
@@ -308,6 +347,8 @@ func revive(hp_percent: float = 0.5) -> void:
 	stats.hp = maxi(1, int(stats.max_hp * hp_percent))
 	stats.sp = maxi(1, int(stats.max_sp * hp_percent))
 	active_buffs.clear()
+	# ★ รอบ 65 ★ ฟื้นคืนชีพแล้วกินยาได้เลย ไม่ต้องรอคูลดาวน์ค้างจากตอนตาย
+	potion_cooldowns.clear()
 	refresh(false)
 
 
@@ -540,6 +581,65 @@ func cards_collected() -> int:
 
 
 # =========================================================
+# ★★ คูลดาวน์ยา (รอบ 65) ★★
+# =========================================================
+## ยาที่ฟื้น amount หน่วย ติดคูลดาวน์กี่วินาที (ฟื้นน้อย = 5 · ฟื้นเยอะ = 10)
+static func potion_cooldown_for(amount: int) -> float:
+	if amount <= 0:
+		return 0.0
+	var t := clampf((float(amount) - POTION_HEAL_LOW) / (POTION_HEAL_HIGH - POTION_HEAL_LOW), 0.0, 1.0)
+	return POTION_CD_MIN + (POTION_CD_MAX - POTION_CD_MIN) * t
+
+
+## ยาชิ้นนี้ฟื้นเลือด/มานาเท่าไหร่ (คิดเปอร์เซ็นต์จากค่าสูงสุดปัจจุบันด้วย)
+## คืน { "hp": int, "sp": int }
+func potion_heal_amounts(data: ItemData) -> Dictionary:
+	if data == null or stats == null:
+		return {"hp": 0, "sp": 0}
+	return {
+		"hp": data.heal_hp + int(stats.max_hp * data.heal_hp_percent / 100.0),
+		"sp": data.heal_sp + int(stats.max_sp * data.heal_sp_percent / 100.0),
+	}
+
+
+## คูลดาวน์ที่ยาชิ้นนี้จะติดถ้ากินตอนนี้ (0 = ไม่ใช่ยาฟื้นพลัง)
+func potion_cooldown_of(data: ItemData) -> float:
+	var h := potion_heal_amounts(data)
+	return maxf(potion_cooldown_for(int(h.hp)), potion_cooldown_for(int(h.sp)))
+
+
+## เวลาที่เหลือของสายนั้น (&"hp" หรือ &"sp")
+func potion_cooldown_left(kind: StringName) -> float:
+	return maxf(0.0, float(potion_cooldowns.get(kind, 0.0)))
+
+
+## ยาชิ้นนี้ยังกินไม่ได้ เหลืออีกกี่วินาที (0 = กินได้เลย)
+func potion_cooldown_left_for(data: ItemData) -> float:
+	var h := potion_heal_amounts(data)
+	var left := 0.0
+	if int(h.hp) > 0:
+		left = maxf(left, potion_cooldown_left(&"hp"))
+	if int(h.sp) > 0:
+		left = maxf(left, potion_cooldown_left(&"sp"))
+	return left
+
+
+## ยาชิ้นนี้ยังกินไม่ได้ เหลืออีกกี่วินาที — เรียกด้วย item_id (ไว้ให้ UI ใช้ง่าย ๆ)
+func potion_cooldown_left_of_id(item_id: StringName) -> float:
+	if item_id == &"":
+		return 0.0
+	return potion_cooldown_left_for(GameData.get_item(item_id))
+
+
+## เริ่มนับคูลดาวน์หลังกินยา (สายไหนก็ต่อสายนั้น เอาค่าที่นานกว่า)
+func start_potion_cooldown(hp_amount: int, sp_amount: int) -> void:
+	if hp_amount > 0:
+		potion_cooldowns[&"hp"] = maxf(potion_cooldown_left(&"hp"), potion_cooldown_for(hp_amount))
+	if sp_amount > 0:
+		potion_cooldowns[&"sp"] = maxf(potion_cooldown_left(&"sp"), potion_cooldown_for(sp_amount))
+
+
+# =========================================================
 # ใช้ไอเทม
 # =========================================================
 func use_item(inv_index: int) -> bool:
@@ -593,15 +693,23 @@ func use_item(inv_index: int) -> bool:
 		Events.item_used.emit(data.id)
 		return true
 
-	var heal := data.heal_hp + int(stats.max_hp * data.heal_hp_percent / 100.0)
-	var sp_heal := data.heal_sp + int(stats.max_sp * data.heal_sp_percent / 100.0)
+	var amounts := potion_heal_amounts(data)
+	var heal: int = int(amounts.hp)
+	var sp_heal: int = int(amounts.sp)
 	var has_buff := data.buff_duration > 0.0 and not data.buff_values.is_empty()
 
 	if heal > 0 and stats.hp >= stats.max_hp and sp_heal <= 0 and not has_buff:
 		Events.say("เลือดเต็มอยู่แล้ว")
 		return false
 
+	# ★ รอบ 65 — คูลดาวน์ยา ★ ยาแรงยิ่งรอนาน (เช็คก่อนหักของออกจากกระเป๋า)
+	var cd_left := potion_cooldown_left_for(data)
+	if cd_left > 0.0:
+		Events.say("%s ยังไม่พร้อม — รออีก %.1f วินาที" % [data.display_name, cd_left])
+		return false
+
 	inventory.take_from_slot(inv_index, 1)
+	start_potion_cooldown(heal, sp_heal)
 	if heal > 0:
 		heal_hp(heal)
 	if sp_heal > 0:
@@ -867,6 +975,7 @@ func from_dict(d: Dictionary) -> void:
 	quests = QuestLog.new()
 	active_buffs.clear()
 	cooldowns.clear()
+	potion_cooldowns.clear()
 	_is_dead = false
 
 	stats.from_dict(d.get("stats", {}))

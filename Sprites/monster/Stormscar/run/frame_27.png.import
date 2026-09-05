@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ck4mubclguspk"
-path="res://.godot/imported/munak walk.png-4eb3ac6720386ede9b04b3dd266a04b3.ctex"
+uid="uid://lbw73awjifaj"
+path="res://.godot/imported/frame_27.png-da042760b1be19f47e262980e4473779.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/monster/munak walk.png"
-dest_files=["res://.godot/imported/munak walk.png-4eb3ac6720386ede9b04b3dd266a04b3.ctex"]
+source_file="res://Sprites/monster/Stormscar/run/frame_27.png"
+dest_files=["res://.godot/imported/frame_27.png-da042760b1be19f47e262980e4473779.ctex"]
 
 [params]
 

@@ -12,12 +12,10 @@
 [ext_resource type="Texture2D" uid="uid://sb5bum41jqa5" path="res://Sprites/npc/bishop-idle-6frames.png" id="13_youxn"]
 [ext_resource type="Texture2D" uid="uid://f4d1lb6krph8" path="res://Sprites/npc/elder-traveler-idle-6frames.png" id="14_d4b5o"]
 [ext_resource type="Texture2D" uid="uid://betk3k6h4ui4r" path="res://Sprites/portraits/Hight.png" id="14_ia7j7"]
-[ext_resource type="Texture2D" uid="uid://bloalvtdnov5g" path="res://Sprites/npc/x1.png" id="15_r67jr"]
 [ext_resource type="Texture2D" uid="uid://bl4a8uts0ixmr" path="res://Sprites/portraits/OldMan.png" id="16_y0k02"]
 [ext_resource type="Texture2D" uid="uid://ci7g5xinjr1cx" path="res://Sprites/npc/หัวหน้ากิลด์บียอร์น.png" id="16_yg0nf"]
-[ext_resource type="Texture2D" uid="uid://bp5n112jpbwpx" path="res://Sprites/npc/x2.png" id="16_youxn"]
-[ext_resource type="Texture2D" uid="uid://d31rke2m7eo6t" path="res://Sprites/npc/x3.png" id="17_d4b5o"]
 [ext_resource type="Texture2D" uid="uid://ebs7rusrgjgy" path="res://Sprites/portraits/Ingrid.png" id="18_6ce6c"]
+[ext_resource type="Texture2D" uid="uid://byyvju3piyvdi" path="res://Sprites/npc/adventurer_idle.png" id="19_63tt3"]
 [ext_resource type="Texture2D" uid="uid://btvljbbjlc58p" path="res://Sprites/portraits/GuildMaster.png" id="22_lpoml"]
 [ext_resource type="Script" uid="uid://cj52mis2ydm4e" path="res://scripts/world/map_base.gd" id="map_base"]
 [ext_resource type="PackedScene" uid="uid://bdgqbnav4qg14" path="res://scenes/npc/npc.tscn" id="npc"]
@@ -343,27 +341,236 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_dy4yb"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a5m5e"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(512, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hck5l"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(1024, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p8n06"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(1536, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a17bo"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(2048, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gm5up"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(2560, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bc7k0"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(3072, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5py5h"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(3584, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vq76s"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(0, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b8sq1"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(512, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vj2p7"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(1024, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n7gur"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(1536, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kcki0"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(2048, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sfhym"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(2560, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xopay"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(3072, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wdkip"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(3584, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jkjtd"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(0, 1024, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nyuje"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(512, 1024, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f8ir8"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(1024, 1024, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1hcxd"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(1536, 1024, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6k3je"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(2048, 1024, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4t547"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(2560, 1024, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_26lo3"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(3072, 1024, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ravyn"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(3584, 1024, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tcufx"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(0, 1536, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t2hrr"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(512, 1536, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kwdlw"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(1024, 1536, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7uobw"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(1536, 1536, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ne2er"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(2048, 1536, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pxd64"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(2560, 1536, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cjb0d"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(3072, 1536, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kptt7"]
+atlas = ExtResource("19_63tt3")
+region = Rect2(3584, 1536, 512, 512)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_5s0fj"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("15_r67jr")
+"texture": SubResource("AtlasTexture_dy4yb")
 }, {
 "duration": 1.0,
-"texture": ExtResource("16_youxn")
+"texture": SubResource("AtlasTexture_a5m5e")
 }, {
 "duration": 1.0,
-"texture": ExtResource("15_r67jr")
+"texture": SubResource("AtlasTexture_hck5l")
 }, {
 "duration": 1.0,
-"texture": ExtResource("16_youxn")
+"texture": SubResource("AtlasTexture_p8n06")
 }, {
 "duration": 1.0,
-"texture": ExtResource("17_d4b5o")
+"texture": SubResource("AtlasTexture_a17bo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gm5up")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bc7k0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5py5h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vq76s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b8sq1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vj2p7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n7gur")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kcki0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sfhym")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xopay")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wdkip")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jkjtd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nyuje")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f8ir8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1hcxd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6k3je")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4t547")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_26lo3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ravyn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tcufx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t2hrr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kwdlw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7uobw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ne2er")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pxd64")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cjb0d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kptt7")
 }],
 "loop": 1,
 "name": &"default",
-"speed": 2.0
+"speed": 23.0
 }]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4i20s"]
@@ -480,13 +687,13 @@ autoplay = "Idle"
 [node name="Merchant" parent="NPCs" unique_id=1565733649 instance=ExtResource("npc")]
 position = Vector2(-70, 590)
 npc_name = "พ่อค้าโทนี่"
-voice_id = "tony"
 dialog = "มีของดีมาขายนะ
 
 ...ถึงจะไม่ค่อยมีของใหม่ก็เถอะ ของจากทางเหนือไม่ได้ส่งมาสามเดือนแล้ว
 ไม่มีใครบอกว่าทำไม"
 portrait = ExtResource("6_ia7j7")
 shop_items = Array[StringName]([&"red_potion", &"orange_potion", &"blue_potion", &"meat", &"wooden_sword", &"novice_sword", &"short_sword", &"rapier", &"falchion", &"wooden_shield", &"guard", &"ribbon", &"cap", &"leather_cap", &"cotton_shirt", &"leather_jacket", &"hood", &"muffler", &"sandals", &"leather_shoes", &"necklace", &"earring", &"brooch", &"wing_of_valkyrie", &"phracon", &"emveretarcon"])
+voice_id = "tony"
 quest_ids = Array[StringName]([&"tony_fabre"])
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/Merchant" unique_id=36482936]
@@ -498,13 +705,13 @@ autoplay = "default"
 [node name="Blacksmith" parent="NPCs" unique_id=1359939436 instance=ExtResource("npc")]
 position = Vector2(453, 575)
 npc_name = "ช่างตีเหล็กฮันส์"
-voice_id = "hans"
 type = 2
 dialog = "อยากให้อาวุธแกร่งขึ้นไหม
 
 ตีเหล็กแบบนี้ข้าเรียนมาจากใต้ภูเขา ที่นั่นเขาตีกันมาเป็นพันปีแล้ว
 ...แต่ข้าถูกไล่ออกมา เพราะข้าถามคำถามที่ไม่ควรถาม"
 portrait_file = "res://Sprites/portraits/hans.png"
+voice_id = "hans"
 quest_ids = Array[StringName]([&"hans_poring", &"m5_old_mine_iron"])
 
 [node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="NPCs/Blacksmith" unique_id=1862143772]
@@ -518,10 +725,10 @@ frame_progress = 0.46044508
 [node name="Healer" parent="NPCs" unique_id=981804629 instance=ExtResource("npc")]
 position = Vector2(1099, 590)
 npc_name = "นักบวชหญิงมาเรีย"
-voice_id = "maria"
 type = 3
 dialog = "บาดแผลของเจ้าจะหายดี จงขอบคุณธอร์เถิด"
 portrait = ExtResource("9_put8n")
+voice_id = "maria"
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/Healer" unique_id=1369066492]
 position = Vector2(2.0000546, -14.000019)
@@ -536,7 +743,6 @@ position = Vector2(1650, 590)
 npc_name = "เสาวาปแห่งธอร์"
 type = 4
 dialog = "เสาวาปโบราณ · เลือกปลายทางแล้วก้าวเข้าไปได้เลย"
-warp_targets = Array[StringName]([&"asgard_forest_2"])
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/SavePoint" unique_id=1114171629]
 position = Vector2(12, -88)
@@ -549,7 +755,6 @@ frame_progress = 0.12460094
 [node name="Guide" parent="NPCs" unique_id=1727980527 instance=ExtResource("npc")]
 position = Vector2(1988, 571)
 npc_name = "ทหารยามเอริค"
-voice_id = "erik"
 type = 0
 dialog = "เด็กใหม่สินะ ข้าเอริค ยามประตูเมืองนี้
 
@@ -559,6 +764,7 @@ J หรือคลิกซ้าย = ฟันดาบ · W หรือ Sp
 ...แล้วก็อย่าเข้าป่าลึกตอนค่ำนะ ผู้กองสั่งห้ามไว้
 ไม่ได้บอกเหตุผลด้วย"
 portrait = ExtResource("12_uap02")
+voice_id = "erik"
 quest_ids = Array[StringName]([&"m1_adventurer_badge", &"m7_silent_forest", &"m13_thunder_scar"])
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/Guide" unique_id=458557870]
@@ -572,7 +778,6 @@ frame_progress = 0.0011229648
 [node name="HighPriest" parent="NPCs" unique_id=1318346366 instance=ExtResource("npc")]
 position = Vector2(1380, 590)
 npc_name = "นักบวชสูงสุดวาลเดอร์"
-voice_id = "valder"
 type = 0
 dialog = "เจ้ามาถูกที่แล้ว ลูกเอ๋ย
 
@@ -587,6 +792,7 @@ portrait = ExtResource("14_ia7j7")
 shop_items = Array[StringName]([&"thunder_blessing", &"reset_skill", &"reset_stat"])
 has_shop = true
 greeting = "เจ้ามาหาข้าด้วยเรื่องใด ลูกเอ๋ย"
+voice_id = "valder"
 quest_ids = Array[StringName]([&"m2_oath", &"m6_ceremony", &"m8_burnt_bark", &"m12_shadow"])
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/HighPriest" unique_id=1929005518]
@@ -600,7 +806,6 @@ frame_progress = 0.6362185
 [node name="OldMan" parent="NPCs" unique_id=1084804787 instance=ExtResource("npc")]
 position = Vector2(-330, 590)
 npc_name = "ตาแก่กุนนาร์"
-voice_id = "gunnar"
 type = 0
 dialog = "เด็กใหม่สินะ...
 
@@ -626,6 +831,7 @@ dialog_by_flag = {
 ป่าจึงเงียบลง เหมือนมีบางสิ่งตายไป"
 }
 portrait = ExtResource("16_y0k02")
+voice_id = "gunnar"
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/OldMan" unique_id=2045269019]
 position = Vector2(0, -20.999977)
@@ -637,26 +843,24 @@ autoplay = "Idle"
 [node name="Ingrid" parent="NPCs" unique_id=1434718339 instance=ExtResource("npc")]
 position = Vector2(830, 590)
 npc_name = "อิงกริด"
-voice_id = "ingrid"
 type = 0
 dialog = "พ่อของข้าเข้าป่าไปเมื่อสิบวันก่อน
 
 แกเป็นนักล่า แกไม่เคยหลงทาง
 แต่คราวนี้แกยังไม่กลับมา"
 portrait = ExtResource("18_6ce6c")
+voice_id = "ingrid"
 quest_ids = Array[StringName]([&"m9_missing_hunter", &"m10_hunter_journal"])
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/Ingrid" unique_id=1192510778]
-position = Vector2(-8, -21.999994)
-scale = Vector2(0.43779904, 0.43779904)
+position = Vector2(2.9999542, -13.999986)
+scale = Vector2(0.58015305, 0.58015305)
 sprite_frames = SubResource("SpriteFrames_5s0fj")
 autoplay = "default"
-frame_progress = 0.03712349
 
 [node name="GuildMaster" parent="NPCs" unique_id=907818509 instance=ExtResource("npc")]
 position = Vector2(-800, 582)
 npc_name = "หัวหน้ากิลด์บียอร์น"
-voice_id = "bjorn"
 type = 0
 dialog = "กิลด์นักผจญภัยพรอนเทรา ยินดีต้อนรับ
 
@@ -665,6 +869,7 @@ dialog = "กิลด์นักผจญภัยพรอนเทรา ย
 ช่วงนี้มอนสเตอร์แถวทุ่งเยอะผิดปกติ
 แปลกนะ พวกมันไม่ได้วิ่งมาทางเมือง พวกมันวิ่งผ่านไป"
 portrait = ExtResource("22_lpoml")
+voice_id = "bjorn"
 quest_ids = Array[StringName]([&"m11_king_poring"])
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/GuildMaster" unique_id=1565329367]

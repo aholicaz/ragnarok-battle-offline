@@ -25,6 +25,8 @@ var _hit_size := Vector2.ZERO
 var _spin := 0.0
 var _sprite: Sprite2D
 var _done := false
+## ★ รอบ 69 ★ ตัวคูณดาเมจของนัดนี้ (ใช้ตอนมอนยิงหลายนัดในท่าเดียว)
+var damage_mult := 1.0
 
 # ---- แบบโค้ง ----
 var _start := Vector2.ZERO
@@ -182,7 +184,7 @@ func _hit_player_direct() -> void:
 		Events.floating_text(p.global_position + Vector2(0, -40), "MISS", Color("#cccccc"), 20, 3)
 		return
 	if p.has_method("take_damage"):
-		p.take_damage(int(result.damage), data.knockback_force, _dir)
+		p.take_damage(maxi(1, int(round(result.damage * damage_mult))), data.knockback_force, _dir)
 
 
 ## ขว้างโค้ง: ระเบิดที่จุดตก ทำดาเมจถ้าผู้เล่นอยู่ในรัศมีสกิล

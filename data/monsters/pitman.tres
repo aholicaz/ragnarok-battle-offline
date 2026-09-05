@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="MonsterData" load_steps=9 format=3]
+[gd_resource type="Resource" script_class="MonsterData" format=3 uid="uid://060ft8qpolib"]
 
-[ext_resource type="Script" path="res://scripts/resources/monster_data.gd" id="1_monster"]
-[ext_resource type="Script" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
+[ext_resource type="Script" uid="uid://dvhbmyjw4ksbk" path="res://scripts/resources/monster_data.gd" id="1_monster"]
+[ext_resource type="Script" uid="uid://lfvvfifv5f84" path="res://scripts/resources/drop_entry.gd" id="2_drop"]
 [ext_resource type="SpriteFrames" path="res://data/sprites/placeholder/pitman_frames.tres" id="3_frames"]
 
 [sub_resource type="Resource" id="Drop_pitman_0"]
@@ -34,9 +34,9 @@ chance = 0.75
 
 [resource]
 script = ExtResource("1_monster")
-sprite_frames = ExtResource("3_frames")
 id = &"pitman"
 display_name = "พิตแมน"
+sprite_frames = ExtResource("3_frames")
 hitbox_size = Vector2(30, 30)
 hp_bar_offset_y = -57.0
 display_height = 150.0
@@ -52,21 +52,17 @@ crit = 2
 element = 3
 race = 2
 size = 0
-ai_type = 0
 move_speed = 95.0
 jump_force = -280.0
 jump_while_chasing = false
-detect_range = 250.0
 attack_range = 100.0
 leash_range = 750.0
 wander_range = 260.0
 hop_while_wandering = false
-wander_pause_chance = 0.70
-wander_pause_min = 3.00
-wander_pause_max = 5.00
-wander_walk_min = 1.50
-wander_walk_max = 2.80
-wander_look_chance = 0.60
+wander_pause_chance = 0.7
+wander_walk_min = 1.5
+wander_walk_max = 2.8
+wander_look_chance = 0.6
 attack_windup = 0.4
 attack_duration = 0.5
 attack_cooldown = 1.8

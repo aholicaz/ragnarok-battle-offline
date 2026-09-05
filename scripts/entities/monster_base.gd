@@ -142,7 +142,19 @@ func body_rect() -> Rect2:
 
 ## ระยะที่มอนตัวนี้ตีถึง — วัดจาก "ขอบตัวมัน" ออกไป
 ## (บอสตัวใหญ่จะได้ไม่ต้องเอาจุดกึ่งกลางมาจ่อตัวผู้เล่นถึงจะตีโดน)
+##
+## ★ รอบ 66 ★ มอนยิงกระสุน (Projectile Texture + Ranged Attack) ใช้ระยะยิงแทน
+## → เห็นผู้เล่นปุ๊บก็ยืนยิงได้เลย ไม่ต้องเดินเข้ามาประชิด
 func attack_reach() -> float:
+	if data == null:
+		return 70.0
+	if data.is_ranged():
+		return data.ranged_reach()
+	return data.attack_range + body_size().x * 0.5
+
+
+## ระยะที่ใช้ตัดสินว่า "ตีติดตัว" โดนไหม — ของมอนยิงไกลไม่เกี่ยว
+func melee_reach() -> float:
 	if data == null:
 		return 70.0
 	return data.attack_range + body_size().x * 0.5
@@ -523,7 +535,15 @@ func _real_anim(anim_name: String) -> String:
 
 
 ## เล่นท่านี้ แล้วคืนชื่อท่าที่ได้เล่นจริง ("" = ไม่มีท่าไหนใช้ได้เลย)
-func _play(anim: String) -> String:
+##
+## ★ restart ★ ใส่ true เมื่อ "เริ่มท่าใหม่จริง ๆ" (เริ่มร่ายสกิล / เริ่มตี / โดนตี)
+## ท่าพวกนี้ถูกเรียกครั้งเดียวต่อการกระทำ ไม่ได้เรียกทุกเฟรม เลยบังคับให้เริ่มที่เฟรม 0 ได้
+##
+## ★ กับดัก 94 (รอบ 65) ★ ท่าที่ปิด loop พอเล่นจบจะค้างที่เฟรมสุดท้าย และ is_playing() = false
+## เงื่อนไขเดิมเช็คแค่ "ชื่อท่าเปลี่ยน" หรือ "หยุดอยู่ + ท่านี้วนซ้ำ" → ท่าปิด loop ที่ค้างอยู่
+## จะไม่ถูกสั่งเล่นซ้ำเลย ★ อาการ: บอสร่ายสกิลรอบสองแล้วยืนแข็งค้างท่าเดิม สายฟ้าลงแต่ตัวไม่ขยับ ★
+## (เจอกับท่า "คำราม" ของอสูรสายฟ้าหลังปิด loop ในรอบ 64)
+func _play(anim: String, restart: bool = false) -> String:
 	if sprite.sprite_frames == null:
 		return ""
 	for candidate in ANIM_FALLBACK.get(anim, [anim]):
@@ -532,7 +552,10 @@ func _play(anim: String) -> String:
 			# ★ รอบ 54 — กับดัก 82 ★ มอนที่มีท่าเดียว (เช่นฮอร์เน็ต มีแค่ Idle): ตอนใส่ SpriteFrames
 			# Godot จะตั้ง sprite.animation เป็นท่านั้นให้เอง "แต่ไม่เล่น" → เช็คแค่ชื่อไม่พอ ต้องเช็ค is_playing ด้วย
 			# (ท่าที่ไม่วนซ้ำแล้วเล่นจบ เช่น Attack/Death ไม่ต้องเริ่มใหม่ ไม่งั้นจะกระตุกวนไปเรื่อย)
-			if sprite.animation != real or (not sprite.is_playing() and sprite.sprite_frames.get_animation_loop(real)):
+			if restart:
+				sprite.play(real)
+				sprite.set_frame_and_progress(0, 0.0)
+			elif sprite.animation != real or (not sprite.is_playing() and sprite.sprite_frames.get_animation_loop(real)):
 				sprite.play(real)
 			return real
 	return ""
@@ -584,13 +607,14 @@ func _cast_skill() -> void:
 	_skill_cd = data.skill_cooldown
 
 	# ท่าสกิล: Skill Anim -> "Skill" -> ท่าโจมตีปกติ
+	# ★ restart = true ★ ร่ายซ้ำต้องเริ่มท่าใหม่เสมอ ไม่งั้นค้างเฟรมสุดท้าย (กับดัก 94)
 	var played := ""
 	if data.skill_anim != &"":
-		played = _play(String(data.skill_anim))
+		played = _play(String(data.skill_anim), true)
 	if played == "":
-		played = _play("Skill")
+		played = _play("Skill", true)
 	if played == "":
-		played = _play("Attack")
+		played = _play("Attack", true)
 
 	if data.skill_name != "":
 		Events.floating_text(global_position + Vector2(0, data.hp_bar_offset_y - 26 - hover_lift()),
@@ -600,6 +624,11 @@ func _cast_skill() -> void:
 	# ใส่ SpriteFrames ลงช่อง "Skill Effect Frames" ใน MonsterData แล้วมันทำงานเอง
 	if data.skill_effect_frames != null:
 		SkillEffect.spawn_monster(data, self, facing)
+
+	# ★ สายฟ้าฟาดเป็นแนว (รอบ 64) ★ ตั้ง Skill Bolt Count > 0 ใน MonsterData
+	# ตัวมันจัดการเวลา/วงเตือน/ดาเมจของแต่ละเส้นเอง (ไม่ผูกกับ Skill Windup)
+	if data.skill_bolt_count > 0:
+		LightningStrike.cast(data, self, facing)
 
 	await get_tree().create_timer(data.skill_windup).timeout
 	if state == State.DEAD or not is_instance_valid(self):
@@ -611,7 +640,8 @@ func _cast_skill() -> void:
 		if _player != null and is_instance_valid(_player):
 			target = _player.foot_position() if _player.has_method("foot_position") else _player.global_position
 		MonsterProjectile.fire_lob(data, self, target)
-	else:
+	elif data.skill_bolt_count <= 0:
+		# ★ สายฟ้าคิดดาเมจเองทีละเส้นแล้ว ★ ไม่ต้องทำดาเมจรอบตัวซ้ำอีก
 		_skill_hit()
 
 	await get_tree().create_timer(maxf(0.05, data.skill_duration - data.skill_windup)).timeout
@@ -644,7 +674,12 @@ func _skill_hit() -> void:
 # โจมตี
 # =========================================================
 func _try_attack() -> void:
-	if _attack_timer > 0.0 or state == State.ATTACK:
+	if state == State.ATTACK:
+		return
+	if _attack_timer > 0.0:
+		# ★ รอบ 66 ★ ยืนรอคูลดาวน์ = กลับไปท่ายืน
+		# (ไม่งั้นค้างเฟรมสุดท้ายของท่าโจมตี — เห็นชัดมากกับมอนยิงไกลที่ยืนอยู่กับที่)
+		_play("Idle")
 		return
 	_attack()
 
@@ -652,34 +687,87 @@ func _try_attack() -> void:
 func _attack() -> void:
 	state = State.ATTACK
 	velocity.x = 0.0
-	_play("Attack")
+	var played := _play("Attack", true)   # ★ ตีซ้ำต้องเริ่มท่าใหม่ทุกครั้ง (กับดัก 94)
 
-	await get_tree().create_timer(data.attack_windup).timeout
+	# ★ รอบ 66/69 — จับจังหวะตามภาพ ★ ตั้ง Attack Hit Frames ไว้ = คิดเวลาจากเฟรมจริง
+	# (เปลี่ยน fps ของท่าเมื่อไหร่ ดาเมจก็ยังออกตรงจังหวะเดิม ไม่ต้องแก้ Windup)
+	# ★ ใส่ได้หลายเฟรม = ตีหลายทีในท่าเดียว ★ (เช่น อสูรสายฟ้าตะปบ 2 ที)
+	var times: Array[float] = []
+	if played != "":
+		for f in data.attack_hit_frame_list():
+			times.append(_anim_time_to_frame(played, f))
+	if times.is_empty():
+		times.append(data.attack_windup)
+
+	var elapsed := 0.0
+	for t in times:
+		var wait: float = maxf(0.0, t - elapsed)
+		if wait > 0.0:
+			await get_tree().create_timer(wait).timeout
+		if state == State.DEAD or not is_instance_valid(self):
+			return
+		elapsed = maxf(elapsed, t)
+		_attack_hit(times.size())
+
+	# ★ หางท่า ★ เปิด Attack Follow Anim = รอจนภาพเล่นจบจริง (ท่ายาว ๆ จะได้ไม่ถูกตัดกลางคัน)
+	var tail: float = data.attack_duration
+	if data.attack_follow_anim and played != "":
+		tail = _anim_length(played) - elapsed
+	await get_tree().create_timer(maxf(0.05, tail)).timeout
 	if state == State.DEAD or not is_instance_valid(self):
 		return
+	state = State.IDLE
+	_attack_timer = data.attack_cooldown
+
+
+## ★ ดาเมจ 1 ที ของท่าโจมตีปกติ ★ (ท่าที่ตีหลายทีจะเรียกซ้ำตามจำนวนเฟรมที่ตั้งไว้)
+## hits = ตีทั้งหมดกี่ทีในท่านี้ — ตี 1 ทีจะไม่โดนตัวคูณ "ต่อที" เลย (ของเดิมไม่เปลี่ยน)
+func _attack_hit(hits: int = 1) -> void:
+	var mult: float = 1.0
+	if hits > 1 and data.attack_hit_damage_mult > 0.0:
+		mult = data.attack_hit_damage_mult
 
 	# ★ โจมตีระยะไกล (รอบ 36) ★ ใส่รูปกระสุนไว้ = ยิงบอลแทนตีติดตัว
 	if data.projectile_texture != null:
 		if _player != null and is_instance_valid(_player):
 			_face_to(_player.global_position.x - global_position.x)
-		MonsterProjectile.fire_straight(data, self, facing)
-	elif _player != null and is_instance_valid(_player) and not PlayerState.is_dead():
-		var pf: Vector2 = _player.foot_position() if _player.has_method("foot_position") \
-			else _player.global_position
-		var dist := foot_position().distance_to(pf)
-		if dist <= attack_reach() + 25.0:
-			var result := Combat.monster_hits_player(data, PlayerState.stats)
-			if result.miss:
-				Events.floating_text(_player.global_position + Vector2(0, -40), "MISS", Color("#cccccc"), 20, 3)
-			elif _player.has_method("take_damage"):
-				var dir := signi(int(_player.global_position.x - global_position.x))
-				_player.take_damage(result.damage, data.knockback_force, dir)
-
-	await get_tree().create_timer(data.attack_duration).timeout
-	if state == State.DEAD or not is_instance_valid(self):
+		var shot := MonsterProjectile.fire_straight(data, self, facing)
+		if shot != null:
+			shot.damage_mult = mult
 		return
-	state = State.IDLE
-	_attack_timer = data.attack_cooldown
+
+	if _player == null or not is_instance_valid(_player) or PlayerState.is_dead():
+		return
+	var pf: Vector2 = _player.foot_position() if _player.has_method("foot_position") \
+		else _player.global_position
+	var dist := foot_position().distance_to(pf)
+	if dist > melee_reach() + 25.0:
+		return
+	var result := Combat.monster_hits_player(data, PlayerState.stats)
+	if result.miss:
+		Events.floating_text(_player.global_position + Vector2(0, -40), "MISS", Color("#cccccc"), 20, 3)
+		return
+	if not _player.has_method("take_damage"):
+		return
+	var dir := signi(int(_player.global_position.x - global_position.x))
+	_player.take_damage(maxi(1, int(round(result.damage * mult))), data.knockback_force, dir)
+
+
+## ★ รอบ 66 ★ ท่านี้เล่นถึงเฟรมที่ idx ใช้เวลากี่วินาที (คิดจาก duration ของแต่ละเฟรม / fps)
+func _anim_time_to_frame(anim: String, idx: int) -> float:
+	if anim == "" or sprite.sprite_frames == null:
+		return 0.0
+	if not sprite.sprite_frames.has_animation(anim):
+		return 0.0
+	var fps: float = sprite.sprite_frames.get_animation_speed(anim)
+	if fps <= 0.0:
+		return 0.0
+	var n: int = sprite.sprite_frames.get_frame_count(anim)
+	var last: int = clampi(idx, 0, maxi(0, n - 1))
+	var t := 0.0
+	for i in range(last):
+		t += sprite.sprite_frames.get_frame_duration(anim, i) / fps
+	return t
 
 
 # =========================================================
@@ -745,7 +833,7 @@ func take_damage(amount: int, is_crit: bool = false, from_dir: int = 0) -> void:
 	if hp <= 0:
 		_die()
 	elif state != State.ATTACK:
-		_play("Hit")
+		_play("Hit", true)   # ★ โดนตีรัว ๆ ต้องสะดุ้งใหม่ทุกครั้ง (กับดัก 94)
 
 
 ## ป้าย MVP เด้งเหนือหัวผู้เล่นตอนล้มบอส
@@ -817,7 +905,7 @@ func _die() -> void:
 
 	# ★ ท่าตาย ★
 	# ชื่อท่าตั้งเป็น Death / Die / Dead ก็ได้ (พิมพ์เล็ก-ใหญ่ไม่สำคัญ)
-	var played := _play("Death")
+	var played := _play("Death", true)   # ★ เริ่มท่าตายที่เฟรม 0 เสมอ (กับดัก 94)
 	if played != "":
 		sprite.frame = 0
 		sprite.play(played)   # เริ่มใหม่จากเฟรมแรกเสมอ
@@ -897,7 +985,7 @@ func spawn_as_corpse() -> void:
 	state = State.DEAD
 	hp = 0
 	velocity = Vector2.ZERO
-	var played := _play("Death")
+	var played := _play("Death", true)   # ★ เริ่มท่าตายที่เฟรม 0 เสมอ (กับดัก 94)
 	_become_corpse(played)
 
 

@@ -309,6 +309,14 @@ static func describe(d: ItemData, inst: ItemInstance = null, extra: String = "")
 		stats.append("ฟื้น HP %d (+%.0f%%)" % [d.heal_hp, d.heal_hp_percent])
 	if d.heal_sp != 0 or d.heal_sp_percent != 0.0:
 		stats.append("ฟื้น SP %d (+%.0f%%)" % [d.heal_sp, d.heal_sp_percent])
+	# ★ รอบ 65 — คูลดาวน์ยา ★ ยาฟื้นเยอะยิ่งรอนาน (5-10 วิ)
+	var pot_cd := PlayerState.potion_cooldown_of(d)
+	if pot_cd > 0.0:
+		var pot_left := PlayerState.potion_cooldown_left_for(d)
+		if pot_left > 0.0:
+			stats.append("[color=#ff9a6a]คูลดาวน์ %.1f วินาที (รออีก %.1f วิ)[/color]" % [pot_cd, pot_left])
+		else:
+			stats.append("[color=#9aa7bd]คูลดาวน์ %.1f วินาที[/color]" % pot_cd)
 	# ★ รอบ 45 — โบนัส % / บัฟไอเทม / ไอเทมพิเศษ ★
 	for pair in [["ดาเมจ", d.damage_percent], ["ป้องกัน", d.defense_percent], ["HP สูงสุด", d.hp_percent],
 			["SP สูงสุด", d.sp_percent], ["ดูดเลือด", d.hp_drain_percent], ["ดูดมานา", d.sp_drain_percent],
